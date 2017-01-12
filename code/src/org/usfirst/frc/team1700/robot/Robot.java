@@ -1,7 +1,10 @@
 
 package org.usfirst.frc.team1700.robot;
 
+import com.ctre.CANTalon;
+
 import edu.wpi.first.wpilibj.IterativeRobot;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -18,6 +21,10 @@ public class Robot extends IterativeRobot {
     final String customAuto = "My Auto";
     String autoSelected;
     SendableChooser chooser;
+    Joystick leftDriveJoystick;
+    Joystick rightDriveJoystick;
+    Joystick operatorJoystick;
+    Drive drive;
 	
     /**
      * This function is run when the robot is first started up and should be
@@ -28,6 +35,10 @@ public class Robot extends IterativeRobot {
         chooser.addDefault("Default Auto", defaultAuto);
         chooser.addObject("My Auto", customAuto);
         SmartDashboard.putData("Auto choices", chooser);
+        
+        leftDriveJoystick = new Joystick(0);
+        rightDriveJoystick = new Joystick(1);
+        operatorJoystick = new Joystick(2);
     }
     
 	/**
@@ -64,7 +75,7 @@ public class Robot extends IterativeRobot {
      * This function is called periodically during operator control
      */
     public void teleopPeriodic() {
-        
+        drive.driveTank(-leftDriveJoystick.getRawAxis(1), rightDriveJoystick.getRawAxis(1));
     }
     
     /**
