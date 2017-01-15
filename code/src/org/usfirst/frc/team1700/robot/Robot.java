@@ -4,6 +4,7 @@ package org.usfirst.frc.team1700.robot;
 
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -18,20 +19,26 @@ public class Robot extends IterativeRobot {
     Joystick leftDriveJoystick;
     Joystick rightDriveJoystick;
     Joystick operatorJoystick;
+    PowerDistributionPanel pdp;
     Drive drive;
+    
+    
+    public Robot() {
+    	drive = new Drive();
+        
+        leftDriveJoystick = new Joystick(0);
+        rightDriveJoystick = new Joystick(1);
+        operatorJoystick = new Joystick(2);
+    }
 	
 
     public void robotInit() {
         chooser = new SendableChooser();
         chooser.addDefault("Default Auto", defaultAuto);
         chooser.addObject("My Auto", customAuto);
+        pdp = new PowerDistributionPanel(1); //put ID in parentheses
         SmartDashboard.putData("Auto choices", chooser);
         
-        drive = new Drive();
-        
-        leftDriveJoystick = new Joystick(0);
-        rightDriveJoystick = new Joystick(1);
-        operatorJoystick = new Joystick(2);
     }
     
 	/**
@@ -64,9 +71,8 @@ public class Robot extends IterativeRobot {
 
     
     public void teleopPeriodic() {
-    	double leftSpeed = -leftDriveJoystick.getRawAxis(1);
-    	double rightSpeed = rightDriveJoystick.getRawAxis(1);
         drive.driveTank(-leftDriveJoystick.getRawAxis(1), rightDriveJoystick.getRawAxis(1));
+        System.out.println("Port 5 Motor Current: " + pdp.getCurrent(5)); //put the motor's port number in parentheses
     }
     
     
