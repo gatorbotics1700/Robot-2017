@@ -21,13 +21,18 @@ public class Robot extends IterativeRobot {
     Joystick operatorJoystick;
     PowerDistributionPanel pdp;
     Drive drive;
+    Intake intake;
+    Gear gear;
+    Shooter shooter;
     Vision visionProcessing;
-    
     
     public Robot() {
     	drive = new Drive();
     	visionProcessing = new Vision();
         
+    	intake = new Intake();
+        gear = new Gear();
+        shooter = new Shooter();
         leftDriveJoystick = new Joystick(0);
         rightDriveJoystick = new Joystick(1);
         operatorJoystick = new Joystick(2);
@@ -76,6 +81,9 @@ public class Robot extends IterativeRobot {
     public void teleopPeriodic() {
         drive.driveTank(-leftDriveJoystick.getRawAxis(1), rightDriveJoystick.getRawAxis(1));
         drive.shiftDrive(leftDriveJoystick);
+        intake.runIntake();
+        gear.moveFlap(leftDriveJoystick);
+        shooter.moveRamp(leftDriveJoystick);
     }
     
     
