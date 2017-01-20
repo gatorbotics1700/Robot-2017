@@ -24,6 +24,7 @@ public class Robot extends IterativeRobot {
     Intake intake;
     Gear gear;
     Shooter shooter;
+    Vision visionProcessing;
     
     public Robot() {
     	drive = new Drive();
@@ -42,6 +43,7 @@ public class Robot extends IterativeRobot {
         chooser.addObject("My Auto", customAuto);
         pdp = new PowerDistributionPanel(1); //put ID in parentheses
         SmartDashboard.putData("Auto choices", chooser);
+        visionProcessing.initVision();
         
     }
     
