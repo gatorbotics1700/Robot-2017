@@ -26,6 +26,7 @@ public class Robot extends IterativeRobot {
     
     public Robot() {
     	drive = new Drive();
+    	visionProcessing = new Vision();
         
         leftDriveJoystick = new Joystick(0);
         rightDriveJoystick = new Joystick(1);

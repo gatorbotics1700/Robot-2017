@@ -29,7 +29,7 @@ public class Vision {
 	private VisionThread visionThread;
 	GripPipeline vpipeline;
 	Mat image;
-	private static final int VISION_HEIGHT_CONSTANT = 30;
+	private static final double VISION_HEIGHT_CONSTANT = 3956;
 	private static final double VISION_DISTANCE = 30;
 	private static final double CAMERA_WIDTH_PIXELS = 760; 
 	private static final double TARGET_HEIGHT_INCHES = 6;
@@ -65,12 +65,11 @@ public class Vision {
 					System.out.println("Rect 2 distance: " + d2);
 					System.out.println("Rect 1 area: " + r1.area());
 					System.out.println("Rect 2 area: " + r2.area());
-//					}
-			System.out.println("");
+					}
             synchronized (imgLock) {
 //            	System.out.println("Rect bound:" + r.area());
 //                centerX = r.x + (r.width / 2);
-            }
+//            }
         }
     });
     visionThread.start();
