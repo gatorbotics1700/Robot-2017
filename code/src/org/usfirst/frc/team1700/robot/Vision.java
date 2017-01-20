@@ -30,6 +30,10 @@ public class Vision {
 	GripPipeline vpipeline;
 	Mat image;
 	private static final int VISION_HEIGHT_CONSTANT = 30;
+	private static final double VISION_DISTANCE = 30;
+	private static final double CAMERA_WIDTH_PIXELS = 760; 
+	private static final double TARGET_HEIGHT_INCHES = 6;
+
 //	private final NetworkTable table;
 	
 	public Vision() {
@@ -78,7 +82,31 @@ public class Vision {
 		return distance;
 	}
 	
-		
+	/**
+	 * Finds the robot's horizontal offset in inches from the center of the target 
+	 * using the input image from the camera. 
+	 * 
+	 * @param rect1 First rectangle detected from camera input. 
+	 * @param rect2 Second rectangle detected from camera input. 
+	 * @return horizontalOffset Robot's horizontal distance from the target in inches. 
+	 */
+	public double getHorizontalOffset(Rect rect1, Rect rect2) {
+		Rect leftRect;
+		Rect rightRect;
+		if (rect1.x < rect2.x) {
+			leftRect = rect1;
+			rightRect = rect2;
+		} else {
+			leftRect = rect2;
+			rightRect = rect1;
+		}
+		double rectMidpoint = (rightRect.x - (leftRect.x + leftRect.width))/2 + leftRect.x + leftRect.width;
+		double picMidpoint = CAMERA_WIDTH_PIXELS / 2;
+		double horizontalOffset = rectMidpoint - picMidpoint;
+		double pixelsPerInch = leftRect.height/TARGET_HEIGHT_INCHES;
+		horizontalOffset *= pixelsPerInch; 
+		return horizontalOffset; 
+	}
 		
 	public void findContours() {
 
