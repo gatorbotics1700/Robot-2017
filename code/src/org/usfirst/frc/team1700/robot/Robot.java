@@ -72,6 +72,7 @@ public class Robot extends IterativeRobot {
     
     public void teleopPeriodic() {
         drive.driveTank(-leftDriveJoystick.getRawAxis(1), rightDriveJoystick.getRawAxis(1));
+        drive.shiftDrive(leftDriveJoystick);
     }
     
     
