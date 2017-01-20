@@ -58,8 +58,8 @@ public class Vision {
 					MatOfPoint mp2 = pipeline.filterContoursOutput().get(1);
 					Rect r1 = Imgproc.boundingRect(mp1);
 					Rect r2 = Imgproc.boundingRect(mp2);
-					double d1 = getDistance(r1);
-					double d2 = getDistance(r2);
+					double angle = getAngle(r1, r2);
+					System.out.println("Angle: " + angle);
 					double distance = (d1+d2)/2;
 					System.out.println("Rect 1 distance: " + d1);
 					System.out.println("Rect 2 distance: " + d2);
@@ -74,6 +74,22 @@ public class Vision {
         }
     });
     visionThread.start();
+	}
+	
+	/**
+	 * Finds the robot's angle to the target. 
+	 * 
+	 * @param rect1 First rectangle detected from camera input.
+	 * @param rect2 Second rectangle detected from camera input. 
+	 * @return angle Robot's angle to the target. 
+	 */
+	public double getAngle(Rect rect1, Rect rect2) {
+		double distance1 = getDistance(rect1);
+		double distance2 = getDistance(rect2);
+		double totalDistance = (distance1 + distance2)/2;
+		double horizontalOffset = getHorizontalOffset(rect1, rect2);
+		double angle = asin(horizontalOffset/totalDistance);
+		return angle; 
 	}
 	
 	public double getDistance(Rect rect) {
