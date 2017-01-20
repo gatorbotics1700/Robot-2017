@@ -72,7 +72,7 @@ public class Robot extends IterativeRobot {
     
     public void teleopPeriodic() {
         drive.driveTank(-leftDriveJoystick.getRawAxis(1), rightDriveJoystick.getRawAxis(1));
-        System.out.println("Port 5 Motor Current: " + pdp.getCurrent(5)); //put the motor's port number in parentheses
+        drive.shiftDrive(leftDriveJoystick);
     }
     
     
