@@ -29,7 +29,7 @@ public class Vision {
 	private VisionThread visionThread;
 	GripPipeline vpipeline;
 	Mat image;
-	private static final int VISION_DISTANCE = 30;
+	private static final int VISION_HEIGHT_CONSTANT = 30;
 //	private final NetworkTable table;
 	
 	public Vision() {
@@ -48,11 +48,20 @@ public class Vision {
 
 		visionThread = new VisionThread(visionCamera, new GripPipeline(), pipeline -> {
 				if (pipeline.filterContoursOutput().size() == 2) { //works if identifies two vision targets
-					for(MatOfPoint value: pipeline.filterContoursOutput()) {
-						Rect r2 = Imgproc.boundingRect(value);
-						getDistance(r2);
-						System.out.print(r2.area());
-					}
+					
+//					for(MatOfPoint value: pipeline.filterContoursOutput()) {
+					MatOfPoint mp1 = pipeline.filterContoursOutput().get(0);
+					MatOfPoint mp2 = pipeline.filterContoursOutput().get(1);
+					Rect r1 = Imgproc.boundingRect(mp1);
+					Rect r2 = Imgproc.boundingRect(mp2);
+					double d1 = getDistance(r1);
+					double d2 = getDistance(r2);
+					double distance = (d1+d2)/2;
+					System.out.println("Rect 1 distance: " + d1);
+					System.out.println("Rect 2 distance: " + d2);
+					System.out.println("Rect 1 area: " + r1.area());
+					System.out.println("Rect 2 area: " + r2.area());
+//					}
 			System.out.println("");
             synchronized (imgLock) {
 //            	System.out.println("Rect bound:" + r.area());
@@ -63,8 +72,10 @@ public class Vision {
     visionThread.start();
 	}
 	
-	public int getDistance(Rect rect) {
-		
+	public double getDistance(Rect rect) {
+		double height = rect.height;
+		double distance = VISION_HEIGHT_CONSTANT/height;
+		return distance;
 	}
 	
 		

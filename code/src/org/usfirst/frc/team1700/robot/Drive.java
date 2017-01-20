@@ -29,10 +29,10 @@ public class Drive {
 		leftBack.set(leftSpeed);
 		rightFront.set(rightSpeed);
 		rightBack.set(rightSpeed);
-		System.out.println("Right front motor current: " + pdp.getCurrent(0));
-		System.out.println("Right back motor current: " + pdp.getCurrent(1));
-		System.out.println("Left front motor current: " + pdp.getCurrent(2));
-		System.out.println("Left back motor current: " + pdp.getCurrent(3));
+//		System.out.println("Right front motor current: " + pdp.getCurrent(0));
+//		System.out.println("Right back motor current: " + pdp.getCurrent(1));
+//		System.out.println("Left front motor current: " + pdp.getCurrent(2));
+//		System.out.println("Left back motor current: " + pdp.getCurrent(3));
 	}
 	
 	public void shiftDrive(Joystick joy){

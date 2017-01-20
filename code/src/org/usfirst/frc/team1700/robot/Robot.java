@@ -21,6 +21,7 @@ public class Robot extends IterativeRobot {
     Joystick operatorJoystick;
     PowerDistributionPanel pdp;
     Drive drive;
+    Vision visionProcessing;
     
     
     public Robot() {
@@ -38,6 +39,7 @@ public class Robot extends IterativeRobot {
         chooser.addObject("My Auto", customAuto);
         pdp = new PowerDistributionPanel(1); //put ID in parentheses
         SmartDashboard.putData("Auto choices", chooser);
+        visionProcessing.initVision();
         
     }
     
