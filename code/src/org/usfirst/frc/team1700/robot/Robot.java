@@ -45,7 +45,7 @@ public class Robot extends IterativeRobot {
         chooser.addObject("My Auto", customAuto);
         pdp = new PowerDistributionPanel(1); //put ID in parentheses
         SmartDashboard.putData("Auto choices", chooser);
-        visionProcessing.initVision();
+        visionProcessing.initVision(leftDriveJoystick);
         
     }
     

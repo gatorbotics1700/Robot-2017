@@ -15,13 +15,17 @@ public class Drive {
     CANTalon leftBack;
     Servo shiftingServo;
     PowerDistributionPanel pdp;
+    Vision vision;
+    private static double ANGLE_CONSTANT;
 	
 	public Drive() {
+		vision = new Vision();
 		rightFront = new CANTalon(0); //TODO: Change ID's
 		rightBack = new CANTalon(1);
 		leftFront = new CANTalon(2);
 		leftBack = new CANTalon(3);
 		pdp = new PowerDistributionPanel(4);
+		ANGLE_CONSTANT = 0.01;
 	}
 	
 	public void driveTank(double leftSpeed, double rightSpeed) {
@@ -29,10 +33,6 @@ public class Drive {
 		leftBack.set(leftSpeed);
 		rightFront.set(rightSpeed);
 		rightBack.set(rightSpeed);
-//		System.out.println("Right front motor current: " + pdp.getCurrent(0));
-//		System.out.println("Right back motor current: " + pdp.getCurrent(1));
-//		System.out.println("Left front motor current: " + pdp.getCurrent(2));
-//		System.out.println("Left back motor current: " + pdp.getCurrent(3));
 	}
 	
 	public void shiftDrive(Joystick joy){
@@ -42,4 +42,13 @@ public class Drive {
 			shiftingServo.set(1.0);
 		}
 	}
+	
+	public void turnToAngle(double angle) {
+		if(angle > 0) {
+			driveTank(0.1, angle/ANGLE_CONSTANT);
+		} else if (angle < 0) {
+			driveTank(-angle/ANGLE_CONSTANT, 0.1);
+		}
+	}
+	
 }

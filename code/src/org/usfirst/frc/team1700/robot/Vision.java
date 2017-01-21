@@ -12,6 +12,7 @@ import org.opencv.imgproc.Imgproc;
 import edu.wpi.cscore.AxisCamera;
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.wpilibj.CameraServer;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.networktables.NetworkTable;
 import edu.wpi.first.wpilibj.vision.VisionRunner;
@@ -19,6 +20,7 @@ import edu.wpi.first.wpilibj.vision.VisionThread;
 import org.opencv.imgproc.*;
 
 public class Vision {
+	Drive drive;
 	private static final int IMG_WIDTH = 640;
 	private static final int IMG_HEIGHT = 480;
 	
@@ -36,6 +38,7 @@ public class Vision {
 //	private final NetworkTable table;
 	
 	public Vision() {
+		drive = new Drive();
 		centerX = 0.0;
 		imgLock = new Object();
 		vpipeline = new GripPipeline();
@@ -44,7 +47,7 @@ public class Vision {
 		
 	}
 	
-	public void initVision() {
+	public void initVision(Joystick joystick) {
 		visionCamera = CameraServer.getInstance().addAxisCamera("axis-camera");
 		visionCamera.setResolution(IMG_WIDTH, IMG_HEIGHT);
 		CameraServer.getInstance().startAutomaticCapture(visionCamera);
@@ -62,14 +65,17 @@ public class Vision {
 					double d2 = getDistance(r2);
 					double distance = (d1+d2)/2;
 					double angle = getAngle(distance, r1, r2);
-					double angleRadians = angle/Math.PI*180;
 					System.out.println("Angle: " + angle);
 					System.out.println("Distance: " + distance);
-					}
             synchronized (imgLock) {
+				double angleRadians = angle/Math.PI*180;
+				if (joystick.getRawButton(8)) {
+					drive.turnToAngle(angleRadians);
+				}
 //            	System.out.println("Rect bound:" + r.area());
 //                centerX = r.x + (r.width / 2);
 //            }
+            }
         }
     });
     visionThread.start();
