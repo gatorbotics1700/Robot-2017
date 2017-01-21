@@ -17,6 +17,7 @@ public class Drive {
     PowerDistributionPanel pdp;
     Vision vision;
     private static double ANGLE_CONSTANT;
+    private static double ANGLE_RANGE;
 	
 	public Drive() {
 		vision = new Vision();
@@ -25,7 +26,8 @@ public class Drive {
 		leftFront = new CANTalon(2);
 		leftBack = new CANTalon(3);
 		pdp = new PowerDistributionPanel(4);
-		ANGLE_CONSTANT = 0.01;
+		ANGLE_CONSTANT = 2;
+		ANGLE_RANGE = 0.05;
 	}
 	
 	public void driveTank(double leftSpeed, double rightSpeed) {
@@ -44,10 +46,10 @@ public class Drive {
 	}
 	
 	public void turnToAngle(double angle) {
-		if(angle > 0) {
-			driveTank(0.1, angle/ANGLE_CONSTANT);
-		} else if (angle < 0) {
-			driveTank(-angle/ANGLE_CONSTANT, 0.1);
+		if(angle > ANGLE_RANGE) {
+			driveTank(0.05, angle/ANGLE_CONSTANT);
+		} else if (angle < ANGLE_RANGE) {
+			driveTank(-angle/ANGLE_CONSTANT, 0.05);
 		}
 	}
 	
