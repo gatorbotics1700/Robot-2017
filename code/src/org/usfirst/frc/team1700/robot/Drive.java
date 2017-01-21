@@ -5,6 +5,7 @@ package org.usfirst.frc.team1700.robot;
 import com.ctre.CANTalon;
 import com.kauailabs.navx.frc.AHRS;
 
+import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
@@ -23,6 +24,8 @@ public class Drive {
     PIDController turnController; 
     operationMode mode; 
     double target;
+    Encoder leftEncoder;
+    Encoder rightEncoder; 
 	
     enum operationMode {
     	MANUAL,
@@ -38,7 +41,8 @@ public class Drive {
 		leftFront = new CANTalon(Constants.DRIVE_LEFT_FRONT);
 		leftBack = new CANTalon(Constants.DRIVE_LEFT_BACK);
 		NavX = new AHRS(SPI.Port.kMXP);
-		
+		leftEncoder = new Encoder(Constants.QUAD_ENCODER_LEFT_1, Constants.QUAD_ENCODER_LEFT_2);
+		rightEncoder = new Encoder(Constants.QUAD_ENCODER_RIGHT_1, Constants.QUAD_ENCODER_RIGHT_2);
 	}
 	
 	private void driveTank(double leftSpeed, double rightSpeed) {
@@ -67,6 +71,11 @@ public class Drive {
 		}
 	}
 	
+	private void driveToDistance(double distanceDelta) {
+		double speed = distanceDelta*Constants.DRIVING_DISTANCE_PROPORTION;
+		driveTank(-speed,speed);
+	}
+	
 	private void setTargetAngleDelta(double angleDelta) {
 		mode = operationMode.ANGLE; 
 		target = getCurrentAngle(); 
@@ -76,8 +85,14 @@ public class Drive {
 		return NavX.getAngle();
 	}
 	
+	public double getCurrentDistance() {
+		return Constants.ticksToInches((leftEncoder.getDistance()+rightEncoder.getDistance())/2);
+	}
+	
 	public void setTargetDistance(double distance) {
-		
+		double position = getCurrentPos();
+		target = position + distance; 
+		mode = operationMode.DISTANCE;
 	}
 	
 	public void update(double leftSpeed, double rightSpeed, boolean highGear) {
@@ -92,6 +107,7 @@ public class Drive {
 			break;
 		case DISTANCE:
 			shiftDrive(true);
+			driveToDistance(getCurrentDistance()-target);
 			break;
 		}
 		if(atTarget()) {

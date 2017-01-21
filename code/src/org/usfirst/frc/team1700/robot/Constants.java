@@ -7,7 +7,10 @@ package org.usfirst.frc.team1700.robot;
 public class Constants {
 	
 	//Don't wan't people to instantiate
-	private Constants() {} 
+	private Constants() {
+		double circumference = WHEEL_DIAMETER_INCHES*Math.PI;
+		TICKS_PER_INCH = ENCODER_TICKS_PER_REV * DRIVE_GEAR_REDUCTION / circumference;
+	} 
 	
 	//ID's for Motor Controllers
 	public static final int DRIVE_RIGHT_FRONT = 1,
@@ -42,7 +45,34 @@ public class Constants {
 							FLAP_DOWN = 6;
 	
 	//Vision constants
-	public static final double TURNING_ANGLE_PROPORTION = 0.01;
-	public static final double TARGET_ANGLE_TOLERANCE = 5;
+	public static final double TURNING_ANGLE_PROPORTION = 0.01,
+							   DRIVING_DISTANCE_PROPORTION = (1.0/48.0),
+							   TARGET_ANGLE_TOLERANCE = 5;
+	
+	//Quadrature encoders
+	//TO-DO: Code based on color of wires. 
+	public static final int QUAD_ENCODER_LEFT_1 = 5,
+							QUAD_ENCODER_LEFT_2 = 6,
+							QUAD_ENCODER_RIGHT_1 = 7,
+							QUAD_ENCODER_RIGHT_2 = 8;
+	
+	//TO-DO: Change these values.
+	public static final double WHEEL_DIAMETER_INCHES = 6,
+							   DRIVE_GEAR_REDUCTION = 100,
+							   ENCODER_TICKS_PER_REV = 250;
+	
+	private static double TICKS_PER_INCH;
+							
+	public double getTicksPerInch() {
+		return TICKS_PER_INCH;
+	}
+	
+	public static double ticksToInches(double ticks) {
+		return ticks / TICKS_PER_INCH;
+	}
+	
+	public static double inchesToTicks(double inches) {
+		return inches * TICKS_PER_INCH; 
+	}
 	
 }
