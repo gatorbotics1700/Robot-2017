@@ -28,6 +28,8 @@ public class Robot extends IterativeRobot {
     
     public Robot() {
     	drive = new Drive();
+    	visionProcessing = new Vision();
+        
     	intake = new Intake();
         gear = new Gear();
         shooter = new Shooter();

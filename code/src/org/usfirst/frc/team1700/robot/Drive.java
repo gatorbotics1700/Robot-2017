@@ -36,9 +36,9 @@ public class Drive {
 	}
 	
 	public void shiftDrive(Joystick joy){
-		if (joy.getRawButton(0)){
+		if (joy.getRawButton(1)){
 			shiftingServo.set(0.0);
-		} else if (joy.getRawButton(1)){
+		} else if (joy.getRawButton(2)){
 			shiftingServo.set(1.0);
 		}
 	}

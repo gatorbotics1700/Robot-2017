@@ -19,8 +19,8 @@ import edu.wpi.first.wpilibj.vision.VisionThread;
 import org.opencv.imgproc.*;
 
 public class Vision {
-	private static final int IMG_WIDTH = 320;
-	private static final int IMG_HEIGHT = 240;
+	private static final int IMG_WIDTH = 640;
+	private static final int IMG_HEIGHT = 480;
 	
 	private double centerX;
 	AxisCamera visionCamera;
@@ -29,9 +29,8 @@ public class Vision {
 	private VisionThread visionThread;
 	GripPipeline vpipeline;
 	Mat image;
-	private static final int VISION_HEIGHT_CONSTANT = 30;
+	private static final double VISION_HEIGHT_CONSTANT = 3956;
 	private static final double VISION_DISTANCE = 30;
-	private static final double CAMERA_WIDTH_PIXELS = 760; 
 	private static final double TARGET_HEIGHT_INCHES = 6;
 
 //	private final NetworkTable table;
@@ -47,6 +46,7 @@ public class Vision {
 	
 	public void initVision() {
 		visionCamera = CameraServer.getInstance().addAxisCamera("axis-camera");
+		visionCamera.setResolution(IMG_WIDTH, IMG_HEIGHT);
 		CameraServer.getInstance().startAutomaticCapture(visionCamera);
 //		UsbCamera alignCamera = CameraServer.getInstance().startAutomaticCapture();
 
@@ -58,19 +58,18 @@ public class Vision {
 					MatOfPoint mp2 = pipeline.filterContoursOutput().get(1);
 					Rect r1 = Imgproc.boundingRect(mp1);
 					Rect r2 = Imgproc.boundingRect(mp2);
-					double angle = getAngle(r1, r2);
-					System.out.println("Angle: " + angle);
+					double d1 = getDistance(r1);
+					double d2 = getDistance(r2);
 					double distance = (d1+d2)/2;
-					System.out.println("Rect 1 distance: " + d1);
-					System.out.println("Rect 2 distance: " + d2);
-					System.out.println("Rect 1 area: " + r1.area());
-					System.out.println("Rect 2 area: " + r2.area());
-//					}
-			System.out.println("");
+					double angle = getAngle(distance, r1, r2);
+					double angleRadians = angle/Math.PI*180;
+					System.out.println("Angle: " + angle);
+					System.out.println("Distance: " + distance);
+					}
             synchronized (imgLock) {
 //            	System.out.println("Rect bound:" + r.area());
 //                centerX = r.x + (r.width / 2);
-            }
+//            }
         }
     });
     visionThread.start();
@@ -83,12 +82,10 @@ public class Vision {
 	 * @param rect2 Second rectangle detected from camera input. 
 	 * @return angle Robot's angle to the target. 
 	 */
-	public double getAngle(Rect rect1, Rect rect2) {
-		double distance1 = getDistance(rect1);
-		double distance2 = getDistance(rect2);
-		double totalDistance = (distance1 + distance2)/2;
+	public double getAngle(double distance, Rect rect1, Rect rect2) {
 		double horizontalOffset = getHorizontalOffset(rect1, rect2);
-		double angle = asin(horizontalOffset/totalDistance);
+		System.out.println(horizontalOffset);
+		double angle = Math.asin(horizontalOffset/distance);
 		return angle; 
 	}
 	
@@ -117,10 +114,15 @@ public class Vision {
 			rightRect = rect1;
 		}
 		double rectMidpoint = (rightRect.x - (leftRect.x + leftRect.width))/2 + leftRect.x + leftRect.width;
-		double picMidpoint = CAMERA_WIDTH_PIXELS / 2;
+		double picMidpoint = IMG_WIDTH / 2;
 		double horizontalOffset = rectMidpoint - picMidpoint;
-		double pixelsPerInch = leftRect.height/TARGET_HEIGHT_INCHES;
-		horizontalOffset *= pixelsPerInch; 
+		double inchesPerPixel = TARGET_HEIGHT_INCHES/leftRect.height;
+		horizontalOffset *= inchesPerPixel;
+		System.out.println("Rect 1 x: " + rect1.x);
+		System.out.println("Rect 2 x: " + rect2.x);
+		System.out.println("Rect 1 width: " + rect1.width);
+		System.out.println("Rect 2 width: " + rect2.width);
+
 		return horizontalOffset; 
 	}
 		
@@ -157,6 +159,7 @@ public class Vision {
 //		}
 //	}
 	}
+	
 //	
 //	
 //	
