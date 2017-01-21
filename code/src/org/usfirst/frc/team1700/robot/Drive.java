@@ -21,11 +21,11 @@ public class Drive {
 	
 	public Drive() {
 		vision = new Vision();
-		rightFront = new CANTalon(0); //TODO: Change ID's
-		rightBack = new CANTalon(1);
-		leftFront = new CANTalon(2);
-		leftBack = new CANTalon(3);
-		pdp = new PowerDistributionPanel(4);
+		rightFront = new CANTalon(Constants.DRIVE_RIGHT_FRONT); //TODO: Change ID's
+		rightBack = new CANTalon(Constants.DRIVE_RIGHT_BACK);
+		leftFront = new CANTalon(Constants.DRIVE_LEFT_FRONT);
+		leftBack = new CANTalon(Constants.DRIVE_LEFT_BACK);
+		pdp = new PowerDistributionPanel(Constants.PDP_ID);
 		ANGLE_CONSTANT = 2;
 		ANGLE_RANGE = 0.05;
 	}
@@ -38,15 +38,15 @@ public class Drive {
 	}
 	
 	public void shiftDrive(Joystick joy){
-		if (joy.getRawButton(1)){
+		if (joy.getRawButton(Constants.SHIFT_LOW)){
 			shiftingServo.set(0.0);
-		} else if (joy.getRawButton(2)){
+		} else if (joy.getRawButton(Constants.SHIFT_HIGH)){
 			shiftingServo.set(1.0);
 		}
 	}
 	
 	public void turnToAngle(double angle) {
-		if(angle > ANGLE_RANGE) {
+		if (angle > ANGLE_RANGE) {
 			driveTank(0.05, angle/ANGLE_CONSTANT);
 		} else if (angle < ANGLE_RANGE) {
 			driveTank(-angle/ANGLE_CONSTANT, 0.05);

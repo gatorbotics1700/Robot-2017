@@ -33,9 +33,9 @@ public class Robot extends IterativeRobot {
     	intake = new Intake();
         gear = new Gear();
         shooter = new Shooter();
-        leftDriveJoystick = new Joystick(0);
-        rightDriveJoystick = new Joystick(1);
-        operatorJoystick = new Joystick(2);
+        leftDriveJoystick = new Joystick(Constants.LEFT_JOYSTICK);
+        rightDriveJoystick = new Joystick(Constants.RIGHT_JOYSTICK);
+        //operatorJoystick = new Joystick(2);
     }
 	
 

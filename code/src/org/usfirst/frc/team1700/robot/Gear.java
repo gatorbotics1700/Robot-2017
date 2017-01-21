@@ -11,9 +11,9 @@ public class Gear {
 	}
 	
 	public void moveFlap(Joystick joy) {
-		if (joy.getRawButton(4)) {
+		if (joy.getRawButton(Constants.FLAP_DOWN)) {
 			flapServo.set(0.0);
-		} else if (joy.getRawButton(5)) {
+		} else if (joy.getRawButton(Constants.FLAP_UP)) {
 			flapServo.set(1.0);
 		}
 	}

@@ -15,12 +15,19 @@ public class Constants {
 							DRIVE_LEFT_FRONT = 3,
 							DRIVE_LEFT_BACK = 4;
 	
+	//PDP ID
+	public static final int PDP_ID = 5;
+	
 	//Joystick ports
 	public static final int LEFT_JOYSTICK = 0,
 							RIGHT_JOYSTICK = 1;
 	
 	//Buttons
 	public static final int SHIFT_LOW = 1,
-							SHIFT_HIGH = 2;
+							SHIFT_HIGH = 2,
+							RAMP_UP = 3,
+							RAMP_DOWN = 4,
+							FLAP_UP = 5,
+							FLAP_DOWN = 6;
 	
 }

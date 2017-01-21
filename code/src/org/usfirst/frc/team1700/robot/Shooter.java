@@ -17,11 +17,11 @@ public class Shooter {
 	}
 	
 	public void moveRamp(Joystick joy) {
-		if (joy.getRawButton(6)) {
+		if (joy.getRawButton(Constants.RAMP_UP)) {
 			if (!upSensor.get()) {
 				rampMotor.set(1);
 			}
-		} else if (joy.getRawButton(7)) {
+		} else if (joy.getRawButton(Constants.RAMP_DOWN)) {
 			if (!downSensor.get()) {
 				rampMotor.set(-1);
 			}
