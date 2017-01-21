@@ -7,8 +7,8 @@ public class Intake {
 	
 	public Intake(){
 		intakeMotor = new CANTalon(1);
-		
 	}
+	
 	public void runIntake(){
 		intakeMotor.set(1);
 	}

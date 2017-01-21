@@ -7,7 +7,7 @@ package org.usfirst.frc.team1700.robot;
 public class Constants {
 	
 	//Dont wan't people to instantiate
-	private Constants() {}
+	private Constants() {} 
 	
 	//ID's for Motor Controllers
 	public static final int DRIVE_RIGHT_FRONT = 1,
