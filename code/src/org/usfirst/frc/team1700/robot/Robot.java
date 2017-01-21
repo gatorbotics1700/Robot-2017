@@ -24,12 +24,11 @@ public class Robot extends IterativeRobot {
     Intake intake;
     Gear gear;
     Shooter shooter;
-    Vision visionProcessing;
+    Vision vision; 
     
     public Robot() {
     	drive = new Drive();
-    	visionProcessing = new Vision();
-        
+    	vision = new Vision();
     	intake = new Intake();
         gear = new Gear();
         shooter = new Shooter();
@@ -45,7 +44,7 @@ public class Robot extends IterativeRobot {
         chooser.addObject("My Auto", customAuto);
         pdp = new PowerDistributionPanel(1); //put ID in parentheses
         SmartDashboard.putData("Auto choices", chooser);
-        visionProcessing.initVision(leftDriveJoystick);
+        //visionProcessing.initVision(leftDriveJoystick);
         
     }
     
@@ -72,14 +71,20 @@ public class Robot extends IterativeRobot {
             break;
     	case defaultAuto:
     	default:
-    	//Put default auto code here
+    		
             break;
     	}
     }
 
     
     public void teleopPeriodic() {
-        drive.driveTank(-leftDriveJoystick.getRawAxis(1), rightDriveJoystick.getRawAxis(1));
+    	drive.update();
+    	if (leftDriveJoystick.getRawButton(1)) {
+    		synchronized(vision.imgLock) {
+    			drive.setTargetAngleDelta(vision.angleDegrees);
+    		}
+    	}
+    	drive.driveTank(-leftDriveJoystick.getRawAxis(1), rightDriveJoystick.getRawAxis(1));
         drive.shiftDrive(leftDriveJoystick);
         intake.runIntake();
         gear.moveFlap(leftDriveJoystick);

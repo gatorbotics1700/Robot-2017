@@ -27,13 +27,14 @@ public class Vision {
 	private double centerX;
 	AxisCamera visionCamera;
 
-	private final Object imgLock;
+	public final Object imgLock;
 	private VisionThread visionThread;
 	GripPipeline vpipeline;
 	Mat image;
 	private static final double VISION_HEIGHT_CONSTANT = 3956;
 	private static final double VISION_DISTANCE = 30;
 	private static final double TARGET_HEIGHT_INCHES = 6;
+	double angleDegrees;
 
 	//	private final NetworkTable table;
 
@@ -68,13 +69,7 @@ public class Vision {
 				System.out.println("Angle: " + angle);
 				System.out.println("Distance: " + distance);
 				synchronized (imgLock) {
-					double angleRadians = angle/Math.PI*180;
-					if (joystick.getRawButton(8)) {
-						drive.turnToAngle(angleRadians);
-					}
-					//            	System.out.println("Rect bound:" + r.area());
-					//                centerX = r.x + (r.width / 2);
-					//            }
+					angleDegrees = angle/Math.PI*180;
 				}
 			}
 		});
@@ -97,7 +92,7 @@ public class Vision {
 
 	public double getDistance(Rect rect) {
 		double height = rect.height;
-		double distance = VISION_HEIGHT_CONSTANT/height;
+		double distance = VISION_HEIGHT_CONSTANT/height;   
 		return distance;
 	}
 

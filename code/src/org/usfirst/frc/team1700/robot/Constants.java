@@ -6,7 +6,7 @@ package org.usfirst.frc.team1700.robot;
 	*/
 public class Constants {
 	
-	//Dont wan't people to instantiate
+	//Don't wan't people to instantiate
 	private Constants() {} 
 	
 	//ID's for Motor Controllers
@@ -14,6 +14,17 @@ public class Constants {
 							DRIVE_RIGHT_BACK = 2,
 							DRIVE_LEFT_FRONT = 3,
 							DRIVE_LEFT_BACK = 4;
+	
+	//Servo ID's
+	public static final int GEAR_SERVO_ID = 0,
+							LEFT_DRIVE_SERVO_ID = 1,
+							RIGHT_DRIVE_SERVO_ID = 2;
+	
+	//Servo angle amounts
+	public static final double GEAR_SERVO_OPEN_POSITION = 1.0,
+							GEAR_SERVO_CLOSED_POSITION = 0.0,
+							DRIVE_SERVO_SHIFT_HIGH_POSITION = 1.0,
+							DRIVE_SERVO_SHIFT_LOW_POSITION = 0.0;
 	
 	//PDP ID
 	public static final int PDP_ID = 5;
@@ -29,5 +40,9 @@ public class Constants {
 							RAMP_DOWN = 4,
 							FLAP_UP = 5,
 							FLAP_DOWN = 6;
+	
+	//Vision constants
+	public static final double TURNING_ANGLE_PROPORTION = 0.01;
+	public static final double TARGET_ANGLE_TOLERANCE = 5;
 	
 }
