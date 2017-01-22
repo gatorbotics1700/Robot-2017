@@ -76,16 +76,19 @@ public class Robot extends IterativeRobot {
     	}
     }
 
+    @Override
+    public void teleopInit() {
+    	drive.setTargetDistance(10.0);
+    }
     
     public void teleopPeriodic() {
-    	drive.update();
+    	drive.setTargetDistance(10.0);
+    	drive.update(0.0,0.0,true);
     	if (leftDriveJoystick.getRawButton(1)) {
     		synchronized(vision.imgLock) {
     			drive.setTargetAngleDelta(vision.angleDegrees);
     		}
     	}
-    	drive.driveTank(-leftDriveJoystick.getRawAxis(1), rightDriveJoystick.getRawAxis(1));
-        drive.shiftDrive(leftDriveJoystick);
         intake.runIntake();
         gear.moveFlap(leftDriveJoystick);
         shooter.moveRamp(leftDriveJoystick);

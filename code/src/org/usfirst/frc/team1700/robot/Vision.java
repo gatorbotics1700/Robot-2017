@@ -20,7 +20,6 @@ import edu.wpi.first.wpilibj.vision.VisionThread;
 import org.opencv.imgproc.*;
 
 public class Vision {
-	Drive drive;
 	private static final int IMG_WIDTH = 640;
 	private static final int IMG_HEIGHT = 480;
 
@@ -39,7 +38,6 @@ public class Vision {
 	//	private final NetworkTable table;
 
 	public Vision() {
-		drive = new Drive();
 		centerX = 0.0;
 		imgLock = new Object();
 		vpipeline = new GripPipeline();

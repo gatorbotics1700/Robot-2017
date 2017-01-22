@@ -8,8 +8,7 @@ public class Constants {
 	
 	//Don't wan't people to instantiate
 	private Constants() {
-		double circumference = WHEEL_DIAMETER_INCHES*Math.PI;
-		TICKS_PER_INCH = ENCODER_TICKS_PER_REV * DRIVE_GEAR_REDUCTION / circumference;
+
 	} 
 	
 	//ID's for Motor Controllers
@@ -57,17 +56,14 @@ public class Constants {
 							QUAD_ENCODER_RIGHT_2 = 8;
 	
 	//TO-DO: Change these values.
-	public static final double WHEEL_DIAMETER_INCHES = 6,
-							   DRIVE_GEAR_REDUCTION = 100,
-							   ENCODER_TICKS_PER_REV = 250;
+	public static final double WHEEL_DIAMETER_INCHES = 6.0,
+							   DRIVE_GEAR_REDUCTION = 1.0,
+							   ENCODER_TICKS_PER_REV = 250.0;
 	
-	private static double TICKS_PER_INCH;
-							
-	public double getTicksPerInch() {
-		return TICKS_PER_INCH;
-	}
+	public static double TICKS_PER_INCH = ENCODER_TICKS_PER_REV * DRIVE_GEAR_REDUCTION / (WHEEL_DIAMETER_INCHES*Math.PI);
 	
 	public static double ticksToInches(double ticks) {
+		System.out.println("Tick per inch: " + TICKS_PER_INCH);
 		return ticks / TICKS_PER_INCH;
 	}
 	

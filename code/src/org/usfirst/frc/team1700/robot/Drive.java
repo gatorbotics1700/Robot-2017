@@ -43,6 +43,7 @@ public class Drive {
 		NavX = new AHRS(SPI.Port.kMXP);
 		leftEncoder = new Encoder(Constants.QUAD_ENCODER_LEFT_1, Constants.QUAD_ENCODER_LEFT_2);
 		rightEncoder = new Encoder(Constants.QUAD_ENCODER_RIGHT_1, Constants.QUAD_ENCODER_RIGHT_2);
+		mode = operationMode.MANUAL;
 	}
 	
 	private void driveTank(double leftSpeed, double rightSpeed) {
@@ -76,26 +77,33 @@ public class Drive {
 		driveTank(-speed,speed);
 	}
 	
-	private void setTargetAngleDelta(double angleDelta) {
+	public void setTargetAngleDelta(double angleDelta) {
 		mode = operationMode.ANGLE; 
 		target = getCurrentAngle(); 
+		System.out.println("Angle Delta: " + angleDelta);
 	}
 	
 	public double getCurrentAngle() {
-		return NavX.getAngle();
+		double currentAngle = NavX.getAngle();
+		System.out.println("Current angle: " + currentAngle);
+		return currentAngle;
 	}
 	
 	public double getCurrentDistance() {
-		return Constants.ticksToInches((leftEncoder.getDistance()+rightEncoder.getDistance())/2);
+		System.out.println("Left Encoder Value: " + leftEncoder.get());
+		System.out.println("Right Encoder Value: " + rightEncoder.get());
+		return Constants.ticksToInches((leftEncoder.get()+rightEncoder.get())/2);
 	}
 	
 	public void setTargetDistance(double distance) {
-		double position = getCurrentPos();
+		double position = getCurrentDistance();
+		System.out.println("Current Distance: " + distance);
 		target = position + distance; 
 		mode = operationMode.DISTANCE;
 	}
 	
 	public void update(double leftSpeed, double rightSpeed, boolean highGear) {
+		System.out.println("Mode: " + mode);
 		switch(mode) {
 		case ANGLE:
 			shiftDrive(true);
@@ -107,6 +115,8 @@ public class Drive {
 			break;
 		case DISTANCE:
 			shiftDrive(true);
+			System.out.println("Current distance: " + getCurrentDistance());
+			System.out.println("Target distance: " + target);
 			driveToDistance(getCurrentDistance()-target);
 			break;
 		}
