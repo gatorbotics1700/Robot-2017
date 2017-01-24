@@ -1,7 +1,7 @@
 package org.usfirst.frc.team1700.robot;
 /**
 	@author christine
-	The RobotMap should be usedfor naming all ports, ids, etc. 
+	The RobotMap should be used for naming all ports, ids, etc. 
 	so we can change them more easily and ensure that we are not reusing them.
 	*/
 public class Constants {
@@ -23,6 +23,10 @@ public class Constants {
 	public static final int GEAR_SERVO_ID = 0,
 							LEFT_DRIVE_SERVO_ID = 1,
 							RIGHT_DRIVE_SERVO_ID = 2;
+	
+	//Sensor ID's
+	public static final int UP_SENSOR_ID = 4,
+							DOWN_SENSOR_ID = 6;
 	
 	//Servo angle amounts
 	public static final double GEAR_SERVO_OPEN_POSITION = 1.0,
