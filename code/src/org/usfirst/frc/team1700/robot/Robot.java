@@ -21,17 +21,15 @@ public class Robot extends IterativeRobot {
     Joystick operatorJoystick;
     PowerDistributionPanel pdp;
     Drive drive;
-    Intake intake;
     Gear gear;
-    Shooter shooter;
+    LowGoal shooter;
     Vision vision; 
     
     public Robot() {
     	drive = new Drive();
     	vision = new Vision();
-    	intake = new Intake();
         gear = new Gear();
-        shooter = new Shooter();
+        shooter = new LowGoal();
         leftDriveJoystick = new Joystick(Constants.LEFT_JOYSTICK);
         rightDriveJoystick = new Joystick(Constants.RIGHT_JOYSTICK);
         //operatorJoystick = new Joystick(2);
@@ -44,8 +42,9 @@ public class Robot extends IterativeRobot {
         chooser.addObject("My Auto", customAuto);
         pdp = new PowerDistributionPanel(1); //put ID in parentheses
         SmartDashboard.putData("Auto choices", chooser);
-        //visionProcessing.initVision(leftDriveJoystick);
-        
+    	drive.zeroEncoders();
+    	System.out.println("Running robot init");
+
     }
     
 	/**
@@ -78,18 +77,20 @@ public class Robot extends IterativeRobot {
 
     @Override
     public void teleopInit() {
-    	drive.setTargetDistance(10.0);
+        vision.initVision();
     }
     
     public void teleopPeriodic() {
-    	drive.setTargetDistance(10.0);
     	drive.update(0.0,0.0,true);
     	if (leftDriveJoystick.getRawButton(1)) {
-    		synchronized(vision.imgLock) {
-    			drive.setTargetAngleDelta(vision.angleDegrees);
-    		}
+    		double angle = 0;
+    		//synchronized(vision.imgLock) {
+    		//	angle = vision.angleDegrees;
+    		//}
+			drive.setTargetAngleDelta(angle);
+    	} else if(leftDriveJoystick.getRawButton(2)) {
+        	drive.setTargetDistance(100.0);
     	}
-        intake.runIntake();
         gear.moveFlap(leftDriveJoystick);
         shooter.moveRamp(leftDriveJoystick);
     }

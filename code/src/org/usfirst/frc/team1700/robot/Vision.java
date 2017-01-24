@@ -46,7 +46,7 @@ public class Vision {
 
 	}
 
-	public void initVision(Joystick joystick) {
+	public void initVision() {
 		visionCamera = CameraServer.getInstance().addAxisCamera("axis-camera");
 		visionCamera.setResolution(IMG_WIDTH, IMG_HEIGHT);
 		CameraServer.getInstance().startAutomaticCapture(visionCamera);
@@ -68,7 +68,10 @@ public class Vision {
 				System.out.println("Distance: " + distance);
 				synchronized (imgLock) {
 					angleDegrees = angle/Math.PI*180;
+					System.out.println("Angle: " + angleDegrees);
 				}
+			} else {
+				System.out.println("Wrong number of rectangles: " + pipeline.filterContoursOutput().size());
 			}
 		});
 		visionThread.start();

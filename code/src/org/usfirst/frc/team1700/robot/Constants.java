@@ -12,10 +12,12 @@ public class Constants {
 	} 
 	
 	//ID's for Motor Controllers
-	public static final int DRIVE_RIGHT_FRONT = 1,
-							DRIVE_RIGHT_BACK = 2,
+	//TODO: Change CANTalon ID's for actual robot
+	public static final int DRIVE_RIGHT_FRONT = 0,
+							DRIVE_RIGHT_BACK = 10,
 							DRIVE_LEFT_FRONT = 3,
-							DRIVE_LEFT_BACK = 4;
+							DRIVE_LEFT_BACK = 8,
+							RAMP_MOTOR = 1;
 	
 	//Servo ID's
 	public static final int GEAR_SERVO_ID = 0,
@@ -44,16 +46,15 @@ public class Constants {
 							FLAP_DOWN = 6;
 	
 	//Vision constants
-	public static final double TURNING_ANGLE_PROPORTION = 0.01,
+	public static final double TURNING_ANGLE_PROPORTION = 0.1,
 							   DRIVING_DISTANCE_PROPORTION = (1.0/48.0),
 							   TARGET_ANGLE_TOLERANCE = 5;
 	
-	//Quadrature encoders
-	//TO-DO: Code based on color of wires. 
-	public static final int QUAD_ENCODER_LEFT_1 = 5,
-							QUAD_ENCODER_LEFT_2 = 6,
-							QUAD_ENCODER_RIGHT_1 = 7,
-							QUAD_ENCODER_RIGHT_2 = 8;
+	//Quadrature encoders DIO ports
+	public static final int QUAD_ENCODER_LEFT_1 = 2,
+							QUAD_ENCODER_LEFT_2 = 3,
+							QUAD_ENCODER_RIGHT_1 = 0,
+							QUAD_ENCODER_RIGHT_2 = 1;
 	
 	//TO-DO: Change these values.
 	public static final double WHEEL_DIAMETER_INCHES = 6.0,

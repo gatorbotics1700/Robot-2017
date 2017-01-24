@@ -23,7 +23,7 @@ public class Drive {
     AHRS NavX;
     PIDController turnController; 
     operationMode mode; 
-    double target;
+    static double target;
     Encoder leftEncoder;
     Encoder rightEncoder; 
 	
@@ -41,7 +41,7 @@ public class Drive {
 		leftFront = new CANTalon(Constants.DRIVE_LEFT_FRONT);
 		leftBack = new CANTalon(Constants.DRIVE_LEFT_BACK);
 		NavX = new AHRS(SPI.Port.kMXP);
-		leftEncoder = new Encoder(Constants.QUAD_ENCODER_LEFT_1, Constants.QUAD_ENCODER_LEFT_2);
+		leftEncoder = new Encoder(Constants.QUAD_ENCODER_LEFT_1, Constants.QUAD_ENCODER_LEFT_2, true);
 		rightEncoder = new Encoder(Constants.QUAD_ENCODER_RIGHT_1, Constants.QUAD_ENCODER_RIGHT_2);
 		mode = operationMode.MANUAL;
 	}
@@ -92,18 +92,20 @@ public class Drive {
 	public double getCurrentDistance() {
 		System.out.println("Left Encoder Value: " + leftEncoder.get());
 		System.out.println("Right Encoder Value: " + rightEncoder.get());
-		return Constants.ticksToInches((leftEncoder.get()+rightEncoder.get())/2);
+		return Constants.ticksToInches((Math.abs(leftEncoder.get())-Math.abs(rightEncoder.get())/2));
 	}
 	
-	public void setTargetDistance(double distance) {
+	public void setTargetDistance(double deltaDistance) {
 		double position = getCurrentDistance();
-		System.out.println("Current Distance: " + distance);
-		target = position + distance; 
+		System.out.println("Delta distance: " + deltaDistance);
+		target = position + deltaDistance; 
+//		System.out.println("Target distance: " + target);
+		driveToDistance(deltaDistance);
+
 		mode = operationMode.DISTANCE;
 	}
 	
 	public void update(double leftSpeed, double rightSpeed, boolean highGear) {
-		System.out.println("Mode: " + mode);
 		switch(mode) {
 		case ANGLE:
 			shiftDrive(true);
@@ -117,7 +119,7 @@ public class Drive {
 			shiftDrive(true);
 			System.out.println("Current distance: " + getCurrentDistance());
 			System.out.println("Target distance: " + target);
-			driveToDistance(getCurrentDistance()-target);
+			driveToDistance(target-getCurrentDistance());
 			break;
 		}
 		if(atTarget()) {
@@ -132,6 +134,11 @@ public class Drive {
 			return Math.abs(target - getCurrentAngle()) < Constants.TARGET_ANGLE_TOLERANCE;
 		}
 		return false;
+	}
+	
+	public void zeroEncoders() {
+		leftEncoder.reset();
+		rightEncoder.reset();
 	}
 	
 }
