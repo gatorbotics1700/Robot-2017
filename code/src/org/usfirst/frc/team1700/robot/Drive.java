@@ -63,6 +63,13 @@ public class Drive {
 		}
 	}
 	
+	/**
+	 * Converts angle the robot needs to turn to into robot movement 
+	 * by changing speed of motors and using a proportion that needs to be tuned
+	 * @param angleDelta difference of angle to the target from the robot's current angle
+	 * If angle delta is positive, turns robot to the right. If angle delta is negative,
+	 * turns robot to the left.
+	 */
 	private void turnByAngle(double angleDelta) {
 		double speed = angleDelta*Constants.TURNING_ANGLE_PROPORTION;
 		System.out.println("Speed: " + speed);
@@ -79,12 +86,21 @@ public class Drive {
 		driveTank(speed,speed);
 	}
 	
+	/**
+	 * Sets target to angle that we want the robot to turn to
+	 * @param angleDelta The angle that the robot wants to turn from the robot's current angle 
+	 * according to the gyro on the NavX
+	 */
 	public void setTargetAngleDelta(double angleDelta) {
 		mode = operationMode.ANGLE; 
 		target = getCurrentAngle() + angleDelta; 
 		System.out.println("Angle Delta: " + angleDelta);
 	}
 	
+	/**
+	 * Gets current angle of the robot from the gyroscope on the NavX
+	 * @return currentAngle in degrees
+	 */
 	public double getCurrentAngle() {
 		double currentAngle = NavX.getAngle();
 		System.out.println("Current angle: " + currentAngle);
