@@ -81,6 +81,10 @@ public class Drive {
 		}
 	}
 	
+	/**
+	 * Calculates the robot's speed based on the desired change in distance. 
+	 * @param distanceDelta Desired change in distance. 
+	 */
 	private void driveToDistance(double distanceDelta) {
 		double speed = distanceDelta*Constants.DRIVING_DISTANCE_PROPORTION;
 		driveTank(speed,speed);
@@ -117,7 +121,7 @@ public class Drive {
 	}
 	
 	/**
-	 * 
+	 * Calculates the distance to move in inches using the current position and given change in distance.
 	 * @param deltaDistance Desired distance in inches. 
 	 */
 	public void setTargetDistance(double deltaDistance) {
@@ -130,6 +134,13 @@ public class Drive {
 		mode = operationMode.DISTANCE;
 	}
 	
+	/**
+	 * Switches between angle, manual, and distance modes by changing what gear the drive is in
+	 * as well as how fast the robot should drive and what angle it should turn to. 
+	 * @param leftSpeed The speed for the left motor if in manual mode. 
+	 * @param rightSpeed The speed for the right motor if in manual mode. 
+	 * @param highGear Boolean of whether the drive should be in high gear or not. 
+	 */
 	public void update(double leftSpeed, double rightSpeed, boolean highGear) {
 		switch(mode) {
 		case ANGLE:
@@ -150,9 +161,11 @@ public class Drive {
 		if(atTarget()) {
 			mode = operationMode.MANUAL;
 		}
-		
 	}
 	
+	/**
+	 * @return A boolean of whether the angle to the target is 0, and therefore the robot is centered on the target. 
+	 */
 	public boolean atTarget() {
 		switch(mode) {
 		case ANGLE:
@@ -161,6 +174,9 @@ public class Drive {
 		return false;
 	}
 	
+	/**
+	 * Reset encoder values.
+	 */
 	public void zeroEncoders() {
 		leftEncoder.reset();
 		rightEncoder.reset();
