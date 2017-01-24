@@ -84,9 +84,9 @@ public class Robot extends IterativeRobot {
     	drive.update(0.0,0.0,true);
     	if (leftDriveJoystick.getRawButton(1)) {
     		double angle = 0;
-    		//synchronized(vision.imgLock) {
-    		//	angle = vision.angleDegrees;
-    		//}
+    		synchronized(vision.imgLock) {
+    			angle = vision.angleDegrees;
+    		}
 			drive.setTargetAngleDelta(angle);
     	} else if(leftDriveJoystick.getRawButton(2)) {
         	drive.setTargetDistance(100.0);

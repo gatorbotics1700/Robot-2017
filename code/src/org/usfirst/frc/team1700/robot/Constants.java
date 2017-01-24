@@ -46,7 +46,7 @@ public class Constants {
 							FLAP_DOWN = 6;
 	
 	//Vision constants
-	public static final double TURNING_ANGLE_PROPORTION = 0.1,
+	public static final double TURNING_ANGLE_PROPORTION = 0.02,
 							   DRIVING_DISTANCE_PROPORTION = (1.0/48.0),
 							   TARGET_ANGLE_TOLERANCE = 5;
 	

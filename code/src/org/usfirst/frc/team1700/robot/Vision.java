@@ -30,6 +30,7 @@ public class Vision {
 	private VisionThread visionThread;
 	GripPipeline vpipeline;
 	Mat image;
+	// Dividing constant by number of pixels returns the distance in inches. 
 	private static final double VISION_HEIGHT_CONSTANT = 3956;
 	private static final double VISION_DISTANCE = 30;
 	private static final double TARGET_HEIGHT_INCHES = 6;
@@ -46,16 +47,21 @@ public class Vision {
 
 	}
 
+	/**
+	 * Called in robot init, starts vision processing. Adds vision camera and field camera. 
+	 * Starts GRIP pipeline and finds two rectangles on target. 
+	 * Calculates distance and angle to centerpoint of target.  
+	 */
 	public void initVision() {
 		visionCamera = CameraServer.getInstance().addAxisCamera("axis-camera");
 		visionCamera.setResolution(IMG_WIDTH, IMG_HEIGHT);
 		CameraServer.getInstance().startAutomaticCapture(visionCamera);
 		//		UsbCamera alignCamera = CameraServer.getInstance().startAutomaticCapture();
 
+		// Starts loop for vision pipeline. 
 		visionThread = new VisionThread(visionCamera, new GripPipeline(), pipeline -> {
 			if (pipeline.filterContoursOutput().size() == 2) { //works if identifies two vision targets
-
-				//					for(MatOfPoint value: pipeline.filterContoursOutput()) {
+ 
 				MatOfPoint mp1 = pipeline.filterContoursOutput().get(0);
 				MatOfPoint mp2 = pipeline.filterContoursOutput().get(1);
 				Rect r1 = Imgproc.boundingRect(mp1);
@@ -78,11 +84,11 @@ public class Vision {
 	}
 
 	/**
-	 * Finds the robot's angle to the target. 
+	 * Finds the robot's angle between centerline of camera image and centerline of target. 
 	 * 
 	 * @param rect1 First rectangle detected from camera input.
 	 * @param rect2 Second rectangle detected from camera input. 
-	 * @return angle Robot's angle to the target. 
+	 * @return angle Robot's angle to the target in radians. 
 	 */
 	public double getAngle(double distance, Rect rect1, Rect rect2) {
 		double horizontalOffset = getHorizontalOffset(rect1, rect2);
@@ -91,6 +97,11 @@ public class Vision {
 		return angle; 
 	}
 
+	/**
+	 * 
+	 * @param rect One of the rectangles on the vision target. 
+	 * @return Distance from camera to target, returned in inches. 
+	 */
 	public double getDistance(Rect rect) {
 		double height = rect.height;
 		double distance = VISION_HEIGHT_CONSTANT/height;   
@@ -127,45 +138,6 @@ public class Vision {
 
 		return horizontalOffset; 
 	}
-
-	public void findContours() {
-
-		//			CameraServer.getInstance().getVideo(visionCamera).grabFrame(image);
-		//			vpipeline.process(image);
-		//			vpipeline.filterContoursOutput();
-		//			
-		//			for(MatOfPoint value: vpipeline.filterContoursOutput()) {
-		//				System.out.println(value.toList());
-		//				double contourArea = Imgproc.contourArea(value);
-		//				System.out.println("Contour area" + contourArea);
-		//				Rect boundRect = Imgproc.boundingRect(value);
-		//				System.out.println("Rect area: " + boundRect.area());
-		//				Timer.delay(1);
-		//			}
-
-		//			
-
-
-		//		for (double area : table.getNumberArray("targets/area", new double[0])) {
-		//            System.out.println("Got contour with area=" + area);
-		//        }
-		//		
-		//		while(true) {
-		//			double[] areas = table.getNumberArray("area", defaultValue);
-		//			System.out.print("areas: ");
-		//			for(double area: areas) {
-		//				System.out.print(area + " ");
-		//			}
-		//			System.out.println();
-		//			Timer.delay(1);
-		//		}
-		//	}
-	}
-
-	//	
-	//	
-	//	
-	//
 }
 
 

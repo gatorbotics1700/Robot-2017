@@ -26,7 +26,7 @@ public class Drive {
     static double target;
     Encoder leftEncoder;
     Encoder rightEncoder; 
-	
+	 
     enum operationMode {
     	MANUAL,
     	DISTANCE,
@@ -47,8 +47,8 @@ public class Drive {
 	}
 	
 	private void driveTank(double leftSpeed, double rightSpeed) {
-		leftFront.set(leftSpeed);
-		leftBack.set(leftSpeed);
+		leftFront.set(-leftSpeed);
+		leftBack.set(-leftSpeed);
 		rightFront.set(rightSpeed);
 		rightBack.set(rightSpeed);
 	}
@@ -65,6 +65,8 @@ public class Drive {
 	
 	private void turnByAngle(double angleDelta) {
 		double speed = angleDelta*Constants.TURNING_ANGLE_PROPORTION;
+		System.out.println("Speed: " + speed);
+		System.out.println("Angle delta: " + angleDelta);
 		if (angleDelta > 0) {
 			driveTank(-speed, speed);
 		} else if (angleDelta < 0) {
@@ -74,12 +76,12 @@ public class Drive {
 	
 	private void driveToDistance(double distanceDelta) {
 		double speed = distanceDelta*Constants.DRIVING_DISTANCE_PROPORTION;
-		driveTank(-speed,speed);
+		driveTank(speed,speed);
 	}
 	
 	public void setTargetAngleDelta(double angleDelta) {
 		mode = operationMode.ANGLE; 
-		target = getCurrentAngle(); 
+		target = getCurrentAngle() + angleDelta; 
 		System.out.println("Angle Delta: " + angleDelta);
 	}
 	
@@ -89,12 +91,19 @@ public class Drive {
 		return currentAngle;
 	}
 	
+	/** 
+	 * @return The average of two encoder values in inches. 
+	 */
 	public double getCurrentDistance() {
 		System.out.println("Left Encoder Value: " + leftEncoder.get());
 		System.out.println("Right Encoder Value: " + rightEncoder.get());
-		return Constants.ticksToInches((Math.abs(leftEncoder.get())-Math.abs(rightEncoder.get())/2));
+		return Constants.ticksToInches((Math.abs(leftEncoder.get())+Math.abs(rightEncoder.get())/2));
 	}
 	
+	/**
+	 * 
+	 * @param deltaDistance Desired distance in inches. 
+	 */
 	public void setTargetDistance(double deltaDistance) {
 		double position = getCurrentDistance();
 		System.out.println("Delta distance: " + deltaDistance);
@@ -109,7 +118,7 @@ public class Drive {
 		switch(mode) {
 		case ANGLE:
 			shiftDrive(true);
-			turnByAngle(getCurrentAngle()-target);
+			turnByAngle(target-getCurrentAngle());
 			break;
 		case MANUAL:
 			shiftDrive(highGear);
