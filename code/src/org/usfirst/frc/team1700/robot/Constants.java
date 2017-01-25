@@ -20,17 +20,19 @@ public class Constants {
 							RAMP_MOTOR = 1;
 	
 	//Servo ID's
-	public static final int GEAR_SERVO_ID = 0,
-							LEFT_DRIVE_SERVO_ID = 1,
-							RIGHT_DRIVE_SERVO_ID = 2;
+	public static final int FLAP_FRONT_SERVO_ID = 0,
+							FLAP_BACK_SERVO_ID = 1,
+							LEFT_DRIVE_SERVO_ID = 2,
+							RIGHT_DRIVE_SERVO_ID = 3;
 	
 	//Sensor ID's
 	public static final int UP_SENSOR_ID = 4,
 							DOWN_SENSOR_ID = 6;
 	
 	//Servo angle amounts
-	public static final double GEAR_SERVO_OPEN_POSITION = 1.0,
-							GEAR_SERVO_CLOSED_POSITION = 0.0,
+	public static final double GEAR_INTAKE_POSITION = 1.0,
+							BALL_DUMPING_POSITION = 0.5,
+							BALL_INTAKE_POSITION = 0.0,
 							DRIVE_SERVO_SHIFT_HIGH_POSITION = 0.7,
 							DRIVE_SERVO_SHIFT_LOW_POSITION = 0.3;
 	
@@ -42,12 +44,13 @@ public class Constants {
 							RIGHT_JOYSTICK = 1;
 	
 	//Buttons
-	public static final int SHIFT_LOW = 1,
-							SHIFT_HIGH = 2,
-							RAMP_UP = 3,
+	public static final int SHIFT_LOW_DRIVE = 1,
+							SHIFT_HIGH_DRIVE = 2,
+							LOW_GOAL = 3,
 							RAMP_DOWN = 4,
-							FLAP_UP = 5,
-							FLAP_DOWN = 6;
+							FLAP_GEAR_POSITION = 5,
+							FLAP_BALL_INTAKE_POSITION = 6,
+							ALIGN_TO_PEG = 7;
 	
 	//Vision constants
 	public static final double TURNING_ANGLE_PROPORTION = 0.02,

@@ -23,7 +23,7 @@ public class LowGoal {
 	 * @param joy The joystick controlling the low goal shooter ramp.
 	 */
 	public void moveRamp(Joystick joy) {
-		if (joy.getRawButton(Constants.RAMP_UP)) {
+		if (joy.getRawButton(Constants.LOW_GOAL)) {
 			if (!upSensor.get()) {
 				rampMotor.set(1);
 			}

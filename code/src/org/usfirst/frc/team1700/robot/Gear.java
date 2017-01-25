@@ -4,10 +4,13 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Servo;
 
 public class Gear {
-	Servo flapServo;
+	Servo firstFlapServo;
+	Servo secondFlapServo;
+	
 	
 	public Gear() {
-		flapServo = new Servo(Constants.GEAR_SERVO_ID);
+		firstFlapServo = new Servo(Constants.FLAP_FRONT_SERVO_ID);
+		secondFlapServo = new Servo(Constants.FLAP_BACK_SERVO_ID);
 	}
 	
 	/**
@@ -15,11 +18,21 @@ public class Gear {
 	 * 
 	 * @param joy The joystick controlling the gear mechanism.
 	 */
-	public void moveFlap(Joystick joy) {
-		if (joy.getRawButton(Constants.FLAP_DOWN)) {
-			flapServo.set(Constants.GEAR_SERVO_CLOSED_POSITION);
-		} else if (joy.getRawButton(Constants.FLAP_UP)) {
-			flapServo.set(Constants.GEAR_SERVO_OPEN_POSITION);
-		}
+	
+	public void gearIntakePosition() {
+		setServos(Constants.GEAR_INTAKE_POSITION);
+	}
+	
+	public void ballIntakePosition() {
+		setServos(Constants.BALL_INTAKE_POSITION);
+	}
+	
+	public void lowGoalPosition() {
+		setServos(Constants.BALL_DUMPING_POSITION);
+	}
+	
+	private void setServos(double value) {
+		firstFlapServo.set(value);
+		secondFlapServo.set(1-value);
 	}
 }
