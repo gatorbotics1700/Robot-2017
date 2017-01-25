@@ -5,7 +5,9 @@ package org.usfirst.frc.team1700.robot;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
+import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.Victor;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -32,7 +34,6 @@ public class Robot extends IterativeRobot {
         shooter = new LowGoal();
         leftDriveJoystick = new Joystick(Constants.LEFT_JOYSTICK);
         rightDriveJoystick = new Joystick(Constants.RIGHT_JOYSTICK);
-        //operatorJoystick = new Joystick(2);
     }
 	
 
@@ -80,6 +81,8 @@ public class Robot extends IterativeRobot {
         vision.initVision();
     }
     
+     
+    
     public void teleopPeriodic() {
     	drive.update(0.0,0.0,true);
     	if (leftDriveJoystick.getRawButton(1)) {
@@ -89,7 +92,7 @@ public class Robot extends IterativeRobot {
     		}
 			drive.setTargetAngleDelta(angle);
     	} else if(leftDriveJoystick.getRawButton(2)) {
-        	drive.setTargetDistance(100.0);
+        	drive.setTargetDistance(30.0);
     	}
         gear.moveFlap(leftDriveJoystick);
         shooter.moveRamp(leftDriveJoystick);

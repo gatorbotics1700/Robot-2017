@@ -20,8 +20,8 @@ import edu.wpi.first.wpilibj.vision.VisionThread;
 import org.opencv.imgproc.*;
 
 public class Vision {
-	private static final int IMG_WIDTH = 640;
-	private static final int IMG_HEIGHT = 480;
+	private static final int IMG_WIDTH = 320;
+	private static final int IMG_HEIGHT = 240;
 
 	private double centerX;
 	AxisCamera visionCamera;
@@ -77,7 +77,7 @@ public class Vision {
 					System.out.println("Angle: " + angleDegrees);
 				}
 			} else {
-				System.out.println("Wrong number of rectangles: " + pipeline.filterContoursOutput().size());
+//				System.out.println("Wrong number of rectangles: " + pipeline.filterContoursOutput().size());
 			}
 		});
 		visionThread.start();
@@ -129,12 +129,10 @@ public class Vision {
 		double rectMidpoint = (rightRect.x - (leftRect.x + leftRect.width))/2 + leftRect.x + leftRect.width;
 		double picMidpoint = IMG_WIDTH / 2;
 		double horizontalOffset = rectMidpoint - picMidpoint;
+		System.out.println("Horizontal offset: " + horizontalOffset);
 		double inchesPerPixel = TARGET_HEIGHT_INCHES/leftRect.height;
 		horizontalOffset *= inchesPerPixel;
-		System.out.println("Rect 1 x: " + rect1.x);
-		System.out.println("Rect 2 x: " + rect2.x);
-		System.out.println("Rect 1 width: " + rect1.width);
-		System.out.println("Rect 2 width: " + rect2.width);
+
 
 		return horizontalOffset; 
 	}

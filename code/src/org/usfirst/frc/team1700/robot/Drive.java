@@ -47,19 +47,19 @@ public class Drive {
 	}
 	
 	private void driveTank(double leftSpeed, double rightSpeed) {
-		leftFront.set(-leftSpeed);
-		leftBack.set(-leftSpeed);
-		rightFront.set(rightSpeed);
-		rightBack.set(rightSpeed);
+		leftFront.set(leftSpeed);
+		leftBack.set(leftSpeed);
+		rightFront.set(-rightSpeed);
+		rightBack.set(-rightSpeed);
 	}
 	
-	private void shiftDrive(boolean highGear){
+	public void shiftDrive(boolean highGear){
 		if (highGear){
-			rightDriveServo.set(Constants.DRIVE_SERVO_SHIFT_HIGH_POSITION);
-			leftDriveServo.set(Constants.DRIVE_SERVO_SHIFT_HIGH_POSITION);
+//			rightDriveServo.set(Constants.DRIVE_SERVO_SHIFT_HIGH_POSITION);
+//			leftDriveServo.set(Constants.DRIVE_SERVO_SHIFT_HIGH_POSITION);
 		} else {
 			rightDriveServo.set(Constants.DRIVE_SERVO_SHIFT_LOW_POSITION);
-			leftDriveServo.set(Constants.DRIVE_SERVO_SHIFT_LOW_POSITION);
+//			leftDriveServo.set(Constants.DRIVE_SERVO_SHIFT_LOW_POSITION);
 		}
 	}
 	
@@ -74,11 +74,7 @@ public class Drive {
 		double speed = angleDelta*Constants.TURNING_ANGLE_PROPORTION;
 		System.out.println("Speed: " + speed);
 		System.out.println("Angle delta: " + angleDelta);
-		if (angleDelta > 0) {
-			driveTank(-speed, speed);
-		} else if (angleDelta < 0) {
-			driveTank(speed, -speed);
-		}
+		driveTank(speed, -speed);
 	}
 	
 	/**
@@ -126,9 +122,7 @@ public class Drive {
 	 */
 	public void setTargetDistance(double deltaDistance) {
 		double position = getCurrentDistance();
-		System.out.println("Delta distance: " + deltaDistance);
 		target = position + deltaDistance; 
-//		System.out.println("Target distance: " + target);
 		driveToDistance(deltaDistance);
 
 		mode = operationMode.DISTANCE;
@@ -170,6 +164,9 @@ public class Drive {
 		switch(mode) {
 		case ANGLE:
 			return Math.abs(target - getCurrentAngle()) < Constants.TARGET_ANGLE_TOLERANCE;
+		case DISTANCE:
+			System.out.println("Delta distance: " + (target - getCurrentDistance()));
+			return Math.abs(target-getCurrentDistance()) < Constants.DEADBAND_DISTANCE;
 		}
 		return false;
 	}

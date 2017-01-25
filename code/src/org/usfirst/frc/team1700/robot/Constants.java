@@ -31,8 +31,8 @@ public class Constants {
 	//Servo angle amounts
 	public static final double GEAR_SERVO_OPEN_POSITION = 1.0,
 							GEAR_SERVO_CLOSED_POSITION = 0.0,
-							DRIVE_SERVO_SHIFT_HIGH_POSITION = 1.0,
-							DRIVE_SERVO_SHIFT_LOW_POSITION = 0.0;
+							DRIVE_SERVO_SHIFT_HIGH_POSITION = 0.7,
+							DRIVE_SERVO_SHIFT_LOW_POSITION = 0.3;
 	
 	//PDP ID
 	public static final int PDP_ID = 5;
@@ -63,7 +63,8 @@ public class Constants {
 	//TO-DO: Change these values.
 	public static final double WHEEL_DIAMETER_INCHES = 6.0,
 							   DRIVE_GEAR_REDUCTION = 1.0,
-							   ENCODER_TICKS_PER_REV = 250.0;
+							   ENCODER_TICKS_PER_REV = 250.0,
+							   DEADBAND_DISTANCE = 4.0;
 	
 	public static double TICKS_PER_INCH = ENCODER_TICKS_PER_REV * DRIVE_GEAR_REDUCTION / (WHEEL_DIAMETER_INCHES*Math.PI);
 	
