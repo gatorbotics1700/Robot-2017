@@ -50,7 +50,7 @@ public class GripPipeline implements VisionPipeline {
 
 		// Step HSL_Threshold0:
 		Mat hslThresholdInput = blurOutput;
-		double[] hslThresholdHue = {68.51811438758357, 103.71528088646637};
+		double[] hslThresholdHue = {68.51811438758357, 103.71528088646637}; //test 50-70
 		double[] hslThresholdSaturation = {171.15392431817256, 255.0};
 		double[] hslThresholdLuminance = {73.46649798805021, 255.0};
 		hslThreshold(hslThresholdInput, hslThresholdHue, hslThresholdSaturation, hslThresholdLuminance, hslThresholdOutput);
@@ -62,22 +62,24 @@ public class GripPipeline implements VisionPipeline {
 
 		// Step Filter_Contours0:
 		ArrayList<MatOfPoint> filterContoursContours = findContoursOutput;
-		double filterContoursMinArea = 100.0;
+		double filterContoursMinArea = 50.0;
 		double filterContoursMinPerimeter = 0.0;
 		double filterContoursMinWidth = 0.0;
 		double filterContoursMaxWidth = 1000.0;
 		double filterContoursMinHeight = 0.0;
 		double filterContoursMaxHeight = 1000.0;
 		double[] filterContoursSolidity = {0, 100};
-		double filterContoursMaxVertices = 1000000.0;
+		double filterContoursMaxVertices =100.0;
 		double filterContoursMinVertices = 0.0;
 		double filterContoursMinRatio = 0.0;
 		double filterContoursMaxRatio = 1000.0;
-		filterContours(filterContoursContours, filterContoursMinArea, filterContoursMinPerimeter, filterContoursMinWidth, filterContoursMaxWidth, filterContoursMinHeight, filterContoursMaxHeight, filterContoursSolidity, filterContoursMaxVertices, filterContoursMinVertices, filterContoursMinRatio, filterContoursMaxRatio, filterContoursOutput);
+		double almostVerticalSlope = 1.5;
+		double almostHorizontalSlope = 0.8;
+		filterContours(filterContoursContours, filterContoursMinArea, filterContoursMinPerimeter, filterContoursMinWidth, filterContoursMaxWidth, filterContoursMinHeight, filterContoursMaxHeight, filterContoursSolidity, filterContoursMaxVertices, filterContoursMinVertices, filterContoursMinRatio, filterContoursMaxRatio, almostVerticalSlope, almostHorizontalSlope, filterContoursOutput);
 
 	}
 
-	/**
+	/** 
 	 * This method is a generated getter for the output of a Blur.
 	 * @return Mat output from Blur.
 	 */
@@ -233,12 +235,16 @@ public class GripPipeline implements VisionPipeline {
 	private void filterContours(List<MatOfPoint> inputContours, double minArea,
 		double minPerimeter, double minWidth, double maxWidth, double minHeight, double
 		maxHeight, double[] solidity, double maxVertexCount, double minVertexCount, double
-		minRatio, double maxRatio, List<MatOfPoint> output) {
+		minRatio, double maxRatio, double almostVerticalSlope, double almostHorizontalSlope, List<MatOfPoint> output) {
 		final MatOfInt hull = new MatOfInt();
 		output.clear();
+		
 		//operation
 		for (int i = 0; i < inputContours.size(); i++) {
 			final MatOfPoint contour = inputContours.get(i);
+			
+			//filter by size
+			//TODO: Look through filters and see what we actually need
 			final Rect bb = Imgproc.boundingRect(contour);
 			if (bb.width < minWidth || bb.width > maxWidth) continue;
 			if (bb.height < minHeight || bb.height > maxHeight) continue;
@@ -258,7 +264,40 @@ public class GripPipeline implements VisionPipeline {
 			if (contour.rows() < minVertexCount || contour.rows() > maxVertexCount)	continue;
 			final double ratio = bb.width / (double)bb.height;
 			if (ratio < minRatio || ratio > maxRatio) continue;
+			
+			//check if rectangle
+			int numHorizontalSlope = 0;
+			int numVerticalSlope = 0;
+			Point[] points = contour.toArray();
+			boolean last_vertical = false;
+			for(int k=0; k<4; k++) {
+				double dx = points[k].x - points[(k+1) % 4].x;
+				double dy = points[k].y - points[(k+1) % 4].y;
+			
+				double slope = 100; //setting this to a big number in case line is vertical
+				if (dx != 0) {
+					slope = dy/dx;
+				}
+				if (Math.abs(slope) >= almostVerticalSlope && (k==0 || !last_vertical)) {
+					last_vertical = true;
+					numVerticalSlope++;
+					System.out.println(slope);
+				} else if (Math.abs(slope) <= almostHorizontalSlope && (k==0 || last_vertical)) {
+					last_vertical = false;
+					numHorizontalSlope++;
+					System.out.println(slope);
+				} else {
+					System.out.println(slope);
+					break;
+				}
+			} if (numVerticalSlope == 2 && numHorizontalSlope == 2) {
+				continue;
+			} else {
+				System.out.println("Vertical:" + numVerticalSlope);
+				System.out.println("Horizontal" + numHorizontalSlope);
+			}
 			output.add(contour);
+			
 		}
 	}
 

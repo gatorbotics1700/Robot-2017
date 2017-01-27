@@ -43,7 +43,7 @@ public class Robot extends IterativeRobot {
         chooser.addObject("My Auto", customAuto);
         pdp = new PowerDistributionPanel(1); //put ID in parentheses
         SmartDashboard.putData("Auto choices", chooser);
-    	drive.zeroEncoders();
+//    	drive.zeroEncoders();
     	System.out.println("Running robot init");
 
     }
@@ -94,8 +94,6 @@ public class Robot extends IterativeRobot {
     	} else if(leftDriveJoystick.getRawButton(2)) {
         	drive.setTargetDistance(30.0);
     	}
-        gear.moveFlap(leftDriveJoystick);
-        shooter.moveRamp(leftDriveJoystick);
     }
     
     

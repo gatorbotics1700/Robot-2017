@@ -55,6 +55,9 @@ public class Vision {
 	public void initVision() {
 		visionCamera = CameraServer.getInstance().addAxisCamera("axis-camera");
 		visionCamera.setResolution(IMG_WIDTH, IMG_HEIGHT);
+		System.out.println("here");
+		visionCamera.setExposureManual(8);
+		//TODO: Change brightness, focus
 		CameraServer.getInstance().startAutomaticCapture(visionCamera);
 		//		UsbCamera alignCamera = CameraServer.getInstance().startAutomaticCapture();
 
@@ -77,7 +80,7 @@ public class Vision {
 					System.out.println("Angle: " + angleDegrees);
 				}
 			} else {
-//				System.out.println("Wrong number of rectangles: " + pipeline.filterContoursOutput().size());
+				System.out.println("Wrong number of rectangles: " + pipeline.filterContoursOutput().size());
 			}
 		});
 		visionThread.start();

@@ -12,7 +12,7 @@ public class LowGoal {
 	
 	public LowGoal() {
 		rampMotor = new CANTalon(Constants.RAMP_MOTOR);
-		upSensor = new DigitalInput(Constants.UP_SENSOR_ID);
+		upSensor = new DigitalInput(Constants.UP_SENSOR_ID); //TODO: Figure out what type of sensor we are using (if any)
 		downSensor = new DigitalInput(Constants.DOWN_SENSOR_ID);
 	}
 	
@@ -22,15 +22,17 @@ public class LowGoal {
 	 * 
 	 * @param joy The joystick controlling the low goal shooter ramp.
 	 */
-	public void moveRamp(Joystick joy) {
-		if (joy.getRawButton(Constants.LOW_GOAL)) {
-			if (!upSensor.get()) {
-				rampMotor.set(1);
-			}
-		} else if (joy.getRawButton(Constants.RAMP_DOWN)) {
-			if (!downSensor.get()) {
-				rampMotor.set(-1);
-			}
+
+	
+	public void moveRampForLowGoal() {
+		if(!upSensor.get()) {
+			rampMotor.set(1);
+		}
+	}
+		
+	public void moveRampDown() {
+		if (!downSensor.get()) {
+			rampMotor.set(-1);
 		}
 	}
 }
