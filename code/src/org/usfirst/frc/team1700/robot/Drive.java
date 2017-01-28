@@ -21,7 +21,10 @@ public class Drive {
     Servo leftDriveServo;
     Servo rightDriveServo;
     AHRS NavX;
-    PIDController turnController; 
+    PIDController leftFrontDistController;
+    PIDController leftBackDistController;
+    PIDController rightFrontDistController;
+    PIDController rightBackDistController;
     operationMode mode; 
     static double target;
     Encoder leftEncoder;
@@ -44,6 +47,10 @@ public class Drive {
 		leftEncoder = new Encoder(Constants.QUAD_ENCODER_LEFT_1, Constants.QUAD_ENCODER_LEFT_2, true);
 		rightEncoder = new Encoder(Constants.QUAD_ENCODER_RIGHT_1, Constants.QUAD_ENCODER_RIGHT_2);
 		mode = operationMode.MANUAL;
+		leftFrontDistController = new PIDController(Constants.DIST_P, Constants.DIST_I, Constants.DIST_D, leftEncoder, leftFront);
+		leftBackDistController = new PIDController(Constants.DIST_P, Constants.DIST_I, Constants.DIST_D, leftEncoder, leftBack);
+		rightFrontDistController = new PIDController(Constants.DIST_P, Constants.DIST_I, Constants.DIST_D, rightEncoder, rightFront);
+		rightBackDistController = new PIDController(Constants.DIST_P, Constants.DIST_I, Constants.DIST_D, rightEncoder, rightBack);
 	}
 	
 	private void driveTank(double leftSpeed, double rightSpeed) {
@@ -90,7 +97,7 @@ public class Drive {
 			driveTank(-speed/angle, speed);
 		} else {
 			driveTank(speed, speed);
-		}
+		} 
 	}
 	
 	/**

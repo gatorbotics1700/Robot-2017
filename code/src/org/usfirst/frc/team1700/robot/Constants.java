@@ -65,6 +65,11 @@ public class Constants {
 							QUAD_ENCODER_RIGHT_1 = 0,
 							QUAD_ENCODER_RIGHT_2 = 1;
 	
+	//PID Constants
+	public static final double DIST_P = 0.1,
+							   DIST_I = 0.1,
+							   DIST_D = 0.1;
+	
 	//TO-DO: Change these values.
 	public static final double WHEEL_DIAMETER_INCHES = 6.0,
 							   DRIVE_GEAR_REDUCTION = 1.0,

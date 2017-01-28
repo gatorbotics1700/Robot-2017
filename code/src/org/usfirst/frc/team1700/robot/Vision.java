@@ -9,6 +9,7 @@ import org.opencv.core.MatOfPoint;
 import org.opencv.core.MatOfPoint2f;
 import org.opencv.core.Point;
 import org.opencv.core.Rect;
+import org.opencv.core.RotatedRect;
 import org.opencv.imgproc.Imgproc;
 
 import edu.wpi.cscore.AxisCamera;
@@ -19,7 +20,6 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.networktables.NetworkTable;
 import edu.wpi.first.wpilibj.vision.VisionRunner;
 import edu.wpi.first.wpilibj.vision.VisionThread;
-import org.opencv.imgproc.*;
 
 public class Vision {
 	private static final int IMG_WIDTH = 320;
@@ -36,6 +36,7 @@ public class Vision {
 	private VisionThread visionThread;
 	GripPipeline vpipeline;
 	Mat image;
+	
 	// Dividing constant by number of pixels returns the distance in inches. 
 	private static final double VISION_HEIGHT_CONSTANT = 3956;
 	private static final double VISION_DISTANCE = 30;
@@ -62,30 +63,38 @@ public class Vision {
 	public void initVision() {
 		visionCamera = CameraServer.getInstance().addAxisCamera("axis-camera");
 		visionCamera.setResolution(IMG_WIDTH, IMG_HEIGHT);
-		System.out.println("here");
 		visionCamera.setExposureManual(8);
-		//TODO: Change brightness, focus
+		
 		CameraServer.getInstance().startAutomaticCapture(visionCamera);
 		//		UsbCamera alignCamera = CameraServer.getInstance().startAutomaticCapture();
 
+		
 		// Starts loop for vision pipeline. 
 		visionThread = new VisionThread(visionCamera, new GripPipeline(), pipeline -> {
 			if (pipeline.filterContoursOutput().size() == 2) { //works if identifies two vision targets
 				MatOfPoint mp1 = pipeline.filterContoursOutput().get(0);
 				MatOfPoint mp2 = pipeline.filterContoursOutput().get(1);
+				
+				//still need to test if this works better/need to finish writing the code
+				MatOfPoint2f pt1 = new MatOfPoint2f(mp1.toArray());
+				MatOfPoint2f pt2 = new MatOfPoint2f(mp2.toArray());
+				RotatedRect rect1 = Imgproc.minAreaRect(pt1);
+				RotatedRect rect2 = Imgproc.minAreaRect(pt2);
+				
+				
 				Rect r1 = Imgproc.boundingRect(mp1);
 				Rect r2 = Imgproc.boundingRect(mp2);
 				double d1 = getDistance(r1);
 				double d2 = getDistance(r2);
 				double distance = (d1+d2)/2;
 				double angle = getAngle(distance, r1, r2);
-				double pinHoleAngle = pinHole(r1, r2);
-				System.out.println("Pinhold Angle: " + pinHoleAngle);
+				double pinholeAngle = pinHole(r1, r2);
+				System.out.println("Pinhole Angle: " + pinholeAngle);
 				System.out.println("Angle: " + angle);
 //				System.out.println("Distance: " + distance);
 				synchronized (imgLock) {
 					angleDegrees = Constants.radiansToDegrees(angle);
-					pinholeAngleDegrees = Constants.radiansToDegrees(pinHoleAngle);
+					pinholeAngleDegrees = Constants.radiansToDegrees(pinholeAngle);
 					System.out.println("Angle: " + angleDegrees);
 				}
 			} else {

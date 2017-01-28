@@ -49,7 +49,6 @@ public class Robot extends IterativeRobot {
         chooser.addObject("Left Peg Auto", leftPeg);
         chooser.addObject("Right Peg Auto", rightPeg);
         chooser.addObject("Middle Peg Auto", middlePeg);
-        pdp = new PowerDistributionPanel(1); //put ID in parentheses
         SmartDashboard.putData("Auto choices", chooser);
     	drive.zeroEncoders();
     	System.out.println("Running robot init");
@@ -70,25 +69,22 @@ public class Robot extends IterativeRobot {
 //		autoSelected = SmartDashboard.getString("Auto Selector", defaultAuto);
 		System.out.println("Auto selected: " + autoSelected);
 		drive.resetNavX();
+		vision.initVision();
     }
  
    
     public void autonomousPeriodic() {
-    	switch(autoSelected) {
-    	case customAuto:
-    		
-    		
-             break;
-    	case defaultAuto:
-    	default:
-    		
-            break;
+    	drive.setTargetDistance(36.0);
+    	double angle;
+    	synchronized(vision.imgLock) {
+    		angle = vision.angleDegrees;
     	}
+    	drive.setTargetAngleDelta(angle);
     }
 
     @Override
     public void teleopInit() {
-        vision.initVision();
+        
     }
     
      
@@ -96,7 +92,7 @@ public class Robot extends IterativeRobot {
     public void teleopPeriodic() {
     	drive.update(0.0,0.0,true);
     	if (leftDriveJoystick.getRawButton(1)) {
-    		double angle = 0;
+    		double angle;
     		synchronized(vision.imgLock) {
     			angle = vision.angleDegrees;
     		}
