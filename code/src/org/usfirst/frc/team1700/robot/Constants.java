@@ -17,7 +17,9 @@ public class Constants {
 							DRIVE_RIGHT_BACK = 10,
 							DRIVE_LEFT_FRONT = 3,
 							DRIVE_LEFT_BACK = 8,
-							RAMP_MOTOR = 1;
+							RAMP_MOTOR = 1,
+							FRONT_ROLLER = 2,
+							BACK_ROLLER = 4;
 	
 	//Servo ID's
 	public static final int FLAP_FRONT_SERVO_ID = 0,
@@ -78,6 +80,10 @@ public class Constants {
 	
 	public static double inchesToTicks(double inches) {
 		return inches * TICKS_PER_INCH; 
+	}
+	
+	public static double radiansToDegrees(double radians) {
+		return radians/Math.PI*180;
 	}
 	
 }

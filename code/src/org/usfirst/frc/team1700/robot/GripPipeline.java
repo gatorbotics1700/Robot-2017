@@ -265,7 +265,7 @@ public class GripPipeline implements VisionPipeline {
 			final double ratio = bb.width / (double)bb.height;
 			if (ratio < minRatio || ratio > maxRatio) continue;
 			
-			//check if rectangle
+			//check if rectangle (has two vertical and two horizontal lines)
 			int numHorizontalSlope = 0;
 			int numVerticalSlope = 0;
 			Point[] points = contour.toArray();

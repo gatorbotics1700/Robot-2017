@@ -3,8 +3,10 @@ package org.usfirst.frc.team1700.robot;
 import java.util.Collections;
 import java.util.Vector;
 
+import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
+import org.opencv.core.MatOfPoint2f;
 import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.opencv.imgproc.Imgproc;
@@ -22,6 +24,10 @@ import org.opencv.imgproc.*;
 public class Vision {
 	private static final int IMG_WIDTH = 320;
 	private static final int IMG_HEIGHT = 240;
+	private static final double FOCAL_LENGTH = 2.8;
+	private static final double HORIZONTAL_FOV = 67;
+	
+
 
 	private double centerX;
 	AxisCamera visionCamera;
@@ -35,6 +41,7 @@ public class Vision {
 	private static final double VISION_DISTANCE = 30;
 	private static final double TARGET_HEIGHT_INCHES = 6;
 	double angleDegrees;
+	double pinholeAngleDegrees;
 
 	//	private final NetworkTable table;
 
@@ -64,7 +71,6 @@ public class Vision {
 		// Starts loop for vision pipeline. 
 		visionThread = new VisionThread(visionCamera, new GripPipeline(), pipeline -> {
 			if (pipeline.filterContoursOutput().size() == 2) { //works if identifies two vision targets
- 
 				MatOfPoint mp1 = pipeline.filterContoursOutput().get(0);
 				MatOfPoint mp2 = pipeline.filterContoursOutput().get(1);
 				Rect r1 = Imgproc.boundingRect(mp1);
@@ -73,10 +79,13 @@ public class Vision {
 				double d2 = getDistance(r2);
 				double distance = (d1+d2)/2;
 				double angle = getAngle(distance, r1, r2);
+				double pinHoleAngle = pinHole(r1, r2);
+				System.out.println("Pinhold Angle: " + pinHoleAngle);
 				System.out.println("Angle: " + angle);
-				System.out.println("Distance: " + distance);
+//				System.out.println("Distance: " + distance);
 				synchronized (imgLock) {
-					angleDegrees = angle/Math.PI*180;
+					angleDegrees = Constants.radiansToDegrees(angle);
+					pinholeAngleDegrees = Constants.radiansToDegrees(pinHoleAngle);
 					System.out.println("Angle: " + angleDegrees);
 				}
 			} else {
@@ -84,6 +93,15 @@ public class Vision {
 			}
 		});
 		visionThread.start();
+	}
+	
+	public double pinHole(Rect rightRect, Rect leftRect) {
+		double imgPlaneWidth = FOCAL_LENGTH*2*Math.tan(HORIZONTAL_FOV/2);
+		double cx = IMG_WIDTH/2 - 0.5;
+		double cy = IMG_HEIGHT/2 - 0.5;
+		double rectCenter = (rightRect.x - (leftRect.x + leftRect.width))/2 + leftRect.x + leftRect.width;
+		double angleToTarget = Math.atan((rectCenter - cx)/FOCAL_LENGTH);
+		return angleToTarget;
 	}
 
 	/**

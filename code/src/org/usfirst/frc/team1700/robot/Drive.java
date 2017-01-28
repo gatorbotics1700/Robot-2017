@@ -83,7 +83,14 @@ public class Drive {
 	 */
 	private void driveToDistance(double distanceDelta) {
 		double speed = distanceDelta*Constants.DRIVING_DISTANCE_PROPORTION;
-		driveTank(speed,speed);
+		double angle = NavX.getAngle();
+		if (angle < -3) {
+			driveTank(speed, -speed/angle);
+		} else if (angle > 3) {
+			driveTank(-speed/angle, speed);
+		} else {
+			driveTank(speed, speed);
+		}
 	}
 	
 	/**
@@ -155,6 +162,10 @@ public class Drive {
 		if(atTarget()) {
 			mode = operationMode.MANUAL;
 		}
+	}
+	
+	public void resetNavX() {
+		NavX.reset();
 	}
 	
 	/**

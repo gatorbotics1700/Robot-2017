@@ -16,6 +16,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class Robot extends IterativeRobot {
     final String defaultAuto = "Default";
     final String customAuto = "My Auto";
+    final String leftPeg = "Left Peg Auto";
+    final String rightPeg = "Right Peg Auto";
+    final String middlePeg = "Middle Peg Auto";
     String autoSelected;
     SendableChooser chooser;
     Joystick leftDriveJoystick;
@@ -26,24 +29,29 @@ public class Robot extends IterativeRobot {
     Gear gear;
     LowGoal shooter;
     Vision vision; 
+    Intake intake;
     
     public Robot() {
     	drive = new Drive();
     	vision = new Vision();
         gear = new Gear();
         shooter = new LowGoal();
+        intake = new Intake();
         leftDriveJoystick = new Joystick(Constants.LEFT_JOYSTICK);
         rightDriveJoystick = new Joystick(Constants.RIGHT_JOYSTICK);
+        
     }
 	
 
     public void robotInit() {
         chooser = new SendableChooser();
         chooser.addDefault("Default Auto", defaultAuto);
-        chooser.addObject("My Auto", customAuto);
+        chooser.addObject("Left Peg Auto", leftPeg);
+        chooser.addObject("Right Peg Auto", rightPeg);
+        chooser.addObject("Middle Peg Auto", middlePeg);
         pdp = new PowerDistributionPanel(1); //put ID in parentheses
         SmartDashboard.putData("Auto choices", chooser);
-//    	drive.zeroEncoders();
+    	drive.zeroEncoders();
     	System.out.println("Running robot init");
 
     }
@@ -61,14 +69,16 @@ public class Robot extends IterativeRobot {
     	autoSelected = (String) chooser.getSelected();
 //		autoSelected = SmartDashboard.getString("Auto Selector", defaultAuto);
 		System.out.println("Auto selected: " + autoSelected);
+		drive.resetNavX();
     }
-
+ 
    
     public void autonomousPeriodic() {
     	switch(autoSelected) {
     	case customAuto:
-        //Put custom auto code here   
-            break;
+    		
+    		
+             break;
     	case defaultAuto:
     	default:
     		
@@ -92,7 +102,8 @@ public class Robot extends IterativeRobot {
     		}
 			drive.setTargetAngleDelta(angle);
     	} else if(leftDriveJoystick.getRawButton(2)) {
-        	drive.setTargetDistance(30.0);
+    		drive.NavX.reset();
+        	drive.setTargetDistance(50.0);
     	}
     }
     
