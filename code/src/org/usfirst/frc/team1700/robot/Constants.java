@@ -55,9 +55,9 @@ public class Constants {
 							ALIGN_TO_PEG = 7;
 	
 	//Vision constants
-	public static final double TURNING_ANGLE_PROPORTION = 0.02,
+	public static final double TURNING_ANGLE_PROPORTION = 0.01,
 							   DRIVING_DISTANCE_PROPORTION = (1.0/48.0),
-							   TARGET_ANGLE_TOLERANCE = 5;
+							   TARGET_ANGLE_TOLERANCE = 0.5;
 	
 	//Quadrature encoders DIO ports
 	public static final int QUAD_ENCODER_LEFT_1 = 2,
@@ -89,6 +89,10 @@ public class Constants {
 	
 	public static double radiansToDegrees(double radians) {
 		return radians/Math.PI*180;
+	}
+	
+	public static double degreesToRadians(double degrees) {
+		return degrees/180*Math.PI;
 	}
 	
 }

@@ -53,6 +53,21 @@ public class Drive {
 		rightBackDistController = new PIDController(Constants.DIST_P, Constants.DIST_I, Constants.DIST_D, rightEncoder, rightBack);
 	}
 	
+	public boolean driveToPose(PoseDelta poseDelta) {
+		if(poseDelta.nearZero()) {
+			driveTank(0,0);
+			return true;
+		}
+		double angleSpeed = poseDelta.angleDelta*Constants.TURNING_ANGLE_PROPORTION;
+		double distanceSpeed = poseDelta.distanceDelta*Constants.DRIVING_DISTANCE_PROPORTION;
+		double rightSpeed = distanceSpeed - angleSpeed;
+		double leftSpeed = distanceSpeed = angleSpeed;
+		
+		driveTank(leftSpeed, rightSpeed);
+
+		return false;
+	}
+	
 	private void driveTank(double leftSpeed, double rightSpeed) {
 		leftFront.set(leftSpeed);
 		leftBack.set(leftSpeed);

@@ -24,8 +24,7 @@ import edu.wpi.first.wpilibj.vision.VisionThread;
 public class Vision {
 	private static final int IMG_WIDTH = 320;
 	private static final int IMG_HEIGHT = 240;
-	private static final double FOCAL_LENGTH = 2.8;
-	private static final double HORIZONTAL_FOV = 67;
+	private static final double HORIZONTAL_FOV = Constants.degreesToRadians(47);
 	
 
 
@@ -88,29 +87,28 @@ public class Vision {
 				double d2 = getDistance(r2);
 				double distance = (d1+d2)/2;
 				double angle = getAngle(distance, r1, r2);
-				double pinholeAngle = pinHole(r1, r2);
-				System.out.println("Pinhole Angle: " + pinholeAngle);
-				System.out.println("Angle: " + angle);
-//				System.out.println("Distance: " + distance);
 				synchronized (imgLock) {
 					angleDegrees = Constants.radiansToDegrees(angle);
-					pinholeAngleDegrees = Constants.radiansToDegrees(pinholeAngle);
+					pinholeAngleDegrees = pinHole(r1, r2);
 					System.out.println("Angle: " + angleDegrees);
+					System.out.println("Pinhole angle: " + pinholeAngleDegrees);
 				}
 			} else {
-				System.out.println("Wrong number of rectangles: " + pipeline.filterContoursOutput().size());
+//				System.out.println("Wrong number of rectangles: " + pipeline.filterContoursOutput().size());
 			}
 		});
 		visionThread.start();
 	}
 	
 	public double pinHole(Rect rightRect, Rect leftRect) {
-		double imgPlaneWidth = FOCAL_LENGTH*2*Math.tan(HORIZONTAL_FOV/2);
+		double FOCAL_LENGTH =  IMG_WIDTH/(2*Math.tan(HORIZONTAL_FOV/2));
+		System.out.println("Focal length" + FOCAL_LENGTH);
 		double cx = IMG_WIDTH/2 - 0.5;
 		double cy = IMG_HEIGHT/2 - 0.5;
 		double rectCenter = (rightRect.x - (leftRect.x + leftRect.width))/2 + leftRect.x + leftRect.width;
+		System.out.println("Rect center: " + rectCenter);
 		double angleToTarget = Math.atan((rectCenter - cx)/FOCAL_LENGTH);
-		return angleToTarget;
+		return Constants.radiansToDegrees(angleToTarget);
 	}
 
 	/**

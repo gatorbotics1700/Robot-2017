@@ -268,34 +268,34 @@ public class GripPipeline implements VisionPipeline {
 			//check if rectangle (has two vertical and two horizontal lines)
 			int numHorizontalSlope = 0;
 			int numVerticalSlope = 0;
-			Point[] points = contour.toArray();
-			boolean last_vertical = false;
-			for(int k=0; k<4; k++) {
-				double dx = points[k].x - points[(k+1) % 4].x;
-				double dy = points[k].y - points[(k+1) % 4].y;
-			
-				double slope = 100; //setting this to a big number in case line is vertical
-				if (dx != 0) {
-					slope = dy/dx;
-				}
-				if (Math.abs(slope) >= almostVerticalSlope && (k==0 || !last_vertical)) {
-					last_vertical = true;
-					numVerticalSlope++;
-					System.out.println(slope);
-				} else if (Math.abs(slope) <= almostHorizontalSlope && (k==0 || last_vertical)) {
-					last_vertical = false;
-					numHorizontalSlope++;
-					System.out.println(slope);
-				} else {
-					System.out.println(slope);
-					break;
-				}
-			} if (numVerticalSlope == 2 && numHorizontalSlope == 2) {
-				continue;
-			} else {
-				System.out.println("Vertical:" + numVerticalSlope);
-				System.out.println("Horizontal" + numHorizontalSlope);
-			}
+//			Point[] points = contour.toArray();
+//			boolean last_vertical = false;
+//			for(int k=0; k<4; k++) {
+//				double dx = points[k].x - points[(k+1) % 4].x;
+//				double dy = points[k].y - points[(k+1) % 4].y;
+//			
+//				double slope = 100; //setting this to a big number in case line is vertical
+//				if (dx != 0) {
+//					slope = dy/dx;
+//				}
+//				if (Math.abs(slope) >= almostVerticalSlope && (k==0 || !last_vertical)) {
+//					last_vertical = true;
+//					numVerticalSlope++;
+//					System.out.println(slope);
+//				} else if (Math.abs(slope) <= almostHorizontalSlope && (k==0 || last_vertical)) {
+//					last_vertical = false;
+//					numHorizontalSlope++;
+//					System.out.println(slope);
+//				} else {
+//					System.out.println(slope);
+//					break;
+//				}
+//			} if (numVerticalSlope == 2 && numHorizontalSlope == 2) {
+//				continue;
+//			} else {
+//				System.out.println("Vertical:" + numVerticalSlope);
+//				System.out.println("Horizontal" + numHorizontalSlope);
+//			}
 			output.add(contour);
 			
 		}
