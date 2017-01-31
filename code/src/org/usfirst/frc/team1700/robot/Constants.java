@@ -29,7 +29,7 @@ public class Constants {
 	
 	//Sensor ID's
 	public static final int UP_SENSOR_ID = 4,
-							DOWN_SENSOR_ID = 6;
+							DOWN_SENSOR_ID = 5;
 	
 	//Servo angle amounts
 	public static final double GEAR_INTAKE_POSITION = 1.0,
@@ -37,9 +37,6 @@ public class Constants {
 							BALL_INTAKE_POSITION = 0.0,
 							DRIVE_SERVO_SHIFT_HIGH_POSITION = 0.7,
 							DRIVE_SERVO_SHIFT_LOW_POSITION = 0.3;
-	
-	//PDP ID
-	public static final int PDP_ID = 5;
 	
 	//Joystick ports
 	public static final int LEFT_JOYSTICK = 0,
@@ -75,6 +72,8 @@ public class Constants {
 							   DRIVE_GEAR_REDUCTION = 1.0,
 							   ENCODER_TICKS_PER_REV = 250.0,
 							   DEADBAND_DISTANCE = 4.0;
+	
+	public static final double INTAKE_CLIMBING_SPEED = 0.6;
 	
 	public static double TICKS_PER_INCH = ENCODER_TICKS_PER_REV * DRIVE_GEAR_REDUCTION / (WHEEL_DIAMETER_INCHES*Math.PI);
 	
