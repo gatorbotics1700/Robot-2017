@@ -30,6 +30,7 @@ public class Robot extends IterativeRobot {
     LowGoal shooter;
     Vision vision; 
     Intake intake;
+
     
     public Robot() {
     	drive = new Drive();
@@ -52,7 +53,7 @@ public class Robot extends IterativeRobot {
         SmartDashboard.putData("Auto choices", chooser);
     	drive.zeroEncoders();
     	System.out.println("Running robot init");
-
+		vision.initVision();
     }
     
 	/**
@@ -69,7 +70,6 @@ public class Robot extends IterativeRobot {
 //		autoSelected = SmartDashboard.getString("Auto Selector", defaultAuto);
 		System.out.println("Auto selected: " + autoSelected);
 		drive.resetNavX();
-		vision.initVision();
     }
  
    
@@ -94,7 +94,7 @@ public class Robot extends IterativeRobot {
     	if (leftDriveJoystick.getRawButton(1)) {
     		double angle;
     		synchronized(vision.imgLock) {
-    			angle = vision.angleDegrees;
+    			angle = vision.pinholeAngleDegrees;
     		}
 			drive.setTargetAngleDelta(angle);
     	} else if(leftDriveJoystick.getRawButton(2)) {
