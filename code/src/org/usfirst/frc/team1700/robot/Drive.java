@@ -28,7 +28,7 @@ public class Drive {
     operationMode mode; 
     static double target;
     Encoder leftEncoder;
-    Encoder rightEncoder; 
+    Encoder rightEncoder;
 	 
     enum operationMode {
     	MANUAL,
@@ -43,9 +43,10 @@ public class Drive {
 		rightBack = new CANTalon(Constants.DRIVE_RIGHT_BACK);
 		leftFront = new CANTalon(Constants.DRIVE_LEFT_FRONT);
 		leftBack = new CANTalon(Constants.DRIVE_LEFT_BACK);
-		NavX = new AHRS(SPI.Port.kMXP);
-		leftEncoder = new Encoder(Constants.QUAD_ENCODER_LEFT_1, Constants.QUAD_ENCODER_LEFT_2, true);
-		rightEncoder = new Encoder(Constants.QUAD_ENCODER_RIGHT_1, Constants.QUAD_ENCODER_RIGHT_2);
+		
+//		NavX = new AHRS(SPI.Port.kMXP);
+//		leftEncoder = new Encoder(Constants.QUAD_ENCODER_LEFT_1, Constants.QUAD_ENCODER_LEFT_2, true);
+//		rightEncoder = new Encoder(Constants.QUAD_ENCODER_RIGHT_1, Constants.QUAD_ENCODER_RIGHT_2);
 		mode = operationMode.MANUAL;
 		leftFrontDistController = new PIDController(Constants.DIST_P, Constants.DIST_I, Constants.DIST_D, leftEncoder, leftFront);
 		leftBackDistController = new PIDController(Constants.DIST_P, Constants.DIST_I, Constants.DIST_D, leftEncoder, leftBack);
@@ -53,7 +54,7 @@ public class Drive {
 		rightBackDistController = new PIDController(Constants.DIST_P, Constants.DIST_I, Constants.DIST_D, rightEncoder, rightBack);
 	}
 	
-	public boolean driveToPose(PoseDelta poseDelta) {
+	public boolean driveByPoseDelta(PoseDelta poseDelta) {
 		if(poseDelta.nearZero()) {
 			driveTank(0,0);
 			return true;
@@ -61,14 +62,14 @@ public class Drive {
 		double angleSpeed = poseDelta.angleDelta*Constants.TURNING_ANGLE_PROPORTION;
 		double distanceSpeed = poseDelta.distanceDelta*Constants.DRIVING_DISTANCE_PROPORTION;
 		double rightSpeed = distanceSpeed - angleSpeed;
-		double leftSpeed = distanceSpeed = angleSpeed;
+		double leftSpeed = distanceSpeed + angleSpeed;
 		
 		driveTank(leftSpeed, rightSpeed);
-
+	
 		return false;
 	}
 	
-	private void driveTank(double leftSpeed, double rightSpeed) {
+	public void driveTank(double leftSpeed, double rightSpeed) {
 		leftFront.set(leftSpeed);
 		leftBack.set(leftSpeed);
 		rightFront.set(-rightSpeed);

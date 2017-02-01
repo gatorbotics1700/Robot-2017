@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.Victor;
+import edu.wpi.first.wpilibj.Joystick.AxisType;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -30,6 +31,8 @@ public class Robot extends IterativeRobot {
     LowGoal shooter;
     Vision vision; 
     Intake intake;
+    PoseManager poseManager;
+    Pose destinationPose;
     
     public Robot() {
     	drive = new Drive();
@@ -37,6 +40,8 @@ public class Robot extends IterativeRobot {
         gear = new Gear();
         shooter = new LowGoal();
         intake = new Intake();
+        poseManager = new PoseManager();
+        destinationPose = null;
         leftDriveJoystick = new Joystick(Constants.LEFT_JOYSTICK);
         rightDriveJoystick = new Joystick(Constants.RIGHT_JOYSTICK);
         
@@ -90,19 +95,42 @@ public class Robot extends IterativeRobot {
      
     
     public void teleopPeriodic() {
+    	drivePose();
+    }
+    
+    public void drivePose() {
+    	if (destinationPose == null) {
+    		drive.driveTank(
+    				leftDriveJoystick.getAxis(AxisType.kY),
+    				rightDriveJoystick.getAxis(AxisType.kY));
+    	} else {
+    		Pose currentPose = poseManager.getCurrentPose();
+    		PoseDelta driveDelta = destinationPose.subtract(currentPose);
+    		if (drive.driveByPoseDelta(driveDelta)) {
+    			destinationPose = null;
+    		}
+    	}
+    	
+    	if (leftDriveJoystick.getRawButton(0)) {
+    		PoseDelta delta = new PoseDelta(90, 0);
+    		destinationPose = poseManager.getCurrentPose().add(delta);
+    	}
+    }
+    
+    @Deprecated
+    public void driveNoPose() {
     	drive.update(0.0,0.0,true);
     	if (leftDriveJoystick.getRawButton(1)) {
     		double angle;
     		synchronized(vision.imgLock) {
     			angle = vision.angleDegrees;
     		}
-			drive.setTargetAngleDelta(angle);
+		drive.setTargetAngleDelta(angle);
     	} else if(leftDriveJoystick.getRawButton(2)) {
     		drive.NavX.reset();
         	drive.setTargetDistance(50.0);
     	}
     }
-    
     
     
     public void testPeriodic() {

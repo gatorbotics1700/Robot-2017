@@ -22,13 +22,6 @@ public class PoseManager {
 		return currentPose;
 	}
 	
-	public Pose getCurrentPoseWithDelta(PoseDelta poseDelta) {
-		Pose currentPose = getCurrentPose();
-		currentPose.angle += poseDelta.angleDelta;
-		currentPose.distance += poseDelta.distanceDelta;
-		return currentPose;
-	}
-	
 	private double getCurrentAngle() {
 		return NavX.getAngle();
 	}
