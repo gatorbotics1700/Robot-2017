@@ -9,9 +9,9 @@ public class Pose {
 		this.distance = distance;
 	}
 	
-	public PoseDelta subtract(Pose targetPose) {
-		PoseDelta poseDelta = new PoseDelta(targetPose.angle - this.angle, 
-				targetPose.distance - this.distance);
+	public PoseDelta subtract(Pose otherPose) {
+		PoseDelta poseDelta = new PoseDelta(this.angle - otherPose.angle, 
+				this.distance - otherPose.distance);
 		return poseDelta;
 	}
 	
@@ -21,5 +21,8 @@ public class Pose {
 		return targetPose;
 	}
 	
+	public String toString() {
+		return "Pose<" + this.angle + ", " + this.distance + ">";
+	}
 
 }

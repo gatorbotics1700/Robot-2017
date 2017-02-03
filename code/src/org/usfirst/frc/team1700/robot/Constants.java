@@ -17,8 +17,8 @@ public class Constants {
 							DRIVE_RIGHT_BACK = 10,
 							DRIVE_LEFT_FRONT = 3,
 							DRIVE_LEFT_BACK = 8,
-							RAMP_MOTOR = 1,
-							FRONT_ROLLER = 2,
+							RAMP_MOTOR = 6,
+							FRONT_ROLLER = 5,
 							BACK_ROLLER = 4;
 	
 	//Servo ID's
@@ -29,7 +29,7 @@ public class Constants {
 	
 	//Sensor ID's
 	public static final int UP_SENSOR_ID = 4,
-							DOWN_SENSOR_ID = 6;
+							DOWN_SENSOR_ID = 5;
 	
 	//Servo angle amounts
 	public static final double GEAR_INTAKE_POSITION = 1.0,
@@ -37,9 +37,6 @@ public class Constants {
 							BALL_INTAKE_POSITION = 0.0,
 							DRIVE_SERVO_SHIFT_HIGH_POSITION = 0.7,
 							DRIVE_SERVO_SHIFT_LOW_POSITION = 0.3;
-	
-	//PDP ID
-	public static final int PDP_ID = 5;
 	
 	//Joystick ports
 	public static final int LEFT_JOYSTICK = 0,
@@ -56,7 +53,7 @@ public class Constants {
 	
 	//Vision constants
 	public static final double TURNING_ANGLE_PROPORTION = 0.01,
-							   DRIVING_DISTANCE_PROPORTION = (1.0/48.0),
+							   DRIVING_DISTANCE_PROPORTION = (1.0/36.0),
 							   TARGET_ANGLE_TOLERANCE = 0.5;
 	
 	//Quadrature encoders DIO ports
@@ -76,10 +73,14 @@ public class Constants {
 							   ENCODER_TICKS_PER_REV = 250.0,
 							   DEADBAND_DISTANCE = 4.0;
 	
+	public static final double MIN_DRIVE_POWER = 0.15;
+	
+	public static final double INTAKE_CLIMBING_SPEED = 0.6;
+	
 	public static double TICKS_PER_INCH = ENCODER_TICKS_PER_REV * DRIVE_GEAR_REDUCTION / (WHEEL_DIAMETER_INCHES*Math.PI);
 	
 	public static double ticksToInches(double ticks) {
-		System.out.println("Tick per inch: " + TICKS_PER_INCH);
+		//System.out.println("Tick per inch: " + TICKS_PER_INCH);
 		return ticks / TICKS_PER_INCH;
 	}
 	

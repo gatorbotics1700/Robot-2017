@@ -8,6 +8,8 @@ import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.Victor;
+import edu.wpi.first.wpilibj.networktables.NetworkTable;
+import edu.wpi.first.wpilibj.Joystick.AxisType;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -30,14 +32,21 @@ public class Robot extends IterativeRobot {
     LowGoal shooter;
     Vision vision; 
     Intake intake;
-
+    PoseManager poseManager;
+    Pose destinationPose;
+    CameraData cameraData;
+    NetworkTable table;
     
     public Robot() {
     	drive = new Drive();
-    	vision = new Vision();
+    	//vision = new Vision();
         gear = new Gear();
         shooter = new LowGoal();
         intake = new Intake();
+        poseManager = new PoseManager();
+        cameraData = new CameraData();
+		table = NetworkTable.getTable("GRIP/myContoursReport");
+        destinationPose = null;
         leftDriveJoystick = new Joystick(Constants.LEFT_JOYSTICK);
         rightDriveJoystick = new Joystick(Constants.RIGHT_JOYSTICK);
         
@@ -51,9 +60,8 @@ public class Robot extends IterativeRobot {
         chooser.addObject("Right Peg Auto", rightPeg);
         chooser.addObject("Middle Peg Auto", middlePeg);
         SmartDashboard.putData("Auto choices", chooser);
-    	drive.zeroEncoders();
     	System.out.println("Running robot init");
-		vision.initVision();
+		//vision.initVision();
     }
     
 	/**
@@ -69,40 +77,78 @@ public class Robot extends IterativeRobot {
     	autoSelected = (String) chooser.getSelected();
 //		autoSelected = SmartDashboard.getString("Auto Selector", defaultAuto);
 		System.out.println("Auto selected: " + autoSelected);
-		drive.resetNavX();
     }
  
    
     public void autonomousPeriodic() {
-    	drive.setTargetDistance(36.0);
-    	double angle;
-    	synchronized(vision.imgLock) {
-    		angle = vision.angleDegrees;
-    	}
-    	drive.setTargetAngleDelta(angle);
+
     }
 
     @Override
     public void teleopInit() {
-        
+        destinationPose = null;
     }
     
      
     
     public void teleopPeriodic() {
-    	drive.update(0.0,0.0,true);
+    	updateCameraData();
+    	if (drivePose()) {
+    		destinationPose = null;
+    	}
+    	
     	if (leftDriveJoystick.getRawButton(1)) {
-    		double angle;
-    		synchronized(vision.imgLock) {
-    			angle = vision.pinholeAngleDegrees;
-    		}
-			drive.setTargetAngleDelta(angle);
-    	} else if(leftDriveJoystick.getRawButton(2)) {
-    		drive.NavX.reset();
-        	drive.setTargetDistance(50.0);
+    		PoseDelta delta = new PoseDelta(90, 0);
+    		destinationPose = poseManager.getCurrentPose().add(delta);
+    	}
+    	
+    	if (rightDriveJoystick.getRawButton(1)) {
+    		PoseDelta delta = new PoseDelta(0,12);
+    		destinationPose = poseManager.getCurrentPose().add(delta);
+    	}
+    	
+    	if (rightDriveJoystick.getRawButton(2)) {
+    		PoseDelta delta = new PoseDelta(-poseManager.getCurrentPose().angle,-poseManager.getCurrentPose().distance);
+    		destinationPose = poseManager.getCurrentPose().add(delta);
     	}
     }
     
+    public CameraData getCameraDataValues() {
+    	double angle = table.getNumber("Angle", 0);
+    	long timestamp = (long) table.getNumber("Time", 0);
+    	return new CameraData(angle, timestamp);
+    }
+    
+    public boolean updateCameraData() {
+    	CameraData newCameraData = getCameraDataValues();
+    	if(newCameraData.timestamp > cameraData.timestamp) {
+    		cameraData = newCameraData;
+    		return true;
+    	}
+    	return false;
+    }
+    
+    public boolean drivePose() {
+    	if (destinationPose == null) {
+    		drive.driveTank(
+    				leftDriveJoystick.getAxis(AxisType.kY),
+    				rightDriveJoystick.getAxis(AxisType.kY));
+    		return true;
+    	} else {
+    		Pose currentPose = poseManager.getCurrentPose();
+    		PoseDelta driveDelta = destinationPose.subtract(currentPose);
+    		System.out.println("Pose: " + destinationPose);
+    		System.out.println("Pose Delta: " + driveDelta);
+    		System.out.println("Current pose: " + currentPose);
+    		if (drive.driveByPoseDelta(driveDelta)) {
+    			System.out.println("Done driving to pose.");
+    			return true;
+    		}
+    		return false;
+    	}
+    	
+    }
+
     
     
     public void testPeriodic() {

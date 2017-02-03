@@ -1,17 +1,16 @@
 package org.usfirst.frc.team1700.robot;
 
-import com.ctre.CANTalon;
-
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.Victor;
 
 public class LowGoal {
-	CANTalon rampMotor;
+	Victor rampMotor;
 	DigitalInput upSensor;
 	DigitalInput downSensor;
 	
 	public LowGoal() {
-		rampMotor = new CANTalon(Constants.RAMP_MOTOR);
+		rampMotor = new Victor(Constants.RAMP_MOTOR);
 		upSensor = new DigitalInput(Constants.UP_SENSOR_ID); //TODO: Figure out what type of sensor we are using (if any)
 		downSensor = new DigitalInput(Constants.DOWN_SENSOR_ID);
 	}
@@ -25,7 +24,7 @@ public class LowGoal {
 
 	
 	public void moveRampForLowGoal() {
-		if(!upSensor.get()) {
+		if (!upSensor.get()) {
 			rampMotor.set(1);
 		}
 	}
@@ -33,6 +32,12 @@ public class LowGoal {
 	public void moveRampDown() {
 		if (!downSensor.get()) {
 			rampMotor.set(-1);
+		}
+	}
+	
+	public void moveRampManual(double speed) {
+		if (!upSensor.get() && !downSensor.get()) {
+			rampMotor.set(speed);
 		}
 	}
 }

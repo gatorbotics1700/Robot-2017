@@ -13,5 +13,9 @@ public class PoseDelta {
 		return (Math.abs(this.angleDelta) < Constants.TARGET_ANGLE_TOLERANCE && 
 				Math.abs(this.distanceDelta) < Constants.DEADBAND_DISTANCE);
 	}
+	
+	public String toString() {
+		return "PoseDelta<" + this.angleDelta + ", " + this.distanceDelta + ">"; 
+	}
 
 }

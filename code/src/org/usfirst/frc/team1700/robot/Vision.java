@@ -35,6 +35,8 @@ public class Vision {
 	private VisionThread visionThread;
 	GripPipeline vpipeline;
 	Mat image;
+	NetworkTable table;
+	
 	
 	// Dividing constant by number of pixels returns the distance in inches. 
 	private static final double VISION_HEIGHT_CONSTANT = 3956;
@@ -49,7 +51,7 @@ public class Vision {
 		centerX = 0.0;
 		imgLock = new Object();
 		vpipeline = new GripPipeline();
-		//		table = NetworkTable.getTable("GRIP/myContoursReport");
+		table = NetworkTable.getTable("GRIP/myContoursReport");
 		image = new Mat();
 
 	}
@@ -87,14 +89,10 @@ public class Vision {
 				double d2 = getDistance(r2);
 				double distance = (d1+d2)/2;
 				double angle = getAngle(distance, r1, r2);
-				synchronized (imgLock) {
-					angleDegrees = Constants.radiansToDegrees(angle);
-					pinholeAngleDegrees = pinHole(r1, r2);
-					System.out.println("Angle: " + angleDegrees);
-					System.out.println("Pinhole angle: " + pinholeAngleDegrees);
-				}
-			} else {
-//				System.out.println("Wrong number of rectangles: " + pipeline.filterContoursOutput().size());
+				angleDegrees = Constants.radiansToDegrees(angle);
+				pinholeAngleDegrees = pinHole(r1, r2);
+				table.putNumber("Time", System.currentTimeMillis());
+				table.putNumber("Angle", pinholeAngleDegrees);
 			}
 		});
 		visionThread.start();
@@ -164,6 +162,7 @@ public class Vision {
 
 		return horizontalOffset; 
 	}
+	
 }
 
 

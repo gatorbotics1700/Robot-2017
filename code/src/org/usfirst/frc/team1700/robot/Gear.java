@@ -13,12 +13,6 @@ public class Gear {
 		secondFlapServo = new Servo(Constants.FLAP_BACK_SERVO_ID);
 	}
 	
-	/**
-	 * Moves the flap of the gear mechanism up or down with a servo motor.
-	 * 
-	 * @param joy The joystick controlling the gear mechanism.
-	 */
-	
 	public void gearIntakePosition() {
 		setServos(Constants.GEAR_INTAKE_POSITION);
 	}

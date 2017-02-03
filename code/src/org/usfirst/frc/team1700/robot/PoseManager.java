@@ -13,19 +13,12 @@ public class PoseManager {
 	
 	public PoseManager() {
 		NavX = new AHRS(SPI.Port.kMXP);
-		leftDriveEncoder = new Encoder(Constants.QUAD_ENCODER_LEFT_1, Constants.QUAD_ENCODER_LEFT_2);
-		rightDriveEncoder = new Encoder(Constants.QUAD_ENCODER_RIGHT_1, Constants.QUAD_ENCODER_RIGHT_2);
+		leftDriveEncoder = new Encoder(Constants.QUAD_ENCODER_LEFT_1, Constants.QUAD_ENCODER_LEFT_2, true);
+		rightDriveEncoder = new Encoder(Constants.QUAD_ENCODER_RIGHT_1, Constants.QUAD_ENCODER_RIGHT_2, false);
 	}
 	
 	public Pose getCurrentPose() {
 		Pose currentPose = new Pose(getCurrentAngle(), getCurrentDistance());
-		return currentPose;
-	}
-	
-	public Pose getCurrentPoseWithDelta(PoseDelta poseDelta) {
-		Pose currentPose = getCurrentPose();
-		currentPose.angle += poseDelta.angleDelta;
-		currentPose.distance += poseDelta.distanceDelta;
 		return currentPose;
 	}
 	
@@ -34,8 +27,9 @@ public class PoseManager {
 	}
 	
 	private double getCurrentDistance() {
-		return Constants.ticksToInches((Math.abs(leftDriveEncoder.get()) + 
-				Math.abs(rightDriveEncoder.get())/2));
+		System.out.println(leftDriveEncoder.get() + " " + rightDriveEncoder.get());
+		return Constants.ticksToInches((leftDriveEncoder.get() + 
+				rightDriveEncoder.get())/2);
 	}
 
 
