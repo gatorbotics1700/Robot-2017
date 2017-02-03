@@ -43,8 +43,8 @@ public class Constants {
 							RIGHT_JOYSTICK = 1;
 	
 	//Buttons
-	public static final int SHIFT_LOW_DRIVE = 1,
-							SHIFT_HIGH_DRIVE = 2,
+	public static final int SHIFT_LOW_DRIVE = 8,
+							SHIFT_HIGH_DRIVE = 9,
 							LOW_GOAL = 3,
 							RAMP_DOWN = 4,
 							FLAP_GEAR_POSITION = 5,
