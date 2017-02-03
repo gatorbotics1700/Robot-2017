@@ -99,6 +99,7 @@ public class Robot extends IterativeRobot {
     }
     
     public void drivePose() {
+    	//if no pose, then basic driving, else pose driving
     	if (destinationPose == null) {
     		drive.driveTank(
     				leftDriveJoystick.getAxis(AxisType.kY),
@@ -111,9 +112,17 @@ public class Robot extends IterativeRobot {
     		}
     	}
     	
+    	//Pose Testing, pose is (angle, distance)
     	if (leftDriveJoystick.getRawButton(0)) {
     		PoseDelta delta = new PoseDelta(90, 0);
     		destinationPose = poseManager.getCurrentPose().add(delta);
+    	}
+    	
+    	//Shifting
+    	if (rightDriveJoystick.getRawButton(Constants.SHIFT_HIGH_DRIVE)) {
+    		drive.shiftDrive(true);
+    	} else if (rightDriveJoystick.getRawButton(Constants.SHIFT_LOW_DRIVE)) {
+    		drive.shiftDrive(false);
     	}
     }
     

@@ -78,11 +78,11 @@ public class Drive {
 	
 	public void shiftDrive(boolean highGear){
 		if (highGear){
-//			rightDriveServo.set(Constants.DRIVE_SERVO_SHIFT_HIGH_POSITION);
-//			leftDriveServo.set(Constants.DRIVE_SERVO_SHIFT_HIGH_POSITION);
+			rightDriveServo.set(Constants.DRIVE_SERVO_SHIFT_HIGH_POSITION);
+			leftDriveServo.set(Constants.DRIVE_SERVO_SHIFT_HIGH_POSITION);
 		} else {
 			rightDriveServo.set(Constants.DRIVE_SERVO_SHIFT_LOW_POSITION);
-//			leftDriveServo.set(Constants.DRIVE_SERVO_SHIFT_LOW_POSITION);
+			leftDriveServo.set(Constants.DRIVE_SERVO_SHIFT_LOW_POSITION);
 		}
 	}
 	
