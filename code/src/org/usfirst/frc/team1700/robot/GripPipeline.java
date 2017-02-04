@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -265,39 +266,27 @@ public class GripPipeline implements VisionPipeline {
 			final double ratio = bb.width / (double)bb.height;
 			if (ratio < minRatio || ratio > maxRatio) continue;
 			
-			//check if rectangle (has two vertical and two horizontal lines)
-			int numHorizontalSlope = 0;
-			int numVerticalSlope = 0;
-//			Point[] points = contour.toArray();
-//			boolean last_vertical = false;
-//			for(int k=0; k<4; k++) {
-//				double dx = points[k].x - points[(k+1) % 4].x;
-//				double dy = points[k].y - points[(k+1) % 4].y;
-//			
-//				double slope = 100; //setting this to a big number in case line is vertical
-//				if (dx != 0) {
-//					slope = dy/dx;
-//				}
-//				if (Math.abs(slope) >= almostVerticalSlope && (k==0 || !last_vertical)) {
-//					last_vertical = true;
-//					numVerticalSlope++;
-//					System.out.println(slope);
-//				} else if (Math.abs(slope) <= almostHorizontalSlope && (k==0 || last_vertical)) {
-//					last_vertical = false;
-//					numHorizontalSlope++;
-//					System.out.println(slope);
-//				} else {
-//					System.out.println(slope);
-//					break;
-//				}
-//			} if (numVerticalSlope == 2 && numHorizontalSlope == 2) {
-//				continue;
-//			} else {
-//				System.out.println("Vertical:" + numVerticalSlope);
-//				System.out.println("Horizontal" + numHorizontalSlope);
-//			}
+			// check if opposite lines have similar  slopes
+			final double SLOPE_DIFFERENCE = 1.0; 
+			double[] slopes = new double[4]; 
+			Point[] points = contour.toArray();
+			double slope = 0.0;
+			for(int k=0; k<4; k++) {
+				double dx = points[k].x - points[(k+1) % 4].x;
+				double dy = points[k].y - points[(k+1) % 4].y;
+				if (dx == 0) {
+					dx = .01;
+				}
+				slope = dy/dx;
+				slopes[k] = slope; 
+				System.out.println("Slope:" + slope);
+			}	
+			Arrays.sort(slopes);
+			if (Math.abs(slopes[1] - slopes[0]) > SLOPE_DIFFERENCE ||
+					Math.abs(slopes[3] - slopes[2]) > SLOPE_DIFFERENCE) {
+				continue;
+			}
 			output.add(contour);
-			
 		}
 	}
 

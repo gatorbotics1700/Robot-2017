@@ -49,10 +49,10 @@ public class Drive {
 	}
 	
 	public void driveTank(double leftSpeed, double rightSpeed) {
-		leftFront.set(-leftSpeed);
-		leftBack.set(-leftSpeed);
-		rightFront.set(rightSpeed);
-		rightBack.set(rightSpeed);
+		leftFront.set(leftSpeed);
+		leftBack.set(leftSpeed);
+		rightFront.set(-rightSpeed);
+		rightBack.set(-rightSpeed);
 	}
 	
 	public void shiftDrive(boolean highGear){

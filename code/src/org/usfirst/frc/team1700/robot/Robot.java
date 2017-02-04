@@ -29,7 +29,7 @@ public class Robot extends IterativeRobot {
     PowerDistributionPanel pdp;
     Drive drive;
     Gear gear;
-    LowGoal shooter;
+    LowGoal lowGoal;
     Vision vision; 
     Intake intake;
     PoseManager poseManager;
@@ -41,7 +41,7 @@ public class Robot extends IterativeRobot {
     	drive = new Drive();
     	//vision = new Vision();
         gear = new Gear();
-        shooter = new LowGoal();
+        lowGoal = new LowGoal();
         intake = new Intake();
         poseManager = new PoseManager();
         cameraData = new CameraData();
@@ -111,6 +111,49 @@ public class Robot extends IterativeRobot {
     		PoseDelta delta = new PoseDelta(-poseManager.getCurrentPose().angle,-poseManager.getCurrentPose().distance);
     		destinationPose = poseManager.getCurrentPose().add(delta);
     	}
+    	
+    	// Shift high for driving
+    	if (leftDriveJoystick.getRawButton(Constants.SHIFT_HIGH_DRIVE)) {
+    		drive.shiftDrive(true);
+    	}
+    	
+    	// Shift low for driving
+    	if (leftDriveJoystick.getRawButton(Constants.SHIFT_LOW_DRIVE)) {
+    		drive.shiftDrive(false);
+    	}
+    	
+    	// Low goal: moves ramp up, stops front intake and back drives back intake, shifts gear flap
+    	if(leftDriveJoystick.getRawButton(Constants.LOW_GOAL)){
+    		lowGoal.moveRampForLowGoal();
+    		intake.lowGoalIntake();
+    		gear.lowGoalPosition();
+    	}
+    	
+    	// Moves ramp down. To be used after low goal
+    	if (leftDriveJoystick.getRawButton(Constants.RAMP_DOWN)) {
+    		lowGoal.moveRampDown();
+    	}
+    	
+    	// Shifts flap for ball intake
+    	if (leftDriveJoystick.getRawButton(Constants.FLAP_BALL_INTAKE_POSITION)) {
+    		gear.ballIntakePosition();
+    	}
+    	
+    	// Shifts flap for gear intake. May change to be the default position.
+    	if (leftDriveJoystick.getRawButton(Constants.FLAP_GEAR_POSITION)) {
+    		gear.gearIntakePosition();
+    	}
+    	
+    	// Shifts low for climbing. Powers intake motor to help climb.
+    	if (leftDriveJoystick.getRawButton(Constants.SHIFT_LOW_CLIMB)) {
+    		drive.shiftDrive(false);
+    		intake.climbIntake();
+    	}
+    	
+    	// Aligns robot to peg
+    	if (leftDriveJoystick.getRawButton(Constants.ALIGN_TO_PEG)) {
+    		
+    	}
     }
     
     public CameraData getCameraDataValues() {
@@ -146,7 +189,6 @@ public class Robot extends IterativeRobot {
     		}
     		return false;
     	}
-    	
     }
 
     
