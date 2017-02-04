@@ -10,9 +10,9 @@ public class LowGoal {
 	DigitalInput downSensor;
 	
 	public LowGoal() {
-		rampMotor = new Victor(Constants.RAMP_MOTOR);
-		upSensor = new DigitalInput(Constants.UP_SENSOR_ID); //TODO: Figure out what type of sensor we are using (if any)
-		downSensor = new DigitalInput(Constants.DOWN_SENSOR_ID);
+		rampMotor = new Victor(Constants.PWM.DUMPER_MOTOR.getPort());
+		upSensor = new DigitalInput(Constants.DigitalIO.UP_SENSOR_ID.getPort()); //TODO: Figure out what type of sensor we are using (if any)
+		downSensor = new DigitalInput(Constants.DigitalIO.DOWN_SENSOR_ID.getPort());
 	}
 	
 	/**
@@ -23,13 +23,13 @@ public class LowGoal {
 	 */
 
 	
-	public void moveRampForLowGoal() {
+	public void moveUp() {
 		if (!upSensor.get()) {
 			rampMotor.set(1);
 		}
 	}
 		
-	public void moveRampDown() {
+	public void moveDown() {
 		if (!downSensor.get()) {
 			rampMotor.set(-1);
 		}

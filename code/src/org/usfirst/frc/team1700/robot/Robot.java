@@ -27,7 +27,7 @@ public class Robot extends IterativeRobot {
     Joystick rightDriveJoystick;
     Joystick operatorJoystick;
     PowerDistributionPanel pdp;
-    Drive drive;
+    DriveTrain drive;
     Gear gear;
     LowGoal lowGoal;
     Vision vision; 
@@ -38,7 +38,7 @@ public class Robot extends IterativeRobot {
     NetworkTable table;
     
     public Robot() {
-    	drive = new Drive();
+    	drive = new DriveTrain();
     	//vision = new Vision();
         gear = new Gear();
         lowGoal = new LowGoal();
@@ -47,8 +47,8 @@ public class Robot extends IterativeRobot {
         cameraData = new CameraData();
 		table = NetworkTable.getTable("GRIP/myContoursReport");
         destinationPose = null;
-        leftDriveJoystick = new Joystick(Constants.LEFT_JOYSTICK);
-        rightDriveJoystick = new Joystick(Constants.RIGHT_JOYSTICK);
+        leftDriveJoystick = new Joystick(Constants.DriverStation.LEFT_JOYSTICK.getPort());
+        rightDriveJoystick = new Joystick(Constants.DriverStation.RIGHT_JOYSTICK.getPort());
         
     }
 	
@@ -113,47 +113,54 @@ public class Robot extends IterativeRobot {
     	}
     	
     	// Shift high for driving
-    	if (leftDriveJoystick.getRawButton(Constants.SHIFT_HIGH_DRIVE)) {
+    	if (leftDriveJoystick.getRawButton(Constants.JoystickButtons.Left.SHIFT_HIGH_DRIVE.getId())) {
     		drive.shiftDrive(true);
     	}
     	
     	// Shift low for driving
-    	if (leftDriveJoystick.getRawButton(Constants.SHIFT_LOW_DRIVE)) {
+    	if (leftDriveJoystick.getRawButton(Constants.JoystickButtons.Left.SHIFT_LOW_DRIVE.getId())) {
     		drive.shiftDrive(false);
     	}
     	
     	// Low goal: moves ramp up, stops front intake and back drives back intake, shifts gear flap
-    	if(leftDriveJoystick.getRawButton(Constants.LOW_GOAL)){
-    		lowGoal.moveRampForLowGoal();
+    	if(leftDriveJoystick.getRawButton(Constants.JoystickButtons.Left.DUMPER_UP.getId())){
+    		lowGoal.moveUp();
     		intake.lowGoalIntake();
     		gear.lowGoalPosition();
     	}
     	
     	// Moves ramp down. To be used after low goal
-    	if (leftDriveJoystick.getRawButton(Constants.RAMP_DOWN)) {
-    		lowGoal.moveRampDown();
+    	if (leftDriveJoystick.getRawButton(Constants.JoystickButtons.Left.DUMPER_DOWN.getId())) {
+    		lowGoal.moveDown();
     	}
     	
     	// Shifts flap for ball intake
-    	if (leftDriveJoystick.getRawButton(Constants.FLAP_BALL_INTAKE_POSITION)) {
+    	if (leftDriveJoystick.getRawButton(Constants.JoystickButtons.Left.FLAP_BALL_INTAKE_POSITION.getId())) {
     		gear.ballIntakePosition();
     	}
     	
     	// Shifts flap for gear intake. May change to be the default position.
-    	if (leftDriveJoystick.getRawButton(Constants.FLAP_GEAR_POSITION)) {
+    	if (leftDriveJoystick.getRawButton(Constants.JoystickButtons.Left.FLAP_GEAR_POSITION.getId())) {
     		gear.gearIntakePosition();
     	}
     	
     	// Shifts low for climbing. Powers intake motor to help climb.
-    	if (leftDriveJoystick.getRawButton(Constants.SHIFT_LOW_CLIMB)) {
+    	if (leftDriveJoystick.getRawButton(Constants.JoystickButtons.Left.SHIFT_LOW_CLIMB.getId())) {
     		drive.shiftDrive(false);
     		intake.climbIntake();
     	}
     	
     	// Aligns robot to peg
-    	if (leftDriveJoystick.getRawButton(Constants.ALIGN_TO_PEG)) {
-    		
+    	if (rightDriveJoystick.getRawButton(Constants.JoystickButtons.Right.ALIGN_TO_PEG.getId())) {
+    		// TODO:integrate vision code when it's finished
     	}
+    	
+    	if(leftDriveJoystick.getRawButton(Constants.JoystickButtons.Left.EXTEND_GEAR.getId())){
+    		gear.extend();
+    	} else{
+    		gear.retract();
+    	}
+    	
     }
     
     public CameraData getCameraDataValues() {

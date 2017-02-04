@@ -13,8 +13,14 @@ public class PoseManager {
 	
 	public PoseManager() {
 		NavX = new AHRS(SPI.Port.kMXP);
-		leftDriveEncoder = new Encoder(Constants.QUAD_ENCODER_LEFT_1, Constants.QUAD_ENCODER_LEFT_2, true);
-		rightDriveEncoder = new Encoder(Constants.QUAD_ENCODER_RIGHT_1, Constants.QUAD_ENCODER_RIGHT_2, false);
+		leftDriveEncoder = new Encoder(
+				Constants.DigitalIO.QUAD_ENCODER_LEFT_1.getPort(), 
+				Constants.DigitalIO.QUAD_ENCODER_LEFT_2.getPort(),
+				true);
+		rightDriveEncoder = new Encoder(
+				Constants.DigitalIO.QUAD_ENCODER_RIGHT_1.getPort(), 
+				Constants.DigitalIO.QUAD_ENCODER_RIGHT_2.getPort(),
+				false);
 	}
 	
 	public Pose getCurrentPose() {

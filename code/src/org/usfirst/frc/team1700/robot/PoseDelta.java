@@ -10,7 +10,7 @@ public class PoseDelta {
 	}
 	
 	public boolean nearZero() {
-		return (Math.abs(this.angleDelta) < Constants.TARGET_ANGLE_TOLERANCE && 
+		return (Math.abs(this.angleDelta) < Constants.Values.Drive.ANGLE_TOLERANCE && 
 				Math.abs(this.distanceDelta) < Constants.DEADBAND_DISTANCE);
 	}
 	

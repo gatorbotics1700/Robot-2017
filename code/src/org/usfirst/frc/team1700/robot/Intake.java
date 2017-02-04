@@ -7,8 +7,8 @@ public class Intake {
 	Victor backRoller;
 	
 	public Intake(){
-		frontRoller = new Victor(Constants.FRONT_ROLLER);
-		backRoller = new Victor(Constants.BACK_ROLLER);
+		frontRoller = new Victor(Constants.PWM.FRONT_ROLLER.getPort());
+		backRoller = new Victor(Constants.PWM.BACK_ROLLER.getPort());
 	}
 	
 	public void runIntake(){
