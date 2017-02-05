@@ -12,14 +12,14 @@ public class Constants {
 	} 
 	public static class Values {
 		public static class Drive {
-			public static final double TURNING_ANGLE_PROPORTION = 0.01,
+			public static final double TURNING_ANGLE_PROPORTION = 0.04,
 									   DRIVING_DISTANCE_PROPORTION = (1.0/36.0),
-									   ANGLE_TOLERANCE = 0.5,
+									   ANGLE_TOLERANCE = 2.0,
 									   DISTANCE_TOLERANCE = 4.0,
-									   WHEEL_DIAMETER_INCHES = 6.0,
+									   WHEEL_DIAMETER_INCHES = 4.0,
 									   DRIVE_GEAR_REDUCTION = 1.0,
 									   ENCODER_TICKS_PER_REV = 250.0,
-									   MIN_DRIVE_POWER = 0.15,
+									   MIN_DRIVE_POWER = 0.2,
 									   INTAKE_CLIMBING_SPEED = 0.6,
 									   TICKS_PER_INCH = ENCODER_TICKS_PER_REV * DRIVE_GEAR_REDUCTION / (WHEEL_DIAMETER_INCHES*Math.PI);
 									   
@@ -28,8 +28,13 @@ public class Constants {
 			public static final double GEAR_INTAKE_POSITION = 1.0,
 					BALL_DUMPING_POSITION = 0.5,
 					BALL_INTAKE_POSITION = 0.0,
-					DRIVE_SERVO_SHIFT_HIGH_POSITION = 0.6,
-					DRIVE_SERVO_SHIFT_LOW_POSITION = 0.4;
+					DRIVE_SERVO_SHIFT_HIGH_POSITION = 0.3,
+					DRIVE_SERVO_SHIFT_LOW_POSITION = 0.7;
+		}
+		public static class Auto {
+			public static final double FIRST_DISTANCE = 84, 
+									   TURN_ANGLE = 60,
+									   SECOND_DISTANCE = 65;
 		}
 	}
 	// CANTalon IDs
@@ -87,14 +92,13 @@ public class Constants {
 	// Buttons
 	public static class JoystickButtons{
 		public enum Left {
-			EXTEND_GEAR(1),
-			SHIFT_LOW_CLIMB(2),
-			DUMPER_UP(3),
-			DUMPER_DOWN(4),
-			FLAP_GEAR_POSITION(5),
-			FLAP_BALL_INTAKE_POSITION(6),
-			SHIFT_LOW_DRIVE(8),
-			SHIFT_HIGH_DRIVE(9);
+			
+			GEAR_INTAKE(1),
+			LOW_GOAL_SCORE(2),
+			BALL_INTAKE(3),
+			CLIMB(4),
+			DEFENSE(5);
+			
 			
 			private int id;
 			

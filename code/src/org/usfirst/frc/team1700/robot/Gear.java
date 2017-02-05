@@ -18,15 +18,15 @@ public class Gear {
 				Constants.Solenoids.RETRACTOR_2.getPort());
 	}
 	
-	public void gearIntakePosition() {
+	public void flapGearIntakePosition() {
 		setServos(Constants.Values.Servos.GEAR_INTAKE_POSITION);
 	}
 	
-	public void ballIntakePosition() {
+	public void flapBallIntakePosition() {
 		setServos(Constants.Values.Servos.BALL_INTAKE_POSITION);
 	}
 	
-	public void lowGoalPosition() {
+	public void flapLowGoalPosition() {
 		setServos(Constants.Values.Servos.BALL_DUMPING_POSITION);
 	}
 	
@@ -35,11 +35,11 @@ public class Gear {
 		secondFlapServo.set(1-value);
 	}
 	
-	public void retract(){
+	public void retractSlot(){
 		retractor.set(DoubleSolenoid.Value.kReverse);
 	}
 	
-	public void extend(){
+	public void extendSlot(){
 		retractor.set(DoubleSolenoid.Value.kForward);
 	}
 	

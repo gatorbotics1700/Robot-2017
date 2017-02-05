@@ -36,6 +36,13 @@ public class Robot extends IterativeRobot {
     Pose destinationPose;
     CameraData cameraData;
     NetworkTable table;
+    public enum AutoStage{
+    	DRIVE_FORWARD,
+    	TURN,
+    	SCORE;
+    }
+    
+    AutoStage currentAutoStage;
     
     public Robot() {
     	drive = new DriveTrain();
@@ -77,10 +84,30 @@ public class Robot extends IterativeRobot {
     	autoSelected = (String) chooser.getSelected();
 //		autoSelected = SmartDashboard.getString("Auto Selector", defaultAuto);
 		System.out.println("Auto selected: " + autoSelected);
+		currentAutoStage = AutoStage.DRIVE_FORWARD;
+		destinationPose = poseManager.getCurrentPose().add(new PoseDelta(0,Constants.Values.Auto.FIRST_DISTANCE));
     }
  
    
     public void autonomousPeriodic() {
+    	drive.shiftHigh();
+    	PoseDelta delta = destinationPose.subtract(poseManager.getCurrentPose());
+    	if(drive.driveByPoseDelta(delta)) {
+    		switch (currentAutoStage) {
+        	case DRIVE_FORWARD:
+        		destinationPose = poseManager.getCurrentPose().add(new PoseDelta(Constants.Values.Auto.TURN_ANGLE,0));
+        		currentAutoStage = AutoStage.TURN;
+        		break;
+        	case TURN:
+        		destinationPose = poseManager.getCurrentPose().add(new PoseDelta(0,Constants.Values.Auto.SECOND_DISTANCE));
+        		currentAutoStage = AutoStage.SCORE;
+        		break;
+        	case SCORE:
+        		destinationPose = poseManager.getCurrentPose();
+        		break;
+        	}
+    		
+    	}
 
     }
 
@@ -93,73 +120,58 @@ public class Robot extends IterativeRobot {
     
     public void teleopPeriodic() {
     	updateCameraData();
+    	poseManager.getCurrentPose();
     	if (drivePose()) {
     		destinationPose = null;
     	}
     	
-    	if (leftDriveJoystick.getRawButton(1)) {
+    	if (rightDriveJoystick.getRawButton(1)) {
     		PoseDelta delta = new PoseDelta(90, 0);
     		destinationPose = poseManager.getCurrentPose().add(delta);
     	}
     	
-    	if (rightDriveJoystick.getRawButton(1)) {
+    	if (rightDriveJoystick.getRawButton(2)) {
     		PoseDelta delta = new PoseDelta(0,12);
     		destinationPose = poseManager.getCurrentPose().add(delta);
     	}
     	
-    	if (rightDriveJoystick.getRawButton(2)) {
+    	if (rightDriveJoystick.getRawButton(3)) {
     		PoseDelta delta = new PoseDelta(-poseManager.getCurrentPose().angle,-poseManager.getCurrentPose().distance);
     		destinationPose = poseManager.getCurrentPose().add(delta);
     	}
     	
-    	// Shift high for driving
-    	if (leftDriveJoystick.getRawButton(Constants.JoystickButtons.Left.SHIFT_HIGH_DRIVE.getId())) {
-    		drive.shiftDrive(true);
-    	}
-    	
-    	// Shift low for driving
-    	if (leftDriveJoystick.getRawButton(Constants.JoystickButtons.Left.SHIFT_LOW_DRIVE.getId())) {
-    		drive.shiftDrive(false);
-    	}
-    	
-    	// Low goal: moves ramp up, stops front intake and back drives back intake, shifts gear flap
-    	if(leftDriveJoystick.getRawButton(Constants.JoystickButtons.Left.DUMPER_UP.getId())){
-    		lowGoal.moveUp();
-    		intake.lowGoalIntake();
-    		gear.lowGoalPosition();
-    	}
-    	
-    	// Moves ramp down. To be used after low goal
-    	if (leftDriveJoystick.getRawButton(Constants.JoystickButtons.Left.DUMPER_DOWN.getId())) {
+    	if(leftDriveJoystick.getRawButton(Constants.JoystickButtons.Left.GEAR_INTAKE.getId())) {
+    		drive.shiftHigh();
     		lowGoal.moveDown();
-    	}
-    	
-    	// Shifts flap for ball intake
-    	if (leftDriveJoystick.getRawButton(Constants.JoystickButtons.Left.FLAP_BALL_INTAKE_POSITION.getId())) {
-    		gear.ballIntakePosition();
-    	}
-    	
-    	// Shifts flap for gear intake. May change to be the default position.
-    	if (leftDriveJoystick.getRawButton(Constants.JoystickButtons.Left.FLAP_GEAR_POSITION.getId())) {
-    		gear.gearIntakePosition();
-    	}
-    	
-    	// Shifts low for climbing. Powers intake motor to help climb.
-    	if (leftDriveJoystick.getRawButton(Constants.JoystickButtons.Left.SHIFT_LOW_CLIMB.getId())) {
-    		drive.shiftDrive(false);
+    		intake.runIntake();
+    		gear.flapGearIntakePosition();
+    		gear.extendSlot();
+    	} else if (leftDriveJoystick.getRawButton(Constants.JoystickButtons.Left.BALL_INTAKE.getId())) {
+    		drive.shiftHigh();
+    		lowGoal.moveDown();
+    		intake.runIntake();
+    		gear.flapBallIntakePosition();
+    		gear.retractSlot();
+    	} else if (leftDriveJoystick.getRawButton(Constants.JoystickButtons.Left.CLIMB.getId())) {
+    		drive.shiftLow();
     		intake.climbIntake();
+    		lowGoal.moveDown();
+    		gear.flapGearIntakePosition();
+    		gear.retractSlot();
+    	} else if (leftDriveJoystick.getRawButton(Constants.JoystickButtons.Left.LOW_GOAL_SCORE.getId())) {
+    		drive.shiftHigh();
+    		intake.lowGoalIntake();
+    		lowGoal.moveUp();
+    		gear.flapLowGoalPosition();
+    		gear.retractSlot();
+    	} else {
+    		drive.shiftHigh();
+    		intake.runIntake();
+    		lowGoal.moveDown();
+    		gear.flapGearIntakePosition();
+    		gear.retractSlot();
     	}
     	
-    	// Aligns robot to peg
-    	if (rightDriveJoystick.getRawButton(Constants.JoystickButtons.Right.ALIGN_TO_PEG.getId())) {
-    		// TODO:integrate vision code when it's finished
-    	}
-    	
-    	if(leftDriveJoystick.getRawButton(Constants.JoystickButtons.Left.EXTEND_GEAR.getId())){
-    		gear.extend();
-    	} else{
-    		gear.retract();
-    	}
     	
     }
     

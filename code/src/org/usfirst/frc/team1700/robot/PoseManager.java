@@ -33,7 +33,7 @@ public class PoseManager {
 	}
 	
 	private double getCurrentDistance() {
-		System.out.println(leftDriveEncoder.get() + " " + rightDriveEncoder.get());
+		System.out.println("Left Encoder: " + leftDriveEncoder.get() + " Right Encoder: " + rightDriveEncoder.get());
 		return Constants.ticksToInches((leftDriveEncoder.get() + 
 				rightDriveEncoder.get())/2);
 	}

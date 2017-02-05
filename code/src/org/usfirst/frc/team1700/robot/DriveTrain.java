@@ -63,7 +63,19 @@ public class DriveTrain {
 		rightBack.set(-rightSpeed);
 	}
 	
-	public void shiftDrive(boolean highGear){
+	public void shiftHigh(){
+		rightDriveServo.set(Constants.Values.Servos.DRIVE_SERVO_SHIFT_HIGH_POSITION);
+		leftDriveServo.set(Constants.Values.Servos.DRIVE_SERVO_SHIFT_HIGH_POSITION);
+		shifter.set(DoubleSolenoid.Value.kForward);
+	}
+	
+	public void shiftLow(){
+		rightDriveServo.set(Constants.Values.Servos.DRIVE_SERVO_SHIFT_LOW_POSITION);
+		leftDriveServo.set(Constants.Values.Servos.DRIVE_SERVO_SHIFT_LOW_POSITION);
+		shifter.set(DoubleSolenoid.Value.kReverse);
+	}
+	
+	public void shiftDriveHigh(boolean highGear){
 		if (highGear){
 			rightDriveServo.set(Constants.Values.Servos.DRIVE_SERVO_SHIFT_HIGH_POSITION);
 			leftDriveServo.set(Constants.Values.Servos.DRIVE_SERVO_SHIFT_HIGH_POSITION);

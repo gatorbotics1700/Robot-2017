@@ -28,7 +28,7 @@ public class Intake {
 	}
 	
 	public void climbIntake() {
-		frontRoller.set(Constants.INTAKE_CLIMBING_SPEED);
+		frontRoller.set(Constants.Values.Drive.INTAKE_CLIMBING_SPEED);
 		backRoller.set(0);
 	}
 }

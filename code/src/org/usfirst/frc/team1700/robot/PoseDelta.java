@@ -11,7 +11,7 @@ public class PoseDelta {
 	
 	public boolean nearZero() {
 		return (Math.abs(this.angleDelta) < Constants.Values.Drive.ANGLE_TOLERANCE && 
-				Math.abs(this.distanceDelta) < Constants.DEADBAND_DISTANCE);
+				Math.abs(this.distanceDelta) < Constants.Values.Drive.DISTANCE_TOLERANCE);
 	}
 	
 	public String toString() {
