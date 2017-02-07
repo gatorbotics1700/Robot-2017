@@ -1,5 +1,6 @@
 package org.usfirst.frc.team1700.robot;
 
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Servo;
@@ -8,6 +9,8 @@ public class Gear {
 	Servo firstFlapServo;
 	Servo secondFlapServo;
 	DoubleSolenoid retractor;
+	DigitalInput beamBreakReceiver;
+	DigitalInput beamBreakEmitter;
 	
 	
 	public Gear() {
@@ -16,6 +19,8 @@ public class Gear {
 		retractor = new DoubleSolenoid(
 				Constants.Solenoids.RETRACTOR_1.getPort(), 
 				Constants.Solenoids.RETRACTOR_2.getPort());
+		beamBreakReceiver = new DigitalInput(Constants.DigitalIO.GEAR_RECEIVER_SENSOR_ID.getPort());
+		beamBreakEmitter = new DigitalInput(Constants.DigitalIO.GEAR_EMITTER_SENSOR_ID.getPort());
 	}
 	
 	public void flapGearIntakePosition() {
@@ -43,5 +48,7 @@ public class Gear {
 		retractor.set(DoubleSolenoid.Value.kForward);
 	}
 	
-	
+	public boolean gearInSlot() {
+		return (!beamBreakReceiver.get());
+	}
 }

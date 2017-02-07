@@ -241,7 +241,6 @@ public class GripPipeline implements VisionPipeline {
 		final MatOfInt hull = new MatOfInt();
 		output.clear();
 		
-		//operation
 		for (int i = 0; i < inputContours.size(); i++) {
 			final MatOfPoint contour = inputContours.get(i);
 			
@@ -267,7 +266,7 @@ public class GripPipeline implements VisionPipeline {
 			final double ratio = bb.width / (double)bb.height;
 			if (ratio < minRatio || ratio > maxRatio) continue;
 			
-			// check if opposite lines have similar  slopes
+			// filter by shape
 			final double SLOPE_DIFFERENCE = 1.0; 
 			double[] slopes = new double[4]; 
 			Point[] points = contour.toArray();

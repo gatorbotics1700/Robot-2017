@@ -21,9 +21,10 @@ public class Constants {
 									   ENCODER_TICKS_PER_REV = 250.0,
 									   MIN_DRIVE_POWER = 0.2,
 									   INTAKE_CLIMBING_SPEED = 0.6,
-									   TICKS_PER_INCH = ENCODER_TICKS_PER_REV * DRIVE_GEAR_REDUCTION / (WHEEL_DIAMETER_INCHES*Math.PI);
-									   
+									   TICKS_PER_INCH = ENCODER_TICKS_PER_REV * DRIVE_GEAR_REDUCTION / (WHEEL_DIAMETER_INCHES*Math.PI),									   
+									   CAMERA_OFFSET = 10.0;
 		}
+		
 		public static class Servos {
 			public static final double GEAR_INTAKE_POSITION = 1.0,
 					BALL_DUMPING_POSITION = 0.5,
@@ -131,8 +132,11 @@ public class Constants {
 		QUAD_ENCODER_RIGHT_2(1),
 		QUAD_ENCODER_LEFT_1(2),
 		QUAD_ENCODER_LEFT_2(3),
-		UP_SENSOR_ID(4),
-		DOWN_SENSOR_ID(5);
+		TOP_SENSOR_ID(4),
+		MIDDLE_SENSOR_ID(5),
+		BOTTOM_SENSOR_ID(6),
+		GEAR_EMITTER_SENSOR_ID(7),
+		GEAR_RECEIVER_SENSOR_ID(8);
 
 		private int port;
 		

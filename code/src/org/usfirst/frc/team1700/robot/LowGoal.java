@@ -6,13 +6,15 @@ import edu.wpi.first.wpilibj.Victor;
 
 public class LowGoal {
 	Victor rampMotor;
-	DigitalInput upSensor;
-	DigitalInput downSensor;
+	DigitalInput topSensor;
+	DigitalInput middleSensor;
+	DigitalInput bottomSensor;
 	
 	public LowGoal() {
 		rampMotor = new Victor(Constants.PWM.DUMPER_MOTOR.getPort());
-		upSensor = new DigitalInput(Constants.DigitalIO.UP_SENSOR_ID.getPort()); //TODO: Figure out what type of sensor we are using (if any)
-		downSensor = new DigitalInput(Constants.DigitalIO.DOWN_SENSOR_ID.getPort());
+		topSensor = new DigitalInput(Constants.DigitalIO.TOP_SENSOR_ID.getPort()); 
+		middleSensor = new DigitalInput(Constants.DigitalIO.MIDDLE_SENSOR_ID.getPort());
+		bottomSensor = new DigitalInput(Constants.DigitalIO.BOTTOM_SENSOR_ID.getPort());
 	}
 	
 	/**
@@ -24,20 +26,34 @@ public class LowGoal {
 
 	
 	public void moveUp() {
-		if (!upSensor.get()) {
+		if (!topSensor.get()) {
+			System.out.println("Limit Switch: " + topSensor.get());
+			if (!middleSensor.get()) {
+				System.out.println("Beam break sensor: " + middleSensor.get());
+				rampMotor.set(0.6);
+			}
 			rampMotor.set(1);
 		}
 	}
 		
 	public void moveDown() {
-		if (!downSensor.get()) {
-			rampMotor.set(-1);
+		if (!bottomSensor.get()) {
+			if (!middleSensor.get()) {
+				rampMotor.set(0.6);
+			}
+			rampMotor.set(1);
 		}
 	}
 	
 	public void moveRampManual(double speed) {
-		if (!upSensor.get() && !downSensor.get()) {
+		if (!topSensor.get() && speed < 0) {
 			rampMotor.set(speed);
+		} else if (!bottomSensor.get() && speed > 0) {
+			rampMotor.set(speed);
+		} else {
+			rampMotor.set(0);
 		}
 	}
+	
+	
 }

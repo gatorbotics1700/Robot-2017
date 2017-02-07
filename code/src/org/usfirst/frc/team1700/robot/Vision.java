@@ -88,8 +88,6 @@ public class Vision {
 				double d1 = getDistance(r1);
 				double d2 = getDistance(r2);
 				double distance = (d1+d2)/2;
-				double angle = getAngle(distance, r1, r2);
-				angleDegrees = Constants.radiansToDegrees(angle);
 				pinholeAngleDegrees = pinHole(r1, r2);
 				table.putNumber("Time", System.currentTimeMillis());
 				table.putNumber("Angle", pinholeAngleDegrees);
@@ -103,7 +101,7 @@ public class Vision {
 		System.out.println("Focal length" + FOCAL_LENGTH);
 		double cx = IMG_WIDTH/2 - 0.5;
 		double cy = IMG_HEIGHT/2 - 0.5;
-		double rectCenter = (rightRect.x - (leftRect.x + leftRect.width))/2 + leftRect.x + leftRect.width;
+		double rectCenter = ((rightRect.x - (leftRect.x + leftRect.width))/2 + leftRect.x + leftRect.width) + Constants.CAMERA_OFFSET;
 		System.out.println("Rect center: " + rectCenter);
 		double angleToTarget = Math.atan((rectCenter - cx)/FOCAL_LENGTH);
 		return Constants.radiansToDegrees(angleToTarget);
@@ -162,7 +160,6 @@ public class Vision {
 
 		return horizontalOffset; 
 	}
-	
 }
 
 
