@@ -28,7 +28,7 @@ public class LowGoal {
 	public void moveUp() {
 		if (!topSensor.get()) {
 			System.out.println("Limit Switch: " + topSensor.get());
-			if (depthSensor.getRangeInches() > 10) {
+			if (depthSensor.getRangeInches() > Constants.RAMP_MOVEMENT_VERTICAL_DIST*Constants.RAMP_SLOW_DOWN_POINT) {
 				System.out.println("Depth sensor: "+ depthSensor.getRangeInches());
 				rampMotor.set(0.6);
 			}
@@ -38,7 +38,7 @@ public class LowGoal {
 		
 	public void moveDown() {
 		if (!bottomSensor.get()) {
-			if (depthSensor.getRangeInches() > 10) {
+			if (depthSensor.getRangeInches() < Constants.RAMP_MOVEMENT_VERTICAL_DIST*Constants.RAMP_SLOW_DOWN_POINT) {
 				System.out.println("Depth sensor: "+ depthSensor.getRangeInches());
 				rampMotor.set(-0.6);
 			}
