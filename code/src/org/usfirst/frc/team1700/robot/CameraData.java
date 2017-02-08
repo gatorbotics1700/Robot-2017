@@ -3,17 +3,20 @@ package org.usfirst.frc.team1700.robot;
 import edu.wpi.first.wpilibj.networktables.NetworkTable;
 
 public class CameraData {
-	double angle;
 	long timestamp;
+	double angle;
+	double distance;
 	
 	public CameraData() {
-		angle = 0;
 		timestamp = 0;
+		angle = 0;
+		distance = 0;
 	}
 	
-	public CameraData(double angle, long timestamp) {
-		angle = this.angle;
-		timestamp = this.timestamp;
+	public CameraData(long timestamp, double angle, double distance) {
+		this.timestamp = timestamp;
+		this.angle = angle;
+		this.distance = distance;
 	}
 
 }

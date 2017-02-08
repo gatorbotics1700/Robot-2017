@@ -37,6 +37,7 @@ public class Constants {
 									   TURN_ANGLE = 60,
 									   SECOND_DISTANCE = 65;
 		}
+		
 	}
 	// CANTalon IDs
 	public enum CanBus {
@@ -56,7 +57,6 @@ public class Constants {
 		}
 	}
 	
-	public static final double CAMERA_OFFSET = 8.0;
 
 	public enum PWM {
 		LEFT_DRIVE_SERVO_ID(0),

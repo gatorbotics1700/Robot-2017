@@ -99,7 +99,7 @@ public class Robot extends IterativeRobot {
         		currentAutoStage = AutoStage.TURN;
         		break;
         	case TURN:
-        		destinationPose = poseManager.getCurrentPose().add(new PoseDelta(0,Constants.Values.Auto.SECOND_DISTANCE));
+        		destinationPose = poseManager.getCurrentPose().add(new PoseDelta(cameraData.angle, Constants.Values.Auto.SECOND_DISTANCE));
         		currentAutoStage = AutoStage.SCORE;
         		break;
         	case SCORE:
@@ -171,14 +171,13 @@ public class Robot extends IterativeRobot {
     		gear.flapGearIntakePosition();
     		gear.retractSlot();
     	}
-    	
-    	
     }
     
     public CameraData getCameraDataValues() {
     	double angle = table.getNumber("Angle", 0);
     	long timestamp = (long) table.getNumber("Time", 0);
-    	return new CameraData(angle, timestamp);
+    	double distance = table.getNumber("Distance", 0);
+    	return new CameraData(timestamp, angle, distance);
     }
     
     public boolean updateCameraData() {

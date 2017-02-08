@@ -24,6 +24,7 @@ import edu.wpi.first.wpilibj.vision.VisionThread;
 public class Vision {
 	private static final int IMG_WIDTH = 320;
 	private static final int IMG_HEIGHT = 240;
+	private static final double CAMERA_OFFSET = 8;
 	private static final double HORIZONTAL_FOV = Constants.degreesToRadians(47);
 
 	private double centerX;
@@ -40,8 +41,8 @@ public class Vision {
 	private static final double VISION_HEIGHT_CONSTANT = 3956;
 	private static final double VISION_DISTANCE = 30;
 	private static final double TARGET_HEIGHT_INCHES = 6;
-	double angleDegrees;
-	double pinholeAngleDegrees;
+	double distance;
+	double angle;
 
 	//	private final NetworkTable table;
 
@@ -86,12 +87,12 @@ public class Vision {
 				double d1 = getDistance(r1);
 				double d2 = getDistance(r2);
 				double distance = (d1+d2)/2;
-				pinholeAngleDegrees = pinHole(r1, r2);
+				double pinholeAngleDegrees = pinHole(r1, r2);
 				double h1 = getDistance(r1);
-				double offsetCameraAngle = accountForCameraOffset(Constants.CAMERA_OFFSET, h1);
 				
 				table.putNumber("Time", System.currentTimeMillis());
-				table.putNumber("Angle", pinholeAngleDegrees);
+				table.putNumber("Angle", angle);
+				table.putNumber("Distance", distance);
 			}
 		});
 		visionThread.start();
@@ -102,7 +103,7 @@ public class Vision {
 		System.out.println("Focal length" + FOCAL_LENGTH);
 		double cx = IMG_WIDTH/2 - 0.5;
 		double cy = IMG_HEIGHT/2 - 0.5;
-		double rectCenter = ((rightRect.x - (leftRect.x + leftRect.width))/2 + leftRect.x + leftRect.width) + Constants.CAMERA_OFFSET;
+		double rectCenter = ((rightRect.x - (leftRect.x + leftRect.width))/2 + leftRect.x + leftRect.width) + CAMERA_OFFSET;
 		System.out.println("Rect center: " + rectCenter);
 		double angleToTarget = Math.atan((rectCenter - cx)/FOCAL_LENGTH);
 		return Constants.radiansToDegrees(angleToTarget);
@@ -162,15 +163,14 @@ public class Vision {
 		return horizontalOffset; 
 	}
 	
-	public double accountForCameraOffset(double x, double hypWithoutOffset) {
+	public void accountForCameraOffset(double pinholeAngleDegrees, double x, double hypWithoutOffset) {
 		double originalTargetAngle = 90 - pinholeAngleDegrees;
 		double horizontalDistNoOffset = Math.cos(originalTargetAngle) * hypWithoutOffset;
-		double verticalDistance = Math.acos(horizontalDistNoOffset/hypWithoutOffset);
+		double verticalDistance = Math.sqrt(Math.pow(hypWithoutOffset, 2) - Math.pow(horizontalDistNoOffset, 2));
 		double horizontalDistOffset = horizontalDistNoOffset + x;
-		double hypWithOffset = Math.sqrt(verticalDistance*verticalDistance + horizontalDistOffset*horizontalDistOffset);
-		double offsetTargetAngle = Math.sin(verticalDistance/hypWithOffset);
-		double theta2 = 90-offsetTargetAngle;
-		return theta2;
+		distance = Math.sqrt(Math.pow(verticalDistance, 2) + Math.pow(horizontalDistOffset, 2));
+		double offsetTargetAngle = Math.sin(verticalDistance/distance);
+		angle = 90-offsetTargetAngle;
 	}
 }
 
