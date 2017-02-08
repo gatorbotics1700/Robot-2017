@@ -55,6 +55,8 @@ public class Constants {
 			return this.id;
 		}
 	}
+	
+	public static final double CAMERA_OFFSET = 8.0;
 
 	public enum PWM {
 		LEFT_DRIVE_SERVO_ID(0),

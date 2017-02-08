@@ -25,8 +25,6 @@ public class Vision {
 	private static final int IMG_WIDTH = 320;
 	private static final int IMG_HEIGHT = 240;
 	private static final double HORIZONTAL_FOV = Constants.degreesToRadians(47);
-	
-
 
 	private double centerX;
 	AxisCamera visionCamera;
@@ -89,6 +87,9 @@ public class Vision {
 				double d2 = getDistance(r2);
 				double distance = (d1+d2)/2;
 				pinholeAngleDegrees = pinHole(r1, r2);
+				double h1 = getDistance(r1);
+				double offsetCameraAngle = accountForCameraOffset(Constants.CAMERA_OFFSET, h1);
+				
 				table.putNumber("Time", System.currentTimeMillis());
 				table.putNumber("Angle", pinholeAngleDegrees);
 			}
@@ -159,6 +160,17 @@ public class Vision {
 
 
 		return horizontalOffset; 
+	}
+	
+	public double accountForCameraOffset(double x, double hypWithoutOffset) {
+		double originalTargetAngle = 90 - pinholeAngleDegrees;
+		double horizontalDistNoOffset = Math.cos(originalTargetAngle) * hypWithoutOffset;
+		double verticalDistance = Math.acos(horizontalDistNoOffset/hypWithoutOffset);
+		double horizontalDistOffset = horizontalDistNoOffset + x;
+		double hypWithOffset = Math.sqrt(verticalDistance*verticalDistance + horizontalDistOffset*horizontalDistOffset);
+		double offsetTargetAngle = Math.sin(verticalDistance/hypWithOffset);
+		double theta2 = 90-offsetTargetAngle;
+		return theta2;
 	}
 }
 
