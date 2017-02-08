@@ -8,7 +8,7 @@ public class CircularBuffer {
 	int currentPos;
 	
 	public CircularBuffer(double historyLength) {
-		circularBuffer = new ArrayList<Pose>(historyLength);
+		circularBuffer = new ArrayList<Pose>((int) (historyLength/50));
 		currentPos = 0;
 	}
 	
@@ -19,8 +19,8 @@ public class CircularBuffer {
 	}
 	
 	public Pose getHistory(double millisecondOffset) {
-		int firstOffset = Int(millisecondOffset/50);
-		int secondOffset = firstIndex + 1; 
+		int firstOffset = (int)(millisecondOffset/50);
+		int secondOffset = firstOffset + 1; 
 		double firstError = millisecondOffset - (firstOffset * 50);
 		double secondError = (secondOffset * 50) - millisecondOffset;
 		double firstProp = secondError / 50.0; 

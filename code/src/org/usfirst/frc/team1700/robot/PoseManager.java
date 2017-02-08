@@ -22,7 +22,7 @@ public class PoseManager {
 				Constants.DigitalIO.QUAD_ENCODER_RIGHT_1.getPort(), 
 				Constants.DigitalIO.QUAD_ENCODER_RIGHT_2.getPort(),
 				false);
-		poseHistory = new CircularBuffer(Constants.MILLISECOND_HISTORY_LENGTH/50);
+		poseHistory = new CircularBuffer(Constants.Values.Drive.MILLISECOND_HISTORY_LENGTH);
 	}
 	
 	public Pose getCurrentPose() {
