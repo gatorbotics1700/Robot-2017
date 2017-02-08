@@ -37,7 +37,6 @@ public class Constants {
 									   TURN_ANGLE = 60,
 									   SECOND_DISTANCE = 65;
 		}
-		
 		public static class Vision {
 			public static final int CAMERA_EXPOSURE = 1;
 		}
@@ -60,7 +59,6 @@ public class Constants {
 		}
 	}
 	
-	public static final double CAMERA_OFFSET = 8.0;
 
 	public enum PWM {
 		LEFT_DRIVE_SERVO_ID(0),
