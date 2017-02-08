@@ -1,19 +1,19 @@
 package org.usfirst.frc.team1700.robot;
 
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.Ultrasonic;
 import edu.wpi.first.wpilibj.Victor;
 
 public class LowGoal {
 	Victor rampMotor;
 	DigitalInput topSensor;
-	DigitalInput middleSensor;
+	Ultrasonic depthSensor;
 	DigitalInput bottomSensor;
 	
 	public LowGoal() {
 		rampMotor = new Victor(Constants.PWM.DUMPER_MOTOR.getPort());
 		topSensor = new DigitalInput(Constants.DigitalIO.TOP_SENSOR_ID.getPort()); 
-		middleSensor = new DigitalInput(Constants.DigitalIO.MIDDLE_SENSOR_ID.getPort());
+		depthSensor = new Ultrasonic(1,1);
 		bottomSensor = new DigitalInput(Constants.DigitalIO.BOTTOM_SENSOR_ID.getPort());
 	}
 	
@@ -28,8 +28,8 @@ public class LowGoal {
 	public void moveUp() {
 		if (!topSensor.get()) {
 			System.out.println("Limit Switch: " + topSensor.get());
-			if (!middleSensor.get()) {
-				System.out.println("Beam break sensor: " + middleSensor.get());
+			if (depthSensor.getRangeInches() > Constants.RAMP_MOVEMENT_VERTICAL_DIST*Constants.RAMP_SLOW_DOWN_POINT) {
+				System.out.println("Depth sensor: "+ depthSensor.getRangeInches());
 				rampMotor.set(0.6);
 			}
 			rampMotor.set(1);
@@ -38,10 +38,11 @@ public class LowGoal {
 		
 	public void moveDown() {
 		if (!bottomSensor.get()) {
-			if (!middleSensor.get()) {
-				rampMotor.set(0.6);
+			if (depthSensor.getRangeInches() < Constants.RAMP_MOVEMENT_VERTICAL_DIST*Constants.RAMP_SLOW_DOWN_POINT) {
+				System.out.println("Depth sensor: "+ depthSensor.getRangeInches());
+				rampMotor.set(-0.6);
 			}
-			rampMotor.set(1);
+			rampMotor.set(-1);
 		}
 	}
 	

@@ -150,6 +150,9 @@ public class Constants {
 		}
 	}
 	
+	public static final double RAMP_MOVEMENT_VERTICAL_DIST = 20.0,
+							   RAMP_SLOW_DOWN_POINT = 0.5;
+	
 	public enum Solenoids {
 		SHIFTER_1(1),
         SHIFTER_2(2),
