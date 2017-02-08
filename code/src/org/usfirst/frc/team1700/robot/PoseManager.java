@@ -10,6 +10,7 @@ public class PoseManager {
 	AHRS NavX;
 	Encoder leftDriveEncoder;
 	Encoder rightDriveEncoder;
+	CircularBuffer poseHistory;
 	
 	public PoseManager() {
 		NavX = new AHRS(SPI.Port.kMXP);
@@ -21,11 +22,16 @@ public class PoseManager {
 				Constants.DigitalIO.QUAD_ENCODER_RIGHT_1.getPort(), 
 				Constants.DigitalIO.QUAD_ENCODER_RIGHT_2.getPort(),
 				false);
+		poseHistory = new CircularBuffer(Constants.MILLISECOND_HISTORY_LENGTH/50);
 	}
 	
 	public Pose getCurrentPose() {
 		Pose currentPose = new Pose(getCurrentAngle(), getCurrentDistance());
 		return currentPose;
+	}
+	
+	public void storeCurrentPose() {
+		poseHistory.add(getCurrentPose());
 	}
 	
 	private double getCurrentAngle() {

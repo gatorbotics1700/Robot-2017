@@ -90,6 +90,7 @@ public class Robot extends IterativeRobot {
  
    
     public void autonomousPeriodic() {
+    	poseManager.storeCurrentPos();
     	drive.shiftHigh();
     	PoseDelta delta = destinationPose.subtract(poseManager.getCurrentPose());
     	if(drive.driveByPoseDelta(delta)) {

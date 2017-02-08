@@ -23,6 +23,7 @@ public class Constants {
 									   INTAKE_CLIMBING_SPEED = 0.6,
 									   TICKS_PER_INCH = ENCODER_TICKS_PER_REV * DRIVE_GEAR_REDUCTION / (WHEEL_DIAMETER_INCHES*Math.PI),									   
 									   CAMERA_OFFSET = 10.0;
+			public static final int MILLISECOND_HISTORY_LENGTH = 2000;
 		}
 		
 		public static class Servos {
@@ -37,6 +38,7 @@ public class Constants {
 									   TURN_ANGLE = 60,
 									   SECOND_DISTANCE = 65;
 		}
+		
 	}
 	// CANTalon IDs
 	public enum CanBus {
