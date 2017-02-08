@@ -64,9 +64,10 @@ public class Vision {
 		visionCamera.setResolution(IMG_WIDTH, IMG_HEIGHT);
 		visionCamera.setExposureManual(8);
 		
-		CameraServer.getInstance().startAutomaticCapture(visionCamera);
-		//		UsbCamera alignCamera = CameraServer.getInstance().startAutomaticCapture();
 
+		CameraServer.getInstance().startAutomaticCapture(visionCamera);
+		UsbCamera alignCamera = CameraServer.getInstance().startAutomaticCapture();
+		alignCamera.setExposureManual(Constants.Values.Vision.CAMERA_EXPOSURE);
 		
 		// Starts loop for vision pipeline. 
 		visionThread = new VisionThread(visionCamera, new GripPipeline(), pipeline -> {
