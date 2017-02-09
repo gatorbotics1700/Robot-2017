@@ -93,17 +93,32 @@ public class Robot extends IterativeRobot {
     	poseManager.storeCurrentPose();
     	drive.shiftHigh();
     	PoseDelta delta = destinationPose.subtract(poseManager.getCurrentPose());
-    	if(drive.driveByPoseDelta(delta)) {
     		switch (currentAutoStage) {
         	case DRIVE_FORWARD:
-        		destinationPose = poseManager.getCurrentPose().add(new PoseDelta(Constants.Values.Auto.TURN_ANGLE,0));
-        		currentAutoStage = AutoStage.TURN;
+        		if(drive.driveByPoseDelta(delta)) {
+        			destinationPose = poseManager.getCurrentPose().add(new PoseDelta(Constants.Values.Auto.TURN_ANGLE,0));
+        			currentAutoStage = AutoStage.TURN;
+        		}
         		break;
         	case TURN:
-        		destinationPose = poseManager.getCurrentPose().add(new PoseDelta(cameraData.angle, Constants.Values.Auto.SECOND_DISTANCE));
-        		currentAutoStage = AutoStage.SCORE;
+        		if (drive.driveByPoseDelta(delta)) {
+        			destinationPose = poseManager.getCurrentPose().add(new PoseDelta(0,Constants.Values.Auto.SECOND_DISTANCE));
+        			currentAutoStage = AutoStage.SCORE;
+        			cameraData.timestamp = System.currentTimeMillis();
+        			cameraData.angle = 0;
+        		}
         		break;
         	case SCORE:
+        		if(updateCameraData()) {
+        			destinationPose = poseManager.getCurrentPose().add(new PoseDelta(cameraData.angle, Constants.Values.Auto.SECOND_DISTANCE));
+        			Pose pastPose = poseManager.poseHistory.getHistory(System.currentTimeMillis()-cameraData.timestamp);
+        			double newDistance = Math.sqrt(Math.pow(pastPose.distance,2)+Math.pow(pastPose.distance,2)-2*pastPose.distance*pastPose.distance*Math.cos(pastPose.angle));
+        			double insideAngle = Math.asin(Math.sin(pastPose.angle)/newDistance*pastPose.distance);
+        			double newAngle = Constants.radiansToDegrees(Math.PI - insideAngle);
+        			Pose newPose = new Pose(newAngle,Constants.Values.Auto.SECOND_DISTANCE);
+        			delta = destinationPose.subtract(poseManager.getCurrentPose());
+        		}
+        		drive.driveByPoseDelta(delta);
         		destinationPose = poseManager.getCurrentPose();
         		break;
         	}
@@ -176,19 +191,19 @@ public class Robot extends IterativeRobot {
     }
     
     public CameraData getCameraDataValues() {
-    	double angle = table.getNumber("Angle", 0);
-    	long timestamp = (long) table.getNumber("Time", 0);
-    	double distance = table.getNumber("Distance", 0);
-    	return new CameraData(timestamp, angle, distance);
+    		double angle = table.getNumber("Angle", 0);
+    		long timestamp = (long) table.getNumber("Time", 0);
+    		double distance = table.getNumber("Distance", 0);
+    		return new CameraData(timestamp, angle, distance);
     }
     
     public boolean updateCameraData() {
-    	CameraData newCameraData = getCameraDataValues();
-    	if(newCameraData.timestamp > cameraData.timestamp) {
-    		cameraData = newCameraData;
-    		return true;
-    	}
-    	return false;
+    		CameraData newCameraData = getCameraDataValues();
+    		if(newCameraData.timestamp > cameraData.timestamp) {
+    			cameraData = newCameraData;
+    			return true;
+    		}
+    		return false;
     }
     
     public boolean drivePose() {

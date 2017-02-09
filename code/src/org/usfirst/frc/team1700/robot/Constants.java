@@ -38,6 +38,7 @@ public class Constants {
 									   TURN_ANGLE = 60,
 									   SECOND_DISTANCE = 65;
 		}
+
 		public static class Vision {
 			public static final int CAMERA_EXPOSURE = -10;
 		}
