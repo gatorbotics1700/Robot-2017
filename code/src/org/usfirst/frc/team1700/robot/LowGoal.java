@@ -13,7 +13,7 @@ public class LowGoal {
 	public LowGoal() {
 		rampMotor = new Victor(Constants.PWM.DUMPER_MOTOR.getPort());
 		topSensor = new DigitalInput(Constants.DigitalIO.TOP_SENSOR_ID.getPort()); 
-		depthSensor = new Ultrasonic(1,1);
+		depthSensor = new Ultrasonic(Constants.DigitalIO.ULTRASONIC_SENSOR.getPort(), 10);//Constants.DigitalIO.ULTRASONIC_SENSOR.getPort());
 		bottomSensor = new DigitalInput(Constants.DigitalIO.BOTTOM_SENSOR_ID.getPort());
 	}
 	

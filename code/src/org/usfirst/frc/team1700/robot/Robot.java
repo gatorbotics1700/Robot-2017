@@ -46,7 +46,7 @@ public class Robot extends IterativeRobot {
     
     public Robot() {
     	drive = new DriveTrain();
-    	//vision = new Vision();
+    	vision = new Vision();
         gear = new Gear();
         lowGoal = new LowGoal();
         intake = new Intake();
@@ -90,7 +90,7 @@ public class Robot extends IterativeRobot {
  
    
     public void autonomousPeriodic() {
-    	poseManager.storeCurrentPos();
+    	poseManager.storeCurrentPose();
     	drive.shiftHigh();
     	PoseDelta delta = destinationPose.subtract(poseManager.getCurrentPose());
     	if(drive.driveByPoseDelta(delta)) {
@@ -114,6 +114,7 @@ public class Robot extends IterativeRobot {
 
     @Override
     public void teleopInit() {
+    	vision.initVision();
         destinationPose = null;
     }
     

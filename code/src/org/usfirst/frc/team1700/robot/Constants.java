@@ -38,13 +38,9 @@ public class Constants {
 									   TURN_ANGLE = 60,
 									   SECOND_DISTANCE = 65;
 		}
-<<<<<<< HEAD
-		
-=======
 		public static class Vision {
-			public static final int CAMERA_EXPOSURE = 1;
+			public static final int CAMERA_EXPOSURE = -10;
 		}
->>>>>>> 1ad88f2f348e9beb37cbdfd9c519e9605158c509
 	}
 	// CANTalon IDs
 	public enum CanBus {
@@ -145,7 +141,8 @@ public class Constants {
 		MIDDLE_SENSOR_ID(5),
 		BOTTOM_SENSOR_ID(6),
 		GEAR_EMITTER_SENSOR_ID(7),
-		GEAR_RECEIVER_SENSOR_ID(8);
+		GEAR_RECEIVER_SENSOR_ID(8),
+		ULTRASONIC_SENSOR(9);
 
 		private int port;
 		

@@ -61,17 +61,19 @@ public class Vision {
 	 * Calculates distance and angle to centerpoint of target.  
 	 */
 	public void initVision() {
-		visionCamera = CameraServer.getInstance().addAxisCamera("axis-camera");
-		visionCamera.setResolution(IMG_WIDTH, IMG_HEIGHT);
-		visionCamera.setExposureManual(8);
+//		visionCamera = CameraServer.getInstance().addAxisCamera("axis-camera");
+//		visionCamera.setResolution(IMG_WIDTH, IMG_HEIGHT);
+//		visionCamera.setExposureManual(8);
 		
 
-		CameraServer.getInstance().startAutomaticCapture(visionCamera);
+//		CameraServer.getInstance().startAutomaticCapture(visionCamera);
 		UsbCamera alignCamera = CameraServer.getInstance().startAutomaticCapture();
 		alignCamera.setExposureManual(Constants.Values.Vision.CAMERA_EXPOSURE);
+		alignCamera.setResolution(IMG_WIDTH, IMG_HEIGHT);
 		
 		// Starts loop for vision pipeline. 
-		visionThread = new VisionThread(visionCamera, new GripPipeline(), pipeline -> {
+		visionThread = new VisionThread(alignCamera, new GripPipeline(), pipeline -> {
+			
 			if (pipeline.filterContoursOutput().size() == 2) { //works if identifies two vision targets
 				MatOfPoint mp1 = pipeline.filterContoursOutput().get(0);
 				MatOfPoint mp2 = pipeline.filterContoursOutput().get(1);
