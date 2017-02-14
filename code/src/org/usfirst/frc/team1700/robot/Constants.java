@@ -38,7 +38,8 @@ public class Constants {
 			public static final double FIRST_DISTANCE = 90, 
 									   TURN_ANGLE = 60,
 									   SECOND_DISTANCE = 65,
-									   BACK_UP_DISTANCE = 25;
+									   BACK_UP_DISTANCE = 25,
+									   WAIT_TIME = 2;
 		}
 
 		public static class Vision {
