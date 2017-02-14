@@ -20,15 +20,9 @@ public class DriveTrain {
     CANTalon rightBack;
     CANTalon leftFront;
     CANTalon leftBack;
-    Servo leftDriveServo;
-    Servo rightDriveServo;
     DoubleSolenoid shifter;
-  
-	 
     
 	public DriveTrain() {
-		leftDriveServo = new Servo(Constants.PWM.LEFT_DRIVE_SERVO_ID.getPort());
-		rightDriveServo = new Servo(Constants.PWM.RIGHT_DRIVE_SERVO_ID.getPort());
 		rightFront = new CANTalon(Constants.CanBus.DRIVE_RIGHT_FRONT.getId()); 
 		rightBack = new CANTalon(Constants.CanBus.DRIVE_RIGHT_BACK.getId());
 		leftFront = new CANTalon(Constants.CanBus.DRIVE_LEFT_FRONT.getId());
@@ -37,6 +31,13 @@ public class DriveTrain {
 				Constants.Solenoids.SHIFTER_1.getPort(),
 				Constants.Solenoids.SHIFTER_2.getPort());
 
+	}
+	
+	public void setDriveVoltageRampRates() {
+		rightFront.setVoltageRampRate(Constants.Values.Drive.VOLTAGE_RAMP_RATE);
+		rightBack.setVoltageRampRate(Constants.Values.Drive.VOLTAGE_RAMP_RATE);
+		leftFront.setVoltageRampRate(Constants.Values.Drive.VOLTAGE_RAMP_RATE);
+		leftBack.setVoltageRampRate(Constants.Values.Drive.VOLTAGE_RAMP_RATE);
 	}
 	
 	public boolean driveByPoseDelta(PoseDelta poseDelta) {
@@ -50,7 +51,9 @@ public class DriveTrain {
 		rightSpeed = Math.copySign(Math.max(Constants.Values.Drive.MIN_DRIVE_POWER, Math.abs(rightSpeed)), rightSpeed);
 		double leftSpeed = distanceSpeed - angleSpeed;
 		leftSpeed = Math.copySign(Math.max(Constants.Values.Drive.MIN_DRIVE_POWER, Math.abs(leftSpeed)), leftSpeed);
-		
+		System.out.println("Delta: " + poseDelta);
+		System.out.println("Portions: " + angleSpeed + ", " + distanceSpeed);
+		System.out.println("Speeds:" + leftSpeed + ", " + rightSpeed);
 		driveTank(leftSpeed, rightSpeed);
 	
 		return false;
@@ -63,27 +66,11 @@ public class DriveTrain {
 		rightBack.set(-rightSpeed);
 	}
 	
-	public void shiftHigh(){
-		rightDriveServo.set(Constants.Values.Servos.DRIVE_SERVO_SHIFT_HIGH_POSITION);
-		leftDriveServo.set(Constants.Values.Servos.DRIVE_SERVO_SHIFT_HIGH_POSITION);
-		shifter.set(DoubleSolenoid.Value.kForward);
-	}
-	
-	public void shiftLow(){
-		rightDriveServo.set(Constants.Values.Servos.DRIVE_SERVO_SHIFT_LOW_POSITION);
-		leftDriveServo.set(Constants.Values.Servos.DRIVE_SERVO_SHIFT_LOW_POSITION);
-		shifter.set(DoubleSolenoid.Value.kReverse);
-	}
-	
 	public void shiftDriveHigh(boolean highGear){
 		if (highGear){
-			rightDriveServo.set(Constants.Values.Servos.DRIVE_SERVO_SHIFT_HIGH_POSITION);
-			leftDriveServo.set(Constants.Values.Servos.DRIVE_SERVO_SHIFT_HIGH_POSITION);
 			shifter.set(DoubleSolenoid.Value.kForward);
 			
 		} else {
-			rightDriveServo.set(Constants.Values.Servos.DRIVE_SERVO_SHIFT_LOW_POSITION);
-			leftDriveServo.set(Constants.Values.Servos.DRIVE_SERVO_SHIFT_LOW_POSITION);
 			shifter.set(DoubleSolenoid.Value.kReverse);
 		}
 	}

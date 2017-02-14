@@ -1,60 +1,72 @@
 package org.usfirst.frc.team1700.robot;
 
+import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Ultrasonic;
 import edu.wpi.first.wpilibj.Victor;
 
 public class LowGoal {
-	Victor rampMotor;
+	Victor firstRampMotor;
+	Victor secondRampMotor;
 	DigitalInput topSensor;
-	Ultrasonic depthSensor;
 	DigitalInput bottomSensor;
+	AnalogInput depthSensor;
 	
 	public LowGoal() {
-		rampMotor = new Victor(Constants.PWM.DUMPER_MOTOR.getPort());
+		firstRampMotor = new Victor(Constants.PWM.FIRST_DUMPER_MOTOR.getPort());
+		secondRampMotor = new Victor(Constants.PWM.SECOND_DUMPER_MOTOR.getPort());
 		topSensor = new DigitalInput(Constants.DigitalIO.TOP_SENSOR_ID.getPort()); 
-		depthSensor = new Ultrasonic(Constants.DigitalIO.ULTRASONIC_SENSOR.getPort(), 10);//Constants.DigitalIO.ULTRASONIC_SENSOR.getPort());
+		depthSensor = new AnalogInput(Constants.AnalogInput.RAMP_RANGEFINDER.getPort());
 		bottomSensor = new DigitalInput(Constants.DigitalIO.BOTTOM_SENSOR_ID.getPort());
 	}
 	
-	/**
-	 * Moves the ramp up or down depending on joystick input.
-	 * Stops the movement when sensors are triggered.
-	 * 
-	 * @param joy The joystick controlling the low goal shooter ramp.
-	 */
-
+	public int getRampHeight() {
+		int distance = depthSensor.getValue();
+		return distance;
+	}
 	
 	public void moveUp() {
 		if (!topSensor.get()) {
 			System.out.println("Limit Switch: " + topSensor.get());
-			if (depthSensor.getRangeInches() > Constants.RAMP_MOVEMENT_VERTICAL_DIST*Constants.RAMP_SLOW_DOWN_POINT) {
-				System.out.println("Depth sensor: "+ depthSensor.getRangeInches());
-				rampMotor.set(0.6);
+			if (getRampHeight() > Constants.RAMP_MOVEMENT_VERTICAL_DIST*Constants.RAMP_SLOW_DOWN_POINT) {
+				firstRampMotor.set(Constants.Values.Drive.MID_RAMP_SPEED);
+				secondRampMotor.set(Constants.Values.Drive.MID_RAMP_SPEED);
 			}
-			rampMotor.set(1);
+			firstRampMotor.set(1);
+			secondRampMotor.set(1);
+		}
+		else {
+			firstRampMotor.set(0);
+			secondRampMotor.set(0);
 		}
 	}
+	
 		
 	public void moveDown() {
 		if (!bottomSensor.get()) {
-			if (depthSensor.getRangeInches() < Constants.RAMP_MOVEMENT_VERTICAL_DIST*Constants.RAMP_SLOW_DOWN_POINT) {
-				System.out.println("Depth sensor: "+ depthSensor.getRangeInches());
-				rampMotor.set(-0.6);
+			if (getRampHeight() < Constants.RAMP_MOVEMENT_VERTICAL_DIST*Constants.RAMP_SLOW_DOWN_POINT) {
+				firstRampMotor.set(-Constants.Values.Drive.MID_RAMP_SPEED);
+				secondRampMotor.set(-Constants.Values.Drive.MID_RAMP_SPEED);
 			}
-			rampMotor.set(-1);
+			firstRampMotor.set(-1);
+			secondRampMotor.set(-1);
+		} else {
+			firstRampMotor.set(0);
+			secondRampMotor.set(0);
 		}
 	}
 	
 	public void moveRampManual(double speed) {
 		if (!topSensor.get() && speed < 0) {
-			rampMotor.set(speed);
+			firstRampMotor.set(speed);
+			secondRampMotor.set(speed);
 		} else if (!bottomSensor.get() && speed > 0) {
-			rampMotor.set(speed);
+			firstRampMotor.set(speed);
+			secondRampMotor.set(speed);
 		} else {
-			rampMotor.set(0);
+			firstRampMotor.set(0);
+			secondRampMotor.set(0);
 		}
 	}
-	
 	
 }

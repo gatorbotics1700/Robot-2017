@@ -12,9 +12,14 @@ public class CircularBuffer {
 		currentPos = 0;
 	}
 	
+	public void addInitialPose(Pose pose) {
+		circularBuffer.add(currentPos, pose);
+	}
+	
 	public void add(Pose pose) {
 		currentPos++;
-		currentPos %= circularBuffer.size();
+		System.out.println("buffer size: " + circularBuffer.size());
+		currentPos = currentPos % circularBuffer.size();
 		circularBuffer.add(currentPos, pose);
 	}
 	

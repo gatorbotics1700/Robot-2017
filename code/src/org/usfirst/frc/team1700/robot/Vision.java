@@ -68,8 +68,8 @@ public class Vision {
 
 //		CameraServer.getInstance().startAutomaticCapture(visionCamera);
 		UsbCamera alignCamera = CameraServer.getInstance().startAutomaticCapture();
-		alignCamera.setExposureManual(Constants.Values.Vision.CAMERA_EXPOSURE);
-		alignCamera.setResolution(IMG_WIDTH, IMG_HEIGHT);
+//		alignCamera.setExposureManual(Constants.Values.Vision.CAMERA_EXPOSURE);
+//		alignCamera.setResolution(IMG_WIDTH, IMG_HEIGHT);
 		
 		// Starts loop for vision pipeline. 
 		visionThread = new VisionThread(alignCamera, new GripPipeline(), pipeline -> {
@@ -97,6 +97,10 @@ public class Vision {
 				table.putNumber("Angle", angle);
 				table.putNumber("Distance", distance);
 			}
+			else {
+				System.out.println(pipeline.filterContoursOutput().size());
+				System.out.println("No targets detected");
+			}
 		});
 		visionThread.start();
 	}
@@ -106,7 +110,7 @@ public class Vision {
 		System.out.println("Focal length" + FOCAL_LENGTH);
 		double cx = IMG_WIDTH/2 - 0.5;
 		double cy = IMG_HEIGHT/2 - 0.5;
-		double rectCenter = ((rightRect.x - (leftRect.x + leftRect.width))/2 + leftRect.x + leftRect.width) + CAMERA_OFFSET;
+		double rectCenter = ((rightRect.x - (leftRect.x + leftRect.width))/2 + leftRect.x + leftRect.width) + Constants.Values.Vision.CAMERA_OFFSET;
 		System.out.println("Rect center: " + rectCenter);
 		double angleToTarget = Math.atan((rectCenter - cx)/FOCAL_LENGTH);
 		return Constants.radiansToDegrees(angleToTarget);

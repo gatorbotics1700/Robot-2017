@@ -2,6 +2,7 @@
 package org.usfirst.frc.team1700.robot;
 
 
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
@@ -36,10 +37,13 @@ public class Robot extends IterativeRobot {
     Pose destinationPose;
     CameraData cameraData;
     NetworkTable table;
+    
     public enum AutoStage{
     	DRIVE_FORWARD,
     	TURN,
-    	SCORE;
+    	SCORE,
+    	RETRY,
+    	DONE;
     }
     
     AutoStage currentAutoStage;
@@ -59,7 +63,6 @@ public class Robot extends IterativeRobot {
         
     }
 	
-
     public void robotInit() {
         chooser = new SendableChooser();
         chooser.addDefault("Default Auto", defaultAuto);
@@ -68,7 +71,8 @@ public class Robot extends IterativeRobot {
         chooser.addObject("Middle Peg Auto", middlePeg);
         SmartDashboard.putData("Auto choices", chooser);
     	System.out.println("Running robot init");
-		//vision.initVision();
+//		vision.initVision();
+		drive.setDriveVoltageRampRates();
     }
     
 	/**
@@ -88,114 +92,131 @@ public class Robot extends IterativeRobot {
 		destinationPose = poseManager.getCurrentPose().add(new PoseDelta(0,Constants.Values.Auto.FIRST_DISTANCE));
     }
  
-   
+   /**
+    * Uses the PoseManager and PoseDelta classes to keep track of current positions and set destination poses
+    * Score mode uses camera to align
+    */
     public void autonomousPeriodic() {
     	poseManager.storeCurrentPose();
-    	drive.shiftHigh();
+    	drive.shiftDriveHigh(true);
     	PoseDelta delta = destinationPose.subtract(poseManager.getCurrentPose());
     		switch (currentAutoStage) {
         	case DRIVE_FORWARD:
+        		System.out.println("In drive forward.");
         		if(drive.driveByPoseDelta(delta)) {
+        			System.out.println("Stopped driving straight");
         			destinationPose = poseManager.getCurrentPose().add(new PoseDelta(Constants.Values.Auto.TURN_ANGLE,0));
+        			System.out.println("Angle while driving straight: " + destinationPose.angle);
         			currentAutoStage = AutoStage.TURN;
         		}
-        		break;
+        		//drive.driveByPoseDelta(delta);
+    			break;
         	case TURN:
+        		System.out.println("In turn.");
         		if (drive.driveByPoseDelta(delta)) {
+        			System.out.println("stopped turning");
         			destinationPose = poseManager.getCurrentPose().add(new PoseDelta(0,Constants.Values.Auto.SECOND_DISTANCE));
+        			System.out.println("Angle in turn modet: " + destinationPose.angle);
         			currentAutoStage = AutoStage.SCORE;
         			cameraData.timestamp = System.currentTimeMillis();
         			cameraData.angle = 0;
         		}
+        		//drive.driveByPoseDelta(delta);
         		break;
         	case SCORE:
-        		if(updateCameraData()) {
-        			destinationPose = poseManager.getCurrentPose().add(new PoseDelta(cameraData.angle, Constants.Values.Auto.SECOND_DISTANCE));
-        			Pose pastPose = poseManager.poseHistory.getHistory(System.currentTimeMillis()-cameraData.timestamp);
-        			double newDistance = Math.sqrt(Math.pow(pastPose.distance,2)+Math.pow(pastPose.distance,2)-2*pastPose.distance*pastPose.distance*Math.cos(pastPose.angle));
-        			double insideAngle = Math.asin(Math.sin(pastPose.angle)/newDistance*pastPose.distance);
-        			double newAngle = Constants.radiansToDegrees(Math.PI - insideAngle);
-        			Pose newPose = new Pose(newAngle,Constants.Values.Auto.SECOND_DISTANCE);
-        			delta = destinationPose.subtract(poseManager.getCurrentPose());
+//        		System.out.println("in score.");
+//        		if(updateCameraData()) {
+//        			destinationPose = poseManager.getCurrentPose().add(new PoseDelta(cameraData.angle, Constants.Values.Auto.SECOND_DISTANCE));
+//        			Pose pastPose = poseManager.poseHistory.getHistory(System.currentTimeMillis()-cameraData.timestamp);
+//        			double newDistance = Math.sqrt(Math.pow(pastPose.distance,2)+Math.pow(pastPose.distance,2)-2*pastPose.distance*pastPose.distance*Math.cos(pastPose.angle));
+//        			double insideAngle = Math.asin(Math.sin(pastPose.angle)/newDistance*pastPose.distance);
+//        			double newAngle = Constants.radiansToDegrees(Math.PI - insideAngle);
+//        			Pose newPose = new Pose(newAngle,Constants.Values.Auto.SECOND_DISTANCE);
+//        			delta = destinationPose.subtract(poseManager.getCurrentPose());
+//        		}
+        		if(drive.driveByPoseDelta(delta) && !gear.gearInSlot()) {
+        			currentAutoStage = AutoStage.DONE;
+        		} else if(drive.driveByPoseDelta(delta) && gear.gearInSlot()) {
+        			Timer.delay(2);
+        			if(!gear.gearInSlot()) {
+        				currentAutoStage = AutoStage.RETRY;
+        			}
         		}
-        		drive.driveByPoseDelta(delta);
-        		destinationPose = poseManager.getCurrentPose();
+//        		destinationPose = poseManager.getCurrentPose();
+        		System.out.println("Angle in score mode: " + destinationPose.angle);
+        		break;
+        	case RETRY:
+        		destinationPose = poseManager.getCurrentPose().add(new PoseDelta(0, Constants.Values.Auto.BACK_UP_DISTANCE));
+        		currentAutoStage = AutoStage.SCORE;
+        		break;
+        	case DONE:
+        		drive.driveTank(0, 0);
         		break;
         	}
     		
-    	}
-
     }
+
 
     @Override
     public void teleopInit() {
-    	vision.initVision();
         destinationPose = null;
+        vision.initVision();
     }
     
-     
+    /**
+     * Buttons handle all of the subsystems on the robot.
+     * The default (aka when a button is not pressed) is when the the driver is moving the robot around the field
+     */
     
     public void teleopPeriodic() {
-    	updateCameraData();
-    	poseManager.getCurrentPose();
-    	if (drivePose()) {
-    		destinationPose = null;
-    	}
-    	
-    	if (rightDriveJoystick.getRawButton(1)) {
-    		PoseDelta delta = new PoseDelta(90, 0);
-    		destinationPose = poseManager.getCurrentPose().add(delta);
-    	}
-    	
-    	if (rightDriveJoystick.getRawButton(2)) {
-    		PoseDelta delta = new PoseDelta(0,12);
-    		destinationPose = poseManager.getCurrentPose().add(delta);
-    	}
-    	
-    	if (rightDriveJoystick.getRawButton(3)) {
-    		PoseDelta delta = new PoseDelta(-poseManager.getCurrentPose().angle,-poseManager.getCurrentPose().distance);
-    		destinationPose = poseManager.getCurrentPose().add(delta);
-    	}
+    	//updateCameraData();
+    	//poseManager.getCurrentPose();
+    	System.out.println("Ramp Voltage: " + lowGoal.getRampHeight());
+    	drive.driveTank(leftDriveJoystick.getRawAxis(1), rightDriveJoystick.getRawAxis(1));
     	
     	if(leftDriveJoystick.getRawButton(Constants.JoystickButtons.Left.GEAR_INTAKE.getId())) {
-    		drive.shiftHigh();
+    		drive.shiftDriveHigh(true);
     		lowGoal.moveDown();
     		intake.runIntake();
     		gear.flapGearIntakePosition();
     		gear.extendSlot();
     	} else if (leftDriveJoystick.getRawButton(Constants.JoystickButtons.Left.BALL_INTAKE.getId())) {
-    		drive.shiftHigh();
+    		drive.shiftDriveHigh(true);
     		lowGoal.moveDown();
     		intake.runIntake();
     		gear.flapBallIntakePosition();
     		gear.retractSlot();
     	} else if (leftDriveJoystick.getRawButton(Constants.JoystickButtons.Left.CLIMB.getId())) {
-    		drive.shiftLow();
+    		drive.shiftDriveHigh(false);
     		intake.climbIntake();
     		lowGoal.moveDown();
     		gear.flapGearIntakePosition();
     		gear.retractSlot();
     	} else if (leftDriveJoystick.getRawButton(Constants.JoystickButtons.Left.LOW_GOAL_SCORE.getId())) {
-    		drive.shiftHigh();
+    		drive.shiftDriveHigh(true);
     		intake.lowGoalIntake();
     		lowGoal.moveUp();
     		gear.flapLowGoalPosition();
     		gear.retractSlot();
     	} else {
-    		drive.shiftHigh();
-    		intake.runIntake();
+    		drive.shiftDriveHigh(true);
+    		intake.runIntake(); //test
     		lowGoal.moveDown();
     		gear.flapGearIntakePosition();
     		gear.retractSlot();
     	}
     }
     
+ 
     public CameraData getCameraDataValues() {
     		double angle = table.getNumber("Angle", 0);
     		long timestamp = (long) table.getNumber("Time", 0);
     		double distance = table.getNumber("Distance", 0);
     		return new CameraData(timestamp, angle, distance);
     }
+    /**
+     * Updates values if the values are new
+     */
     
     public boolean updateCameraData() {
     		CameraData newCameraData = getCameraDataValues();
@@ -206,11 +227,12 @@ public class Robot extends IterativeRobot {
     		return false;
     }
     
+
     public boolean drivePose() {
     	if (destinationPose == null) {
     		drive.driveTank(
-    				leftDriveJoystick.getAxis(AxisType.kY),
-    				rightDriveJoystick.getAxis(AxisType.kY));
+    				leftDriveJoystick.getRawAxis(1),
+    				rightDriveJoystick.getRawAxis(1));
     		return true;
     	} else {
     		Pose currentPose = poseManager.getCurrentPose();

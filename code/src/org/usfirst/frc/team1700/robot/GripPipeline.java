@@ -240,6 +240,7 @@ public class GripPipeline implements VisionPipeline {
 		minRatio, double maxRatio, double almostVerticalSlope, double almostHorizontalSlope, List<MatOfPoint> output) {
 		final MatOfInt hull = new MatOfInt();
 		output.clear();
+		System.out.println("Input contours size " + inputContours.size());
 		
 		for (int i = 0; i < inputContours.size(); i++) {
 			final MatOfPoint contour = inputContours.get(i);
@@ -267,25 +268,25 @@ public class GripPipeline implements VisionPipeline {
 			if (ratio < minRatio || ratio > maxRatio) continue;
 			
 			// filter by shape
-			final double SLOPE_DIFFERENCE = 1.0; 
-			double[] slopes = new double[4]; 
-			Point[] points = contour.toArray();
-			double slope = 0.0;
-			for(int k=0; k<4; k++) {
-				double dx = points[k].x - points[(k+1) % 4].x;
-				double dy = points[k].y - points[(k+1) % 4].y;
-				if (dx == 0) {
-					dx = .01;
-				}
-				slope = dy/dx;
-				slopes[k] = slope; 
-				System.out.println("Slope:" + slope);
-			}	
-			Arrays.sort(slopes);
-			if (Math.abs(slopes[1] - slopes[0]) > SLOPE_DIFFERENCE ||
-					Math.abs(slopes[3] - slopes[2]) > SLOPE_DIFFERENCE) {
-				continue;
-			}
+//			final double SLOPE_DIFFERENCE = 1.0; 
+//			double[] slopes = new double[4]; 
+//			Point[] points = contour.toArray();
+//			double slope = 0.0;
+//			for(int k=0; k<4; k++) {
+//				double dx = points[k].x - points[(k+1) % 4].x;
+//				double dy = points[k].y - points[(k+1) % 4].y;
+//				if (dx == 0) {
+//					dx = .01;
+//				}
+//				slope = dy/dx;
+//				slopes[k] = slope; 
+//				System.out.println("Slope:" + slope);
+//			}	
+//			Arrays.sort(slopes);
+//			if (Math.abs(slopes[1] - slopes[0]) > SLOPE_DIFFERENCE ||
+//					Math.abs(slopes[3] - slopes[2]) > SLOPE_DIFFERENCE) {
+//				continue;
+//			}
 			output.add(contour);
 		}
 	}

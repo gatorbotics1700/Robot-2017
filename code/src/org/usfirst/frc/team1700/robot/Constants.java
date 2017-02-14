@@ -12,17 +12,18 @@ public class Constants {
 	} 
 	public static class Values {
 		public static class Drive {
-			public static final double TURNING_ANGLE_PROPORTION = 0.04,
-									   DRIVING_DISTANCE_PROPORTION = (1.0/36.0),
+			public static final double TURNING_ANGLE_PROPORTION = 0.02,
+									   DRIVING_DISTANCE_PROPORTION = (1.0/72.0),
 									   ANGLE_TOLERANCE = 2.0,
 									   DISTANCE_TOLERANCE = 4.0,
 									   WHEEL_DIAMETER_INCHES = 4.0,
 									   DRIVE_GEAR_REDUCTION = 1.0,
 									   ENCODER_TICKS_PER_REV = 250.0,
-									   MIN_DRIVE_POWER = 0.2,
+									   MIN_DRIVE_POWER = 0.1,
 									   INTAKE_CLIMBING_SPEED = 0.6,
-									   TICKS_PER_INCH = ENCODER_TICKS_PER_REV * DRIVE_GEAR_REDUCTION / (WHEEL_DIAMETER_INCHES*Math.PI),									   
-									   CAMERA_OFFSET = 10.0;
+									   TICKS_PER_INCH = ENCODER_TICKS_PER_REV * DRIVE_GEAR_REDUCTION / (WHEEL_DIAMETER_INCHES*Math.PI), 
+									   VOLTAGE_RAMP_RATE = 12,
+									   MID_RAMP_SPEED = 0.6;
 			public static final int MILLISECOND_HISTORY_LENGTH = 2000;
 		}
 		
@@ -34,22 +35,23 @@ public class Constants {
 					DRIVE_SERVO_SHIFT_LOW_POSITION = 0.7;
 		}
 		public static class Auto {
-			public static final double FIRST_DISTANCE = 84, 
+			public static final double FIRST_DISTANCE = 90, 
 									   TURN_ANGLE = 60,
-									   SECOND_DISTANCE = 65;
+									   SECOND_DISTANCE = 65,
+									   BACK_UP_DISTANCE = 25;
 		}
 
 		public static class Vision {
-			public static final int CAMERA_EXPOSURE = -10;
+			public static final int CAMERA_EXPOSURE = -9;
+			public static final double CAMERA_OFFSET = 11.5;
 		}
 	}
 	// CANTalon IDs
 	public enum CanBus {
-		//TODO: Change ID's
-		DRIVE_LEFT_BACK(1),
-		DRIVE_RIGHT_FRONT(7),
-		DRIVE_LEFT_FRONT(8),
-		DRIVE_RIGHT_BACK(9);
+		DRIVE_LEFT_FRONT(1),
+		DRIVE_LEFT_BACK(2),
+		DRIVE_RIGHT_FRONT(3),
+		DRIVE_RIGHT_BACK(4);
 		
 		private int id;
 		
@@ -63,11 +65,11 @@ public class Constants {
 	
 
 	public enum PWM {
-		LEFT_DRIVE_SERVO_ID(0),
-		RIGHT_DRIVE_SERVO_ID(1),
-		FLAP_BACK_SERVO_ID(2),
-		FLAP_FRONT_SERVO_ID(3),
-		DUMPER_MOTOR(7),
+		FLAP_BACK_SERVO_ID(0),
+		FLAP_FRONT_SERVO_ID(1),
+		// Victors
+		FIRST_DUMPER_MOTOR(6),
+		SECOND_DUMPER_MOTOR(7),
 		FRONT_ROLLER(8),
 		BACK_ROLLER(9);
 		
@@ -132,19 +134,16 @@ public class Constants {
 		
 	} 
 	
-	// Quadrature encoders DIO ports
 	public enum DigitalIO {
 		QUAD_ENCODER_RIGHT_1(0),
 		QUAD_ENCODER_RIGHT_2(1),
 		QUAD_ENCODER_LEFT_1(2),
 		QUAD_ENCODER_LEFT_2(3),
 		TOP_SENSOR_ID(4),
-		MIDDLE_SENSOR_ID(5),
-		BOTTOM_SENSOR_ID(6),
-		GEAR_EMITTER_SENSOR_ID(7),
-		GEAR_RECEIVER_SENSOR_ID(8),
-		ULTRASONIC_SENSOR(9);
-
+		BOTTOM_SENSOR_ID(5),
+		GEAR_EMITTER_SENSOR_ID(6),
+		GEAR_RECEIVER_SENSOR_ID(7),
+		RAMP_HEIGHT_SENSOR_ID(8);
 		private int port;
 		
 		private DigitalIO(int port) {
@@ -155,7 +154,20 @@ public class Constants {
 		}
 	}
 	
-	public static final double RAMP_MOVEMENT_VERTICAL_DIST = 20.0,
+	public enum AnalogInput {
+		RAMP_RANGEFINDER(2);
+		private int port;
+		
+		private AnalogInput(int port) {
+			this.port = port;
+		}
+		
+		public int getPort() {
+			return this.port;
+		}
+	}
+	
+	public static final double RAMP_MOVEMENT_VERTICAL_DIST = 15.0,
 							   RAMP_SLOW_DOWN_POINT = 0.5;
 	
 	public enum Solenoids {
