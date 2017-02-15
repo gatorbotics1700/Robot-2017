@@ -173,6 +173,24 @@ public class Robot extends IterativeRobot {
         vision.initVision();
     }
     
+    public CameraData getCameraDataValues() {
+		double angle = table.getNumber("Angle", 0);
+		long timestamp = (long) table.getNumber("Time", 0);
+		double distance = table.getNumber("Distance", 0);
+		return new CameraData(timestamp, angle, distance);
+}
+	
+	 //Updates values if the values are new
+
+	public boolean updateCameraData() {
+			CameraData newCameraData = getCameraDataValues();
+			if(newCameraData.timestamp > cameraData.timestamp) {
+				cameraData = newCameraData;
+				return true;
+			}
+			return false;
+	}
+    
     /**
      * Buttons handle all of the subsystems on the robot.
      * The default (aka when a button is not pressed) is when the the driver is moving the robot around the field
@@ -217,25 +235,6 @@ public class Robot extends IterativeRobot {
     	}
     }
     
- 
-    public CameraData getCameraDataValues() {
-    		double angle = table.getNumber("Angle", 0);
-    		long timestamp = (long) table.getNumber("Time", 0);
-    		double distance = table.getNumber("Distance", 0);
-    		return new CameraData(timestamp, angle, distance);
-    }
-    /**
-     * Updates values if the values are new
-     */
-    
-    public boolean updateCameraData() {
-    		CameraData newCameraData = getCameraDataValues();
-    		if(newCameraData.timestamp > cameraData.timestamp) {
-    			cameraData = newCameraData;
-    			return true;
-    		}
-    		return false;
-    }
     
 
     public boolean drivePose() {

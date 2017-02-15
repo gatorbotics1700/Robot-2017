@@ -39,6 +39,7 @@ public class Constants {
 									   TURN_ANGLE = 60,
 									   SECOND_DISTANCE = 65,
 									   BACK_UP_DISTANCE = 25,
+									   MIDDLE_PEG_DISTANCE = 50, //TODO: Test
 									   WAIT_TIME = 2;
 		}
 
@@ -172,10 +173,10 @@ public class Constants {
 							   RAMP_SLOW_DOWN_POINT = 0.5;
 	
 	public enum Solenoids {
-		SHIFTER_1(1),
-        SHIFTER_2(2),
-        RETRACTOR_1(3),
-        RETRACTOR_2(4);
+		SHIFTER_1(6),
+        SHIFTER_2(7),
+        RETRACTOR_1(4),
+        RETRACTOR_2(5);
 
 		private int port;
 		
