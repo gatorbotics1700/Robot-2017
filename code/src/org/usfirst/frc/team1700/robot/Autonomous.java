@@ -1,40 +1,30 @@
 package org.usfirst.frc.team1700.robot;
 
-import org.usfirst.frc.team1700.robot.Robot.AutoStage;
 
 import edu.wpi.first.wpilibj.networktables.NetworkTable;
 
 public abstract class Autonomous {
-	protected DriveTrain drive;
-	protected PoseManager poseManager;
-	private Pose destinationPose;
-	private Intake intake;
-	private LowGoal lowGoal;
-	protected Gear gear;	
+	private DriveTrain drive;
+	private PoseManager poseManager;
+	private Pose destinationPose;	
     NetworkTable table;
     protected PoseDelta delta;
 	
     protected CameraData cameraData;
 	
-	public Autonomous(DriveTrain drive, PoseManager poseManager, Gear gear) {
+	public Autonomous(DriveTrain drive, PoseManager poseManager) {
 		this.drive = drive;
 		this.poseManager = poseManager;
-		this.gear = gear;
 		init();
 	}
 	
-	public void update() {
+	public void update(boolean hasGear) {
 		delta = destinationPose.subtract(poseManager.getCurrentPose());
-		periodic(drive.driveByPoseDelta(delta), false);
-		intake.runIntake();
+		boolean updated = updateCameraData();
+		periodic(drive.driveByPoseDelta(delta), updated, hasGear);
 		drive.shiftDriveHigh(true);
-		lowGoal.moveDown();
-		gear.retractSlot();
-		gear.flapGearIntakePosition();
-		
-		poseManager.storeCurrentPose(); //lol
-		
-		if(updateCameraData()) {
+				
+		if(updated) {
 			cameraData = getCameraDataValues();
 		}
 		// TODO: Store robot pose history here
@@ -72,8 +62,9 @@ public abstract class Autonomous {
 		drive.driveTank(0, 0);
 	}
 	
+	
 	protected abstract void init();
-	protected abstract void periodic(boolean atDestination, boolean newCameraData);
+	protected abstract void periodic(boolean atDestination, boolean newCameraData, boolean hasGear);
 	
 	
 }

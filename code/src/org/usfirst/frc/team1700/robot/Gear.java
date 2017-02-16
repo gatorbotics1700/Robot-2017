@@ -20,7 +20,6 @@ public class Gear {
 				Constants.Solenoids.RETRACTOR_1.getPort(), 
 				Constants.Solenoids.RETRACTOR_2.getPort());
 		beamBreakReceiver = new DigitalInput(Constants.DigitalIO.GEAR_RECEIVER_SENSOR_ID.getPort());
-		beamBreakEmitter = new DigitalInput(Constants.DigitalIO.GEAR_EMITTER_SENSOR_ID.getPort());
 	}
 	
 	public void flapGearIntakePosition() {

@@ -18,8 +18,8 @@ public class SidePegAutonomous extends Autonomous {
     AutoStage currentAutoStage;
 	double turnAngle;
 	
-	SidePegAutonomous(DriveTrain drive, PoseManager poseManager, Gear gear) {
-		super(drive, poseManager, gear);
+	SidePegAutonomous(DriveTrain drive, PoseManager poseManager) {
+		super(drive, poseManager);
 	}
 	
 	@Override
@@ -30,7 +30,7 @@ public class SidePegAutonomous extends Autonomous {
 	}
 
 	@Override
-	protected void periodic(boolean atDestination, boolean newCameraData) {
+	protected void periodic(boolean atDestination, boolean newCameraData, boolean hasGear) {
     		switch (currentAutoStage) {
         	case DRIVE_FORWARD:
         		System.out.println("In drive forward.");
@@ -60,15 +60,15 @@ public class SidePegAutonomous extends Autonomous {
 //        			double newAngle = Constants.radiansToDegrees(Math.PI - insideAngle);
 //        			Pose newPose = new Pose(newAngle,Constants.Values.Auto.SECOND_DISTANCE);
         		}
-        		if(super.drive.driveByPoseDelta(delta)) {
+        		if(atDestination) {
         			currentAutoStage = AutoStage.WAIT;
                 	deadline = Constants.Values.Auto.WAIT_TIME + System.currentTimeMillis();
         		}
         		break;
         	case WAIT:
-        		drive.driveTank(0, 0);
+        		stopRobot();
     			if(System.currentTimeMillis() > deadline) {
-    				if(gear.gearInSlot()) {
+    				if(hasGear) {
     	        		updateDestination(new PoseDelta(0, -Constants.Values.Auto.BACK_UP_DISTANCE));
     					currentAutoStage = AutoStage.RETRY;
     				} else {
@@ -77,13 +77,13 @@ public class SidePegAutonomous extends Autonomous {
     			}
     			break;
         	case RETRY:
-        		if(drive.driveByPoseDelta(delta)) {
+        		if(atDestination) {
         			updateDestination(new PoseDelta(0, Constants.Values.Auto.BACK_UP_DISTANCE));
             		currentAutoStage = AutoStage.SCORE;
         		}
         		break;
         	case DONE:
-        		drive.driveTank(0, 0);
+        		stopRobot();
         		break;
         	}
 	}

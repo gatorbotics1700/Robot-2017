@@ -1,6 +1,5 @@
 package org.usfirst.frc.team1700.robot;
 
-import org.usfirst.frc.team1700.robot.Robot.AutoStage;
 
 public class MiddlePegAutonomous extends Autonomous {
 	
@@ -16,21 +15,21 @@ double deadline;
     AutoStage currentAutoStage;
 	double turnAngle;
 
-	public MiddlePegAutonomous(DriveTrain drive, PoseManager poseManager, Gear gear) {
-		super(drive, poseManager, gear);
+	public MiddlePegAutonomous(DriveTrain drive, PoseManager poseManager) {
+		super(drive, poseManager);
 		// TODO Auto-generated constructor stub
 	}
 
 	@Override
 	protected void init() {
-		super.updateCameraData();
+		updateCameraData();
 		currentAutoStage = AutoStage.SCORE;
 		updateDestination(new PoseDelta(0,Constants.Values.Auto.MIDDLE_PEG_DISTANCE));
 		
 	}
 
 	@Override
-	protected void periodic(boolean atDestination, boolean newCameraData) {
+	protected void periodic(boolean atDestination, boolean newCameraData, boolean hasGear) {
 		switch(currentAutoStage) {
 		case SCORE:
 			if(newCameraData) {
@@ -41,15 +40,15 @@ double deadline;
 	//			double newAngle = Constants.radiansToDegrees(Math.PI - insideAngle);
 	//			Pose newPose = new Pose(newAngle,Constants.Values.Auto.SECOND_DISTANCE);
 			}
-			if(super.drive.driveByPoseDelta(delta)) {
+			if(atDestination) {
 				currentAutoStage = AutoStage.WAIT;
 	        	deadline = Constants.Values.Auto.WAIT_TIME + System.currentTimeMillis();
 			}
 			break;
 		case WAIT:
-			drive.driveTank(0, 0);
+			stopRobot();
 			if(System.currentTimeMillis() > deadline) {
-				if(gear.gearInSlot()) {
+				if(hasGear) {
 	        		updateDestination(new PoseDelta(0, -Constants.Values.Auto.BACK_UP_DISTANCE));
 					currentAutoStage = AutoStage.RETRY;
 				} else {
@@ -58,13 +57,13 @@ double deadline;
 			}
 			break;
 		case RETRY:
-			if(drive.driveByPoseDelta(delta)) {
+			if(atDestination) {
 				updateDestination(new PoseDelta(0, Constants.Values.Auto.BACK_UP_DISTANCE));
 	    		currentAutoStage = AutoStage.SCORE;
 			}
 			break;
 		case DONE:
-			drive.driveTank(0, 0);
+			stopRobot();
 			break;
 		}
 			
