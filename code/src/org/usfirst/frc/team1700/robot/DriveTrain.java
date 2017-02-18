@@ -51,6 +51,7 @@ public class DriveTrain {
 		rightSpeed = Math.copySign(Math.max(Constants.Values.Drive.MIN_DRIVE_POWER, Math.abs(rightSpeed)), rightSpeed);
 		double leftSpeed = distanceSpeed - angleSpeed;
 		leftSpeed = Math.copySign(Math.max(Constants.Values.Drive.MIN_DRIVE_POWER, Math.abs(leftSpeed)), leftSpeed);
+		leftSpeed *= 1.2;  
 		System.out.println("Delta: " + poseDelta);
 		System.out.println("Portions: " + angleSpeed + ", " + distanceSpeed);
 		System.out.println("Speeds:" + leftSpeed + ", " + rightSpeed);
@@ -64,6 +65,19 @@ public class DriveTrain {
 		leftBack.set(leftSpeed);
 		rightFront.set(-rightSpeed);
 		rightBack.set(-rightSpeed);
+	}
+	
+	public boolean driveTankByAngle(double speed, double angle) {
+		double angleSpeed = angle*Constants.Values.Drive.TURNING_ANGLE_PROPORTION;
+		double right = speed + angleSpeed;
+		//right = Math.copySign(Math.max(Constants.Values.Drive.MIN_DRIVE_POWER, Math.abs(right)), right);
+		double left = speed - angleSpeed;
+		//left = Math.copySign(Math.max(Constants.Values.Drive.MIN_DRIVE_POWER, Math.abs(left)), left);
+		left *= 1.2;  
+		System.out.println("Angle: " + angle);
+		driveTank(left, right);
+	
+		return false;
 	}
 	
 	public void shiftDriveHigh(boolean highGear){

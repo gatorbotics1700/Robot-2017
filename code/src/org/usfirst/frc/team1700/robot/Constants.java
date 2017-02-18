@@ -12,14 +12,14 @@ public class Constants {
 	} 
 	public static class Values {
 		public static class Drive {
-			public static final double TURNING_ANGLE_PROPORTION = 0.02,
+			public static final double TURNING_ANGLE_PROPORTION = 0.04,
 									   DRIVING_DISTANCE_PROPORTION = (1.0/72.0),
-									   ANGLE_TOLERANCE = 2.0,
+									   ANGLE_TOLERANCE = 5.0,
 									   DISTANCE_TOLERANCE = 4.0,
 									   WHEEL_DIAMETER_INCHES = 4.0,
 									   DRIVE_GEAR_REDUCTION = 1.0,
 									   ENCODER_TICKS_PER_REV = 250.0,
-									   MIN_DRIVE_POWER = 0.1,
+									   MIN_DRIVE_POWER = 0.7,
 									   INTAKE_CLIMBING_SPEED = 0.6,
 									   TICKS_PER_INCH = ENCODER_TICKS_PER_REV * DRIVE_GEAR_REDUCTION / (WHEEL_DIAMETER_INCHES*Math.PI), 
 									   VOLTAGE_RAMP_RATE = 12,
@@ -35,17 +35,22 @@ public class Constants {
 					DRIVE_SERVO_SHIFT_LOW_POSITION = 0.7;
 		}
 		public static class Auto {
-			public static final double FIRST_DISTANCE = 90, 
+			public static final double FIRST_DISTANCE = 50, 
 									   TURN_ANGLE = 60,
-									   SECOND_DISTANCE = 65,
+									   SECOND_DISTANCE = 60,
 									   BACK_UP_DISTANCE = 25,
-									   MIDDLE_PEG_DISTANCE = 50, //TODO: Test
+									   MIDDLE_PEG_DISTANCE = 75, //TODO: Test
 									   WAIT_TIME = 2;
 		}
 
 		public static class Vision {
-			public static final int CAMERA_EXPOSURE = -9;
-			public static final double CAMERA_OFFSET = 11.5;
+			public static final int CAMERA_EXPOSURE = 1;
+			public static final double CAMERA_OFFSET = 11.5,
+									   MAX_TARGET_HEIGHT_OFFSET = 30.0;
+		}
+		
+		public static class Field {
+			public static final double PEG_VISION_SEPARATION = 8.25; 
 		}
 	}
 	// CANTalon IDs
@@ -108,8 +113,8 @@ public class Constants {
 			LOW_GOAL_SCORE(2),
 			BALL_INTAKE(3),
 			CLIMB(4),
-			DEFENSE(5);
-			
+			DEFENSE(5),
+			VISION(6);
 			
 			private int id;
 			

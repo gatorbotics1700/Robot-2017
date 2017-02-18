@@ -26,6 +26,7 @@ public class Vision {
 	private static final int IMG_HEIGHT = 240;
 	private static final double CAMERA_OFFSET = 8;
 	private static final double HORIZONTAL_FOV = Constants.degreesToRadians(47);
+	public static final double FOCAL_LENGTH = IMG_WIDTH/(2*Math.tan(HORIZONTAL_FOV/2));
 
 	private double centerX;
 	AxisCamera visionCamera;
@@ -64,11 +65,10 @@ public class Vision {
 //		visionCamera = CameraServer.getInstance().addAxisCamera("axis-camera");
 //		visionCamera.setResolution(IMG_WIDTH, IMG_HEIGHT);
 //		visionCamera.setExposureManual(8);
-		
-
 //		CameraServer.getInstance().startAutomaticCapture(visionCamera);
+		
 		UsbCamera alignCamera = CameraServer.getInstance().startAutomaticCapture();
-//		alignCamera.setExposureManual(Constants.Values.Vision.CAMERA_EXPOSURE);
+		alignCamera.setExposureManual(Constants.Values.Vision.CAMERA_EXPOSURE);
 //		alignCamera.setResolution(IMG_WIDTH, IMG_HEIGHT);
 		
 		// Starts loop for vision pipeline. 
@@ -106,7 +106,6 @@ public class Vision {
 	}
 	
 	public double pinHole(Rect rightRect, Rect leftRect) {
-		double FOCAL_LENGTH =  IMG_WIDTH/(2*Math.tan(HORIZONTAL_FOV/2));
 		System.out.println("Focal length" + FOCAL_LENGTH);
 		double cx = IMG_WIDTH/2 - 0.5;
 		double cy = IMG_HEIGHT/2 - 0.5;
@@ -135,7 +134,7 @@ public class Vision {
 	 * @param rect One of the rectangles on the vision target. 
 	 * @return Distance from camera to target, returned in inches. 
 	 */
-	public double getDistance(Rect rect) {
+	public static double getDistance(Rect rect) {
 		double height = rect.height;
 		double distance = VISION_HEIGHT_CONSTANT/height;   
 		return distance;

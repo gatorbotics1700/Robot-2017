@@ -241,7 +241,8 @@ public class GripPipeline implements VisionPipeline {
 		final MatOfInt hull = new MatOfInt();
 		output.clear();
 		System.out.println("Input contours size " + inputContours.size());
-		
+		ArrayList<MatOfPoint> filtered = new ArrayList<MatOfPoint>();
+		double minTargetDistanceFound = 652.0; //initialized to field length
 		for (int i = 0; i < inputContours.size(); i++) {
 			final MatOfPoint contour = inputContours.get(i);
 			
@@ -267,6 +268,7 @@ public class GripPipeline implements VisionPipeline {
 			final double ratio = bb.width / (double)bb.height;
 			if (ratio < minRatio || ratio > maxRatio) continue;
 			
+			
 			// filter by shape
 //			final double SLOPE_DIFFERENCE = 1.0; 
 //			double[] slopes = new double[4]; 
@@ -287,12 +289,49 @@ public class GripPipeline implements VisionPipeline {
 //					Math.abs(slopes[3] - slopes[2]) > SLOPE_DIFFERENCE) {
 //				continue;
 //			}
-			output.add(contour);
+			filtered.add(contour);
+		}
+		for (int i = 0; i < filtered.size(); i++) {
+			for (int j = i + 1; j < filtered.size(); j++) {
+				double avgDist = avgDistance(filtered.get(i), filtered.get(j));
+				if (isValidPair(filtered.get(i),filtered.get(j))) {
+					if (avgDist < minTargetDistanceFound) {
+						output.clear();
+						minTargetDistanceFound = avgDist;
+						output.add(filtered.get(i));
+						output.add(filtered.get(j));
+					}
+					continue;
+				}
+			}
 		}
 	}
 
-
-
+	private boolean isValidPair(MatOfPoint contour1, MatOfPoint contour2) {
+		Rect r1 = Imgproc.boundingRect(contour1);
+		Rect r2 = Imgproc.boundingRect(contour2);
+		double dist1 = Vision.getDistance(r1);
+		double dist2 = Vision.getDistance(r2);
+		double maxHorizontalSeparation = Constants.Values.Field.PEG_VISION_SEPARATION*Vision.FOCAL_LENGTH/((dist1+dist2)/2);
+		if (Math.abs(dist1-dist2) > Constants.Values.Field.PEG_VISION_SEPARATION) {
+			return false;
+		} 
+		if (Math.abs(r1.x - r2.x) > maxHorizontalSeparation) {
+			return false;
+		}
+		if (Math.abs((r1.y+r1.height/2)-(r2.y+r2.height/2)) > Constants.Values.Vision.MAX_TARGET_HEIGHT_OFFSET) {
+			return false;
+		}
+		return true;
+	}
+	
+	private double avgDistance(MatOfPoint contour1, MatOfPoint contour2) {
+		Rect r1 = Imgproc.boundingRect(contour1);
+		Rect r2 = Imgproc.boundingRect(contour2);
+		double dist1 = Vision.getDistance(r1);
+		double dist2 = Vision.getDistance(r2);
+		return (dist1+dist2)/2;
+	}
 
 }
 

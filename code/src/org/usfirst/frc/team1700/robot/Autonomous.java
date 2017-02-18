@@ -7,14 +7,16 @@ public abstract class Autonomous {
 	private DriveTrain drive;
 	private PoseManager poseManager;
 	private Pose destinationPose;	
-    NetworkTable table;
     protected PoseDelta delta;
+    private NetworkTable table;
 	
     protected CameraData cameraData;
 	
 	public Autonomous(DriveTrain drive, PoseManager poseManager) {
 		this.drive = drive;
 		this.poseManager = poseManager;
+		this.cameraData = new CameraData();
+		this.table = NetworkTable.getTable("GRIP/myContoursReport");
 		init();
 	}
 	

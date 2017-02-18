@@ -1,7 +1,5 @@
 package org.usfirst.frc.team1700.robot;
 
-import org.usfirst.frc.team1700.robot.Robot.AutoStage;
-
 public class SidePegAutonomous extends Autonomous {
 
 	double deadline;
