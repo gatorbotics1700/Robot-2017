@@ -14,6 +14,7 @@ import org.opencv.imgproc.Imgproc;
 
 import edu.wpi.cscore.AxisCamera;
 import edu.wpi.cscore.UsbCamera;
+import edu.wpi.cscore.VideoMode;
 import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Timer;
@@ -22,38 +23,83 @@ import edu.wpi.first.wpilibj.vision.VisionRunner;
 import edu.wpi.first.wpilibj.vision.VisionThread;
 
 public class Vision {
-	private static final int IMG_WIDTH = 320;
-	private static final int IMG_HEIGHT = 240;
-	private static final double CAMERA_OFFSET = 8;
-	private static final double HORIZONTAL_FOV = Constants.degreesToRadians(47);
-	public static final double FOCAL_LENGTH = IMG_WIDTH/(2*Math.tan(HORIZONTAL_FOV/2));
+	private static final double HORIZONTAL_FOV = Constants.degreesToRadians(70.42);
+	private static final double VERTICAL_FOV = Constants.degreesToRadians(43.3);
+	public static final double FOCAL_LENGTH = Constants.Values.Vision.IMG_WIDTH/(2*Math.tan(HORIZONTAL_FOV/2));
 
-	private double centerX;
-	AxisCamera visionCamera;
 
-	public final Object imgLock;
+//	AxisCamera visionCamera;
+
 	private VisionThread visionThread;
 	GripPipeline vpipeline;
 	Mat image;
 	NetworkTable table;
 	
+	UsbCamera camera;
 	
-	// Dividing constant by number of pixels returns the distance in inches. 
-	private static final double VISION_HEIGHT_CONSTANT = 3956;
+	
 	private static final double VISION_DISTANCE = 30;
-	private static final double TARGET_HEIGHT_INCHES = 6;
-	double distance;
-	double angle;
+	private static final double TARGET_HEIGHT_INCHES = 5;
+	private static final double MAX_DISTANCE = TARGET_HEIGHT_INCHES/2 / Math.tan(VERTICAL_FOV/2);
+	// Dividing constant by number of pixels returns the distance in inches.
+	private static final double VISION_HEIGHT_CONSTANT = Constants.Values.Vision.IMG_HEIGHT * MAX_DISTANCE;
+
 
 	//	private final NetworkTable table;
 
-	public Vision() {
-		centerX = 0.0;
-		imgLock = new Object();
+	public Vision(int id) {
 		vpipeline = new GripPipeline();
 		table = NetworkTable.getTable("GRIP/myContoursReport");
 		image = new Mat();
 
+		camera = CameraServer.getInstance().startAutomaticCapture(id);
+		
+		camera.setResolution(Constants.Values.Vision.IMG_WIDTH, Constants.Values.Vision.IMG_HEIGHT);
+		// Starts loop for vision pipeline. 
+		visionThread = new VisionThread(camera, new GripPipeline(), pipeline -> {
+			
+			if (pipeline.filterContoursOutput().size() == 2) { //works if identifies two vision targets
+				MatOfPoint mp1 = pipeline.filterContoursOutput().get(0);
+				MatOfPoint mp2 = pipeline.filterContoursOutput().get(1);
+				
+				Rect r1 = Imgproc.boundingRect(mp1);
+				Rect r2 = Imgproc.boundingRect(mp2);
+				double d1 = getDistance(r1);
+				double d2 = getDistance(r2);
+				double distance = (d1+d2)/2;
+				double pinholeAngle = pinHole(r1, r2);
+				double h1 = getDistance(r1);
+				CameraData cameraData = accountForCameraOffset(pinholeAngle, Constants.Values.Vision.CAMERA_RIGHT_OFFSET, distance);
+				cameraData.timestamp = System.currentTimeMillis();
+				table.putNumber("Time", cameraData.timestamp);
+				table.putNumber("Angle", pinholeAngle);
+				table.putNumber("Distance", distance);
+				System.out.println("ID: " + id + " Angle: " + cameraData.angle + " Distance: "+ distance);
+			}
+			else {
+				System.out.println("ID:" + id + "No targets detected");
+			}
+		});
+		camera.setResolution(Constants.Values.Vision.IMG_WIDTH, Constants.Values.Vision.IMG_HEIGHT);
+
+		visionThread.setPriority(1);
+		visionThread.start();
+		turnOffVision();
+	}
+	
+	public void turnOnVision() {
+		camera.setExposureManual(Constants.Values.Vision.CAMERA_EXPOSURE_LOW);
+		//visionThread.notify();
+	}
+	
+	public void turnOffVision() {
+		camera.setExposureManual(Constants.Values.Vision.CAMERA_EXPOSURE_NORMAL);
+//		try {
+//			visionThread.wait();
+//		} catch (InterruptedException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 	}
 
 	/**
@@ -61,58 +107,12 @@ public class Vision {
 	 * Starts GRIP pipeline and finds two rectangles on target. 
 	 * Calculates distance and angle to centerpoint of target.  
 	 */
-	public void initVision() {
-//		visionCamera = CameraServer.getInstance().addAxisCamera("axis-camera");
-//		visionCamera.setResolution(IMG_WIDTH, IMG_HEIGHT);
-//		visionCamera.setExposureManual(8);
-//		CameraServer.getInstance().startAutomaticCapture(visionCamera);
-		
-		UsbCamera alignCamera = CameraServer.getInstance().startAutomaticCapture();
-		alignCamera.setExposureManual(Constants.Values.Vision.CAMERA_EXPOSURE);
-//		alignCamera.setResolution(IMG_WIDTH, IMG_HEIGHT);
-		
-		// Starts loop for vision pipeline. 
-		visionThread = new VisionThread(alignCamera, new GripPipeline(), pipeline -> {
-			
-			if (pipeline.filterContoursOutput().size() == 2) { //works if identifies two vision targets
-				MatOfPoint mp1 = pipeline.filterContoursOutput().get(0);
-				MatOfPoint mp2 = pipeline.filterContoursOutput().get(1);
-				
-				//still need to test if this works better/need to finish writing the code
-				MatOfPoint2f pt1 = new MatOfPoint2f(mp1.toArray());
-				MatOfPoint2f pt2 = new MatOfPoint2f(mp2.toArray());
-				RotatedRect rect1 = Imgproc.minAreaRect(pt1);
-				RotatedRect rect2 = Imgproc.minAreaRect(pt2);
-				
-				
-				Rect r1 = Imgproc.boundingRect(mp1);
-				Rect r2 = Imgproc.boundingRect(mp2);
-				double d1 = getDistance(r1);
-				double d2 = getDistance(r2);
-				double distance = (d1+d2)/2;
-				double pinholeAngleDegrees = pinHole(r1, r2);
-				double h1 = getDistance(r1);
-				
-				table.putNumber("Time", System.currentTimeMillis());
-				table.putNumber("Angle", angle);
-				table.putNumber("Distance", distance);
-			}
-			else {
-				System.out.println(pipeline.filterContoursOutput().size());
-				System.out.println("No targets detected");
-			}
-		});
-		visionThread.start();
-	}
 	
 	public double pinHole(Rect rightRect, Rect leftRect) {
-		System.out.println("Focal length" + FOCAL_LENGTH);
-		double cx = IMG_WIDTH/2 - 0.5;
-		double cy = IMG_HEIGHT/2 - 0.5;
-		double rectCenter = ((rightRect.x - (leftRect.x + leftRect.width))/2 + leftRect.x + leftRect.width) + Constants.Values.Vision.CAMERA_OFFSET;
-		System.out.println("Rect center: " + rectCenter);
-		double angleToTarget = Math.atan((rectCenter - cx)/FOCAL_LENGTH);
-		return Constants.radiansToDegrees(angleToTarget);
+		double cx = Constants.Values.Vision.IMG_WIDTH/2 - 0.5;
+		double cy = Constants.Values.Vision.IMG_HEIGHT/2 - 0.5;
+		double rectCenter = ((rightRect.x - (leftRect.x + leftRect.width))/2 + leftRect.x + leftRect.width) + Constants.Values.Vision.CAMERA_RIGHT_OFFSET;
+		return Math.atan((rectCenter - cx)/FOCAL_LENGTH);
 	}
 
 	/**
@@ -159,7 +159,7 @@ public class Vision {
 			rightRect = rect1;
 		}
 		double rectMidpoint = (rightRect.x - (leftRect.x + leftRect.width))/2 + leftRect.x + leftRect.width;
-		double picMidpoint = IMG_WIDTH / 2;
+		double picMidpoint = Constants.Values.Vision.IMG_WIDTH / 2;
 		double horizontalOffset = rectMidpoint - picMidpoint;
 		System.out.println("Horizontal offset: " + horizontalOffset);
 		double inchesPerPixel = TARGET_HEIGHT_INCHES/leftRect.height;
@@ -169,14 +169,46 @@ public class Vision {
 		return horizontalOffset; 
 	}
 	
-	public void accountForCameraOffset(double pinholeAngleDegrees, double x, double hypWithoutOffset) {
-		double originalTargetAngle = 90 - pinholeAngleDegrees;
-		double horizontalDistNoOffset = Math.cos(originalTargetAngle) * hypWithoutOffset;
+	public static CameraData stereoImaging(CameraData firstCameraData, CameraData secondCameraData, double leftOffset, double rightOffset) {
+		CameraData leftCamera;
+		CameraData rightCamera;
+		double leftAngle;
+		double rightAngle;
+		if(firstCameraData.angle > secondCameraData.angle) {
+			leftCamera = firstCameraData;
+			rightCamera = secondCameraData;
+		} else {
+			leftCamera = secondCameraData;
+			rightCamera = firstCameraData;
+		}
+		
+		//compute left and right angles to target
+		if(leftCamera.angle * rightCamera.angle < 0) {
+			leftAngle = Math.PI/2 - leftCamera.angle;
+			rightAngle = Math.PI/2 - rightCamera.angle;
+		} else if (leftCamera.angle > 0 && rightCamera.angle > 0) {
+			leftAngle = Math.PI/2 - leftCamera.angle;
+			rightAngle = Math.PI/2 + rightCamera.angle;
+		} else {
+			leftAngle =  Math.PI/2 + leftCamera.angle;
+			rightAngle =  Math.PI/2 - rightCamera.angle;
+		}
+		double oppositeAngle = Math.PI - leftAngle - rightAngle;
+		double leftDistance = Math.sin(oppositeAngle) / (leftOffset+rightOffset) * Math.sin(rightAngle);
+		double rightDistance = Math.sin(oppositeAngle) / (leftOffset+rightOffset) * Math.sin(leftAngle);
+		double centerDistance = Math.sqrt(Math.pow(leftDistance, 2) + Math.pow(leftOffset, 2) - 2*leftDistance*leftOffset*Math.cos(leftAngle));
+		double centerAngle = Math.sin(centerDistance) / leftAngle * leftDistance;
+		centerAngle -= Math.PI/2;
+		return new CameraData(Math.max(firstCameraData.timestamp, secondCameraData.timestamp), centerAngle, centerDistance);
+	}
+	
+	public static CameraData accountForCameraOffset(double pinholeAngle, double horizontalOffset, double hypWithoutOffset) {
+		double horizontalDistNoOffset = Math.sin(pinholeAngle) * hypWithoutOffset;
 		double verticalDistance = Math.sqrt(Math.pow(hypWithoutOffset, 2) - Math.pow(horizontalDistNoOffset, 2));
-		double horizontalDistOffset = horizontalDistNoOffset + x;
-		distance = Math.sqrt(Math.pow(verticalDistance, 2) + Math.pow(horizontalDistOffset, 2));
-		double offsetTargetAngle = Math.sin(verticalDistance/distance);
-		angle = 90-offsetTargetAngle;
+		double horizontalDistOffset = horizontalDistNoOffset + horizontalOffset;
+		double distance = Math.sqrt(Math.pow(verticalDistance, 2) + Math.pow(horizontalDistOffset, 2));
+		double angle = Math.asin(horizontalDistOffset/distance);
+		return new CameraData(0, angle, distance);
 	}
 }
 

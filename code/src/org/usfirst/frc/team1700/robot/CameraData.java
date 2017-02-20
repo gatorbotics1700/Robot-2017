@@ -18,5 +18,9 @@ public class CameraData {
 		this.angle = angle;
 		this.distance = distance;
 	}
+	
+	public String toString() {
+		return "CameraData@" + this.timestamp + "<" + this.angle + ", " + this.distance + ">"; 
+	}
 
 }

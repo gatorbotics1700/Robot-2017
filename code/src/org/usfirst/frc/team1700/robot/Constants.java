@@ -13,13 +13,16 @@ public class Constants {
 	public static class Values {
 		public static class Drive {
 			public static final double TURNING_ANGLE_PROPORTION = 0.04,
-									   DRIVING_DISTANCE_PROPORTION = (1.0/72.0),
+									   TURNING_ANGLE_PROPORTION_LOW_GEAR = 0.02,
+									   DRIVING_DISTANCE_PROPORTION_LOW_GEAR = 1.0/300.0,
+									   DRIVING_DISTANCE_PROPORTION = (1.0/252.0),
 									   ANGLE_TOLERANCE = 5.0,
 									   DISTANCE_TOLERANCE = 4.0,
 									   WHEEL_DIAMETER_INCHES = 4.0,
 									   DRIVE_GEAR_REDUCTION = 1.0,
 									   ENCODER_TICKS_PER_REV = 250.0,
-									   MIN_DRIVE_POWER = 0.7,
+									   MIN_DRIVE_POWER = 0.35,
+									   MIN_DRIVE_POWER_LOW_GEAR = 0.3,
 									   INTAKE_CLIMBING_SPEED = 0.6,
 									   TICKS_PER_INCH = ENCODER_TICKS_PER_REV * DRIVE_GEAR_REDUCTION / (WHEEL_DIAMETER_INCHES*Math.PI), 
 									   VOLTAGE_RAMP_RATE = 12,
@@ -44,9 +47,19 @@ public class Constants {
 		}
 
 		public static class Vision {
-			public static final int CAMERA_EXPOSURE = 1;
-			public static final double CAMERA_OFFSET = 11.5,
-									   MAX_TARGET_HEIGHT_OFFSET = 30.0;
+			public static final int CAMERA_EXPOSURE_LOW = 1,
+									CAMERA_EXPOSURE_NORMAL = 50,
+									IMG_WIDTH = 640,
+									IMG_HEIGHT = 360;
+			public static final double CAMERA_RIGHT_OFFSET = 8.75,
+									   CAMERA_LEFT_OFFSET = 8.75,
+									   MAX_TARGET_HEIGHT_OFFSET = 30.0,
+									   FILTER_DEADBAND = 10.0;
+		}
+		
+		public static class LowGoal {
+			public static final double LOW_MOTOR_VALUE = 100,
+									   HIGH_MOTOR_VALUE = 150;
 		}
 		
 		public static class Field {
@@ -114,7 +127,9 @@ public class Constants {
 			BALL_INTAKE(3),
 			CLIMB(4),
 			DEFENSE(5),
-			VISION(6);
+			ANGLE(7),
+			RESET(8),
+			VISION(9);
 			
 			private int id;
 			
@@ -127,8 +142,8 @@ public class Constants {
 		} 
 		
 		public enum Right {
-			ALIGN_TO_PEG(7);
-			
+			ALIGN_TO_PEG(7),
+			SERVOS(8);
 			private int id;
 			
 			private Right(int id) {

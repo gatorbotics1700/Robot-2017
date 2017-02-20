@@ -51,9 +51,9 @@ public class GripPipeline implements VisionPipeline {
 
 		// Step HSL_Threshold0:
 		Mat hslThresholdInput = blurOutput;
-		double[] hslThresholdHue = {53, 92}; //test 50-70
-		double[] hslThresholdSaturation = {32, 255.0};
-		double[] hslThresholdLuminance = {104, 255.0};
+		double[] hslThresholdHue = {62, 178}; //test 50-70
+		double[] hslThresholdSaturation = {57, 255.0};
+		double[] hslThresholdLuminance = {214, 255.0};
 		hslThreshold(hslThresholdInput, hslThresholdHue, hslThresholdSaturation, hslThresholdLuminance, hslThresholdOutput);
 
 		// Step Find_Contours0:
@@ -63,7 +63,7 @@ public class GripPipeline implements VisionPipeline {
 
 		// Step Filter_Contours0:
 		ArrayList<MatOfPoint> filterContoursContours = findContoursOutput;
-		double filterContoursMinArea = 50.0;
+		double filterContoursMinArea = 10.0;
 		double filterContoursMinPerimeter = 0.0;
 		double filterContoursMinWidth = 0.0;
 		double filterContoursMaxWidth = 1000.0;
@@ -240,7 +240,6 @@ public class GripPipeline implements VisionPipeline {
 		minRatio, double maxRatio, double almostVerticalSlope, double almostHorizontalSlope, List<MatOfPoint> output) {
 		final MatOfInt hull = new MatOfInt();
 		output.clear();
-		System.out.println("Input contours size " + inputContours.size());
 		ArrayList<MatOfPoint> filtered = new ArrayList<MatOfPoint>();
 		double minTargetDistanceFound = 652.0; //initialized to field length
 		for (int i = 0; i < inputContours.size(); i++) {
@@ -312,16 +311,25 @@ public class GripPipeline implements VisionPipeline {
 		Rect r2 = Imgproc.boundingRect(contour2);
 		double dist1 = Vision.getDistance(r1);
 		double dist2 = Vision.getDistance(r2);
-		double maxHorizontalSeparation = Constants.Values.Field.PEG_VISION_SEPARATION*Vision.FOCAL_LENGTH/((dist1+dist2)/2);
-		if (Math.abs(dist1-dist2) > Constants.Values.Field.PEG_VISION_SEPARATION) {
-			return false;
-		} 
-		if (Math.abs(r1.x - r2.x) > maxHorizontalSeparation) {
-			return false;
-		}
-		if (Math.abs((r1.y+r1.height/2)-(r2.y+r2.height/2)) > Constants.Values.Vision.MAX_TARGET_HEIGHT_OFFSET) {
-			return false;
-		}
+		double maxHorizontalSeparation = Constants.Values.Field.PEG_VISION_SEPARATION*Vision.FOCAL_LENGTH/((dist1+dist2)/2) 
+				+ Constants.Values.Vision.FILTER_DEADBAND;
+		double maxVerticalSeparation = (r1.height + r2.height)/2 + Constants.Values.Vision.FILTER_DEADBAND;
+//		if (Math.abs(dist1-dist2) > Constants.Values.Field.PEG_VISION_SEPARATION) {
+//		System.out.println("Depth offset: " + Math.abs(dist1-dist2));
+//		System.out.println("Max depth offset: " + Constants.Values.Field.PEG_VISION_SEPARATION);
+////			return false;
+//			
+//		} 
+//		if (Math.abs(r1.x - r2.x) > maxHorizontalSeparation) {
+//			System.out.println("Horizontal Distance: " + Math.abs(r1.x - r2.x));
+//			System.out.println("Max Distance: " + maxHorizontalSeparation);
+//			return false;
+//		}
+//		if (Math.abs((r1.y+r1.height/2)-(r2.y+r2.height/2)) > maxVerticalSeparation) {
+//			System.out.println("Height offset: " + Math.abs((r1.y+r1.height/2)-(r2.y+r2.height/2)));
+//			System.out.println("Max height offset: " + maxVerticalSeparation);
+//			return false;
+//		}
 		return true;
 	}
 	

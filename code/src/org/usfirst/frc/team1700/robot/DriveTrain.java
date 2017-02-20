@@ -60,6 +60,26 @@ public class DriveTrain {
 		return false;
 	}
 	
+	public boolean driveByPoseDeltaLowGear(PoseDelta poseDelta) {
+		if(poseDelta.nearZero()) {
+			driveTank(0,0);
+			return true; 
+		}
+		double angleSpeed = poseDelta.angleDelta*Constants.Values.Drive.TURNING_ANGLE_PROPORTION_LOW_GEAR;
+		double distanceSpeed = -poseDelta.distanceDelta*Constants.Values.Drive.DRIVING_DISTANCE_PROPORTION_LOW_GEAR;
+		double rightSpeed = distanceSpeed + angleSpeed;
+		rightSpeed = Math.copySign(Math.max(Constants.Values.Drive.MIN_DRIVE_POWER_LOW_GEAR, Math.abs(rightSpeed)), rightSpeed);
+		double leftSpeed = distanceSpeed - angleSpeed;
+		leftSpeed = Math.copySign(Math.max(Constants.Values.Drive.MIN_DRIVE_POWER_LOW_GEAR, Math.abs(leftSpeed)), leftSpeed);
+		leftSpeed *= 1.2;  
+		System.out.println("Delta: " + poseDelta);
+		System.out.println("Portions: " + angleSpeed + ", " + distanceSpeed);
+		System.out.println("Speeds:" + leftSpeed + ", " + rightSpeed);
+		driveTank(leftSpeed, rightSpeed);
+	
+		return false;
+	}
+	
 	public void driveTank(double leftSpeed, double rightSpeed) {
 		leftFront.set(leftSpeed);
 		leftBack.set(leftSpeed);
@@ -68,12 +88,20 @@ public class DriveTrain {
 	}
 	
 	public boolean driveTankByAngle(double speed, double angle) {
+		PoseDelta delta = new PoseDelta(angle, 0);
 		double angleSpeed = angle*Constants.Values.Drive.TURNING_ANGLE_PROPORTION;
+		if(Math.abs(speed) < Constants.Values.Drive.MIN_DRIVE_POWER) {
+			angleSpeed = Math.copySign(Math.max(Constants.Values.Drive.MIN_DRIVE_POWER, Math.abs(angleSpeed)), angleSpeed);
+		}
+		if(delta.nearZero()) {
+			angleSpeed = 0;
+		}
+		
 		double right = speed + angleSpeed;
 		//right = Math.copySign(Math.max(Constants.Values.Drive.MIN_DRIVE_POWER, Math.abs(right)), right);
 		double left = speed - angleSpeed;
 		//left = Math.copySign(Math.max(Constants.Values.Drive.MIN_DRIVE_POWER, Math.abs(left)), left);
-		left *= 1.2;  
+		right /= 1.2;  
 		System.out.println("Angle: " + angle);
 		driveTank(left, right);
 	
@@ -81,9 +109,16 @@ public class DriveTrain {
 	}
 	
 	public void shiftDriveHigh(boolean highGear){
-		if (highGear){
+		if (highGear) {
 			shifter.set(DoubleSolenoid.Value.kForward);
-			
+		} else {
+			shifter.set(DoubleSolenoid.Value.kReverse);
+		}
+	}
+	
+	public void shiftDrive() {
+		if (shifter.get() == DoubleSolenoid.Value.kReverse) {
+			shifter.set(DoubleSolenoid.Value.kForward);
 		} else {
 			shifter.set(DoubleSolenoid.Value.kReverse);
 		}

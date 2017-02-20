@@ -3,6 +3,10 @@ package org.usfirst.frc.team1700.robot;
 
 
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Joystick;
@@ -15,7 +19,7 @@ public class Robot extends IterativeRobot {
     DriveTrain drive;
     Gear gear;
     LowGoal lowGoal;
-    Vision vision; 
+    List<Vision> vision;
     Intake intake;
     PoseManager poseManager;
     Autonomous auto;
@@ -23,12 +27,11 @@ public class Robot extends IterativeRobot {
     DigitalInput secondAutoSwitch;
     CameraData cameraData;
     NetworkTable table;
-    double targetAngle;
+    Pose targetPose;
     
     
     public Robot() {
     	drive = new DriveTrain();
-    	vision = new Vision();
         gear = new Gear();
         lowGoal = new LowGoal();
         intake = new Intake();
@@ -38,13 +41,15 @@ public class Robot extends IterativeRobot {
         firstAutoSwitch = new DigitalInput(Constants.DigitalIO.FIRST_AUTO_SWITCH.getPort());
         secondAutoSwitch = new DigitalInput(Constants.DigitalIO.SECOND_AUTO_SWITCH.getPort());
         cameraData = new CameraData();
+        vision = Arrays.asList(new Vision(0), new Vision(1));
         table = NetworkTable.getTable("GRIP/myContoursReport");
-        targetAngle = 0;
+        targetPose = new Pose(0,0);
     }
 	
     public void robotInit() {
-		vision.initVision();
-		drive.setDriveVoltageRampRates();
+    	drive.setDriveVoltageRampRates();
+    	vision.get(0).turnOnVision();
+    	vision.get(1).turnOnVision();
     }
     
 
@@ -64,11 +69,13 @@ public class Robot extends IterativeRobot {
     public void autonomousPeriodic() {
     	auto.update(gear.gearInSlot());
     	driveState();
+    	
     }
 
 
     @Override
     public void teleopInit() {
+        targetPose = poseManager.getCurrentPose();
     }
     
     
@@ -87,25 +94,37 @@ public class Robot extends IterativeRobot {
     		climbState();
     	} else if (leftDriveJoystick.getRawButton(Constants.JoystickButtons.Left.LOW_GOAL_SCORE.getId())) {
     		lowGoalState();
+    	} else if (leftDriveJoystick.getRawButton(Constants.JoystickButtons.Left.RESET.getId())) {
+    		resetState();
+    	} else if (leftDriveJoystick.getRawButton(Constants.JoystickButtons.Left.ANGLE.getId())) {
+    		driveToAngle();
+    	} else if (rightDriveJoystick.getRawButton(Constants.JoystickButtons.Right.SERVOS.getId())) {
+    		drive.shiftDrive();
     	} else {
     		driveState();
     	}
     }
     
     protected boolean updateCameraData() {
-		CameraData newCameraData = getCameraDataValues();
-		if(newCameraData.timestamp > cameraData.timestamp) {
-			cameraData = newCameraData;
-			return true;
-		}
+    	//check if there's two. If two call stereoimaging if one call account for camera offset
+		List<CameraData> newCameraData = getCameraDataValues();
+			if(newCameraData.get(0).timestamp > cameraData.timestamp || newCameraData.get(1).timestamp > cameraData.timestamp) {
+				cameraData = Vision.stereoImaging(newCameraData.get(0), newCameraData.get(1), Constants.Values.Vision.CAMERA_LEFT_OFFSET, Constants.Values.Vision.CAMERA_RIGHT_OFFSET);;
+				System.out.println("Camera Data! " + cameraData);
+				return true;
+			}
 		return false;
-}
+    }
     
-	protected CameraData getCameraDataValues() {
-		double angle = table.getNumber("Angle", 0);
-		long timestamp = (long) table.getNumber("Time", 0);
-		double distance = table.getNumber("Distance", 0);
-		return new CameraData(timestamp, angle, distance);
+	protected List<CameraData> getCameraDataValues() {
+		List<CameraData> newCameraData = new ArrayList<CameraData>();
+		for(int i=0; i<vision.size(); i++) {
+			double angle = table.getNumber(i+":Angle", 0);
+			long timestamp = (long) table.getNumber(i+":Time", 0);
+			double distance = table.getNumber(i+":Distance", 0);
+			newCameraData.add(new CameraData(timestamp, angle, distance));
+		}
+		return newCameraData;
 	}
     
     public void gearState() {
@@ -125,10 +144,14 @@ public class Robot extends IterativeRobot {
 		gear.flapGearIntakePosition();
 		gear.extendSlot();
 		if (updateCameraData()) {
-			targetAngle = poseManager.getCurrentPose().angle + cameraData.angle;
+			targetPose = poseManager.getCurrentPose().add(new PoseDelta(Constants.radiansToDegrees(cameraData.angle), cameraData.distance)) ;
 			
 		}
-		drive.driveTankByAngle(rightDriveJoystick.getRawAxis(1), targetAngle - poseManager.getCurrentPose().angle);
+		//drive.driveByPoseDelta(targetPose.subtract(poseManager.getCurrentPose()));
+    }
+    
+    public void resetState() {
+    	targetPose = poseManager.getCurrentPose();
     }
     
     public void ballIntakeState() {
@@ -156,6 +179,13 @@ public class Robot extends IterativeRobot {
 		lowGoal.moveUp();
 		gear.flapLowGoalPosition();
 		gear.retractSlot();
+    }
+    
+    public void driveToAngle() {
+    	if (updateCameraData()) {
+			targetPose = poseManager.getCurrentPose().add(new PoseDelta(Constants.radiansToDegrees(cameraData.angle), 0));
+		}
+		drive.driveByPoseDeltaLowGear(targetPose.subtract(poseManager.getCurrentPose()));
     }
     
     public void driveState() {
