@@ -6,16 +6,16 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Servo;
 
 public class Gear {
-	Servo firstFlapServo;
-	Servo secondFlapServo;
+	Servo leftFlapServo;
+	Servo rightFlapServo;
 	DoubleSolenoid retractor;
 	DigitalInput beamBreakReceiver;
 	DigitalInput beamBreakEmitter;
 	
 	
 	public Gear() {
-		firstFlapServo = new Servo(Constants.PWM.FLAP_FRONT_SERVO_ID.getPort());
-		secondFlapServo = new Servo(Constants.PWM.FLAP_BACK_SERVO_ID.getPort());
+		leftFlapServo = new Servo(Constants.PWM.FLAP_LEFT.getPort());
+		rightFlapServo = new Servo(Constants.PWM.FLAP_RIGHT.getPort());
 		retractor = new DoubleSolenoid(
 				Constants.Solenoids.RETRACTOR_1.getPort(), 
 				Constants.Solenoids.RETRACTOR_2.getPort());
@@ -35,8 +35,8 @@ public class Gear {
 	}
 	
 	private void setServos(double value) {
-		firstFlapServo.set(value);
-		secondFlapServo.set(1-value);
+		leftFlapServo.set(value);
+		rightFlapServo.set(1-value);
 	}
 	
 	public void retractSlot(){

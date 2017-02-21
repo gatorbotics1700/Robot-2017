@@ -15,7 +15,8 @@ import edu.wpi.first.wpilibj.networktables.NetworkTable;
 
 public class Robot extends IterativeRobot {
     Joystick leftDriveJoystick;
-    Joystick rightDriveJoystick;    
+    Joystick rightDriveJoystick;
+    Joystick coDriveJoystick;
     DriveTrain drive;
     Gear gear;
     LowGoal lowGoal;
@@ -38,6 +39,7 @@ public class Robot extends IterativeRobot {
         poseManager = new PoseManager();
         leftDriveJoystick = new Joystick(Constants.DriverStation.LEFT_JOYSTICK.getPort());
         rightDriveJoystick = new Joystick(Constants.DriverStation.RIGHT_JOYSTICK.getPort());
+        coDriveJoystick = new Joystick(Constants.DriverStation.CO_JOYSTICK.getPort());
         firstAutoSwitch = new DigitalInput(Constants.DigitalIO.FIRST_AUTO_SWITCH.getPort());
         secondAutoSwitch = new DigitalInput(Constants.DigitalIO.SECOND_AUTO_SWITCH.getPort());
         cameraData = new CameraData();
@@ -84,24 +86,28 @@ public class Robot extends IterativeRobot {
      */
     
     public void teleopPeriodic() {
-    	if (leftDriveJoystick.getRawButton(Constants.JoystickButtons.Left.VISION.getId())) {
-    		visionState();
-    	} else if(leftDriveJoystick.getRawButton(Constants.JoystickButtons.Left.GEAR_INTAKE.getId())) {
-    		gearState();
-    	} else if (leftDriveJoystick.getRawButton(Constants.JoystickButtons.Left.BALL_INTAKE.getId())) {
-    		ballIntakeState();
-    	} else if (leftDriveJoystick.getRawButton(Constants.JoystickButtons.Left.CLIMB.getId())) {
+    	if (leftDriveJoystick.getRawButton(Constants.JoystickButtons.Right.CLIMB.getId())) {
     		climbState();
-    	} else if (leftDriveJoystick.getRawButton(Constants.JoystickButtons.Left.LOW_GOAL_SCORE.getId())) {
+    	} else if(coDriveJoystick.getRawButton(Constants.JoystickButtons.Co.GEAR_INTAKE.getId())) {
+    		gearState();
+    	} else if (coDriveJoystick.getRawButton(Constants.JoystickButtons.Co.BALL_INTAKE.getId())) {
+    		ballIntakeState();
+    	} else if (leftDriveJoystick.getRawButton(Constants.JoystickButtons.Co.VISION.getId())) {
+    		visionState();
+    	} else if (coDriveJoystick.getRawButton(Constants.JoystickButtons.Co.LOW_GOAL_SCORE.getId())) {
     		lowGoalState();
-    	} else if (leftDriveJoystick.getRawButton(Constants.JoystickButtons.Left.RESET.getId())) {
+    	} else if (coDriveJoystick.getRawButton(Constants.JoystickButtons.Co.RESET.getId())) {
     		resetState();
-    	} else if (leftDriveJoystick.getRawButton(Constants.JoystickButtons.Left.ANGLE.getId())) {
+    	} else if (coDriveJoystick.getRawButton(Constants.JoystickButtons.Co.ANGLE.getId())) {
     		driveToAngle();
-    	} else if (rightDriveJoystick.getRawButton(Constants.JoystickButtons.Right.SERVOS.getId())) {
-    		drive.shiftDrive();
     	} else {
     		driveState();
+    	}
+    	
+    	if(rightDriveJoystick.getRawButton(Constants.JoystickButtons.Right.SHIFT_HIGH.getId())) {
+    		drive.shiftDriveHigh(true);
+    	} else if (rightDriveJoystick.getRawButton(Constants.JoystickButtons.Right.SHIFT_LOW.getId())) {
+    		drive.shiftDriveHigh(false);
     	}
     }
     
@@ -129,7 +135,6 @@ public class Robot extends IterativeRobot {
     
     public void gearState() {
     	drive.driveTank(leftDriveJoystick.getRawAxis(1), rightDriveJoystick.getRawAxis(1));
-    	drive.shiftDriveHigh(true);
 		lowGoal.moveDown();
 		intake.runIntake();
 		gear.flapGearIntakePosition();
@@ -138,7 +143,6 @@ public class Robot extends IterativeRobot {
     }
     
     public void visionState() {
-    	drive.shiftDriveHigh(true);
 		lowGoal.moveDown();
 		intake.runIntake();
 		gear.flapGearIntakePosition();
@@ -156,7 +160,6 @@ public class Robot extends IterativeRobot {
     
     public void ballIntakeState() {
     	drive.driveTank(leftDriveJoystick.getRawAxis(1), rightDriveJoystick.getRawAxis(1));
-    	drive.shiftDriveHigh(true);
 		lowGoal.moveDown();
 		intake.runIntake();
 		gear.flapBallIntakePosition();
@@ -174,7 +177,6 @@ public class Robot extends IterativeRobot {
     
     public void lowGoalState() {
     	drive.driveTank(leftDriveJoystick.getRawAxis(1), rightDriveJoystick.getRawAxis(1));
-    	drive.shiftDriveHigh(true);
 		intake.lowGoalIntake();
 		lowGoal.moveUp();
 		gear.flapLowGoalPosition();
@@ -190,10 +192,9 @@ public class Robot extends IterativeRobot {
     
     public void driveState() {
     	drive.driveTank(leftDriveJoystick.getRawAxis(1), rightDriveJoystick.getRawAxis(1));
-    	drive.shiftDriveHigh(true);
 		intake.runIntake();
 		lowGoal.moveDown();
-		gear.flapGearIntakePosition();
+//		gear.flapGearIntakePosition();
 		gear.retractSlot();
     }
     

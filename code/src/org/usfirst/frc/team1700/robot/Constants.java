@@ -31,9 +31,9 @@ public class Constants {
 		}
 		
 		public static class Servos {
-			public static final double GEAR_INTAKE_POSITION = 1.0,
-					BALL_DUMPING_POSITION = 0.5,
-					BALL_INTAKE_POSITION = 0.0,
+			public static final double GEAR_INTAKE_POSITION = 0.03,
+					BALL_DUMPING_POSITION = 0.3,
+					BALL_INTAKE_POSITION = 0.48,
 					DRIVE_SERVO_SHIFT_HIGH_POSITION = 0.3,
 					DRIVE_SERVO_SHIFT_LOW_POSITION = 0.7;
 		}
@@ -59,7 +59,9 @@ public class Constants {
 		
 		public static class LowGoal {
 			public static final double LOW_MOTOR_VALUE = 100,
-									   HIGH_MOTOR_VALUE = 150;
+									   HIGH_MOTOR_VALUE = 150,
+									   MOVE_UP_SPEED = 0.3,
+									   MOVE_DOWN_SPEED = 0.4;
 		}
 		
 		public static class Field {
@@ -85,13 +87,13 @@ public class Constants {
 	
 
 	public enum PWM {
-		FLAP_BACK_SERVO_ID(0),
-		FLAP_FRONT_SERVO_ID(1),
+		FLAP_LEFT(0),
+		FLAP_RIGHT(1),
 		// Victors
-		FIRST_DUMPER_MOTOR(6),
-		SECOND_DUMPER_MOTOR(7),
-		FRONT_ROLLER(8),
-		BACK_ROLLER(9);
+		FIRST_DUMPER_MOTOR(9),
+		SECOND_DUMPER_MOTOR(8),
+		FRONT_ROLLER(7),
+		BACK_ROLLER(6);
 		
 		private int port;
 		
@@ -106,7 +108,8 @@ public class Constants {
 	// Joystick ports
 	public enum DriverStation {
 		LEFT_JOYSTICK(0),
-		RIGHT_JOYSTICK(1);
+		RIGHT_JOYSTICK(1),
+		CO_JOYSTICK(2);
 		
 		private int port;
 		
@@ -121,16 +124,7 @@ public class Constants {
 	// Buttons
 	public static class JoystickButtons{
 		public enum Left {
-			
-			GEAR_INTAKE(1),
-			LOW_GOAL_SCORE(2),
-			BALL_INTAKE(3),
-			CLIMB(4),
-			DEFENSE(5),
-			ANGLE(7),
-			RESET(8),
-			VISION(9);
-			
+			VISION(1);
 			private int id;
 			
 			private Left(int id) {
@@ -142,11 +136,30 @@ public class Constants {
 		} 
 		
 		public enum Right {
-			ALIGN_TO_PEG(7),
-			SERVOS(8);
+			CLIMB(1),
+			SHIFT_LOW(2),
+			SHIFT_HIGH(3);
 			private int id;
 			
 			private Right(int id) {
+				this.id = id;
+			}
+			public int getId(){
+				return this.id;
+			}
+		}
+		
+		public enum Co {
+			LOW_GOAL_SCORE(1),
+			GEAR_INTAKE(2),
+			BALL_INTAKE(3),
+			ANGLE(6),
+			RESET(7),
+			VISION(10),
+			ALIGN_TO_PEG(11);
+			private int id;
+			
+			private Co(int id) {
 				this.id = id;
 			}
 			public int getId(){
@@ -158,15 +171,16 @@ public class Constants {
 	
 	public enum DigitalIO {
 		QUAD_ENCODER_RIGHT_1(0),
-		QUAD_ENCODER_RIGHT_2(1),
-		QUAD_ENCODER_LEFT_1(2),
+		QUAD_ENCODER_RIGHT_2(8),
+		QUAD_ENCODER_LEFT_1(9),
 		QUAD_ENCODER_LEFT_2(3),
 		HIGH_TOP_RAMP_ID(4),
 		LOW_TOP_RAMP_ID(5),
-		BOTTOM_SENSOR_ID(6),
 		GEAR_RECEIVER_SENSOR_ID(7),
-		FIRST_AUTO_SWITCH(8),
-		SECOND_AUTO_SWITCH(9);
+		HIGH_BOTTOM_RAMP_ID(1),
+		LOW_BOTTOM_RAMP_ID(2),
+		FIRST_AUTO_SWITCH(6),
+		SECOND_AUTO_SWITCH(10);
 		private int port;
 		
 		private DigitalIO(int port) {
