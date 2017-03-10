@@ -49,7 +49,7 @@ public class Robot extends IterativeRobot {
     }
 	
     public void robotInit() {
-    	drive.setDriveVoltageRampRates();
+//    	drive.setDriveVoltageRampRates();
     	vision.get(0).turnOnVision();
     	vision.get(1).turnOnVision();
     }
@@ -78,6 +78,7 @@ public class Robot extends IterativeRobot {
     @Override
     public void teleopInit() {
         targetPose = poseManager.getCurrentPose();
+    	drive.shiftDriveHigh(true);
     }
     
     
@@ -86,7 +87,7 @@ public class Robot extends IterativeRobot {
      */
     
     public void teleopPeriodic() {
-    	if (leftDriveJoystick.getRawButton(Constants.JoystickButtons.Right.CLIMB.getId())) {
+    	if (leftDriveJoystick.getRawButton(Constants.JoystickButtons.Left.CLIMB.getId())) {
     		climbState();
     	} else if(coDriveJoystick.getRawButton(Constants.JoystickButtons.Co.GEAR_INTAKE.getId())) {
     		gearState();
@@ -96,19 +97,34 @@ public class Robot extends IterativeRobot {
     		visionState();
     	} else if (coDriveJoystick.getRawButton(Constants.JoystickButtons.Co.LOW_GOAL_SCORE.getId())) {
     		lowGoalState();
+    	} else if (coDriveJoystick.getRawButton(Constants.JoystickButtons.Co.STOP_INTAKE.getId())) {
+    		stopIntakeState();
     	} else if (coDriveJoystick.getRawButton(Constants.JoystickButtons.Co.RESET.getId())) {
     		resetState();
     	} else if (coDriveJoystick.getRawButton(Constants.JoystickButtons.Co.ANGLE.getId())) {
     		driveToAngle();
-    	} else {
+    		
+    	//driver practice
+    	} else if (coDriveJoystick.getRawButton(Constants.JoystickButtons.Co.LOW_GOAL_DOWN.getId())) {
+    		lowGoal.moveDown();
+        	drive.driveTankTuned(leftDriveJoystick.getRawAxis(1), rightDriveJoystick.getRawAxis(1));
+    	} else if (coDriveJoystick.getRawButton(Constants.JoystickButtons.Co.LOW_GOAL_UP.getId())) {
+    		lowGoal.moveUp();
+        	drive.driveTankTuned(leftDriveJoystick.getRawAxis(1), rightDriveJoystick.getRawAxis(1));
+    	}
+    	
+    	else {
     		driveState();
     	}
     	
     	if(rightDriveJoystick.getRawButton(Constants.JoystickButtons.Right.SHIFT_HIGH.getId())) {
     		drive.shiftDriveHigh(true);
+    		System.out.println("Shifting High");
     	} else if (rightDriveJoystick.getRawButton(Constants.JoystickButtons.Right.SHIFT_LOW.getId())) {
     		drive.shiftDriveHigh(false);
     	}
+    	
+    	poseManager.printDistance();
     }
     
     protected boolean updateCameraData() {
@@ -134,7 +150,7 @@ public class Robot extends IterativeRobot {
 	}
     
     public void gearState() {
-    	drive.driveTank(leftDriveJoystick.getRawAxis(1), rightDriveJoystick.getRawAxis(1));
+    	drive.driveTankTuned(leftDriveJoystick.getRawAxis(1), rightDriveJoystick.getRawAxis(1));
 		lowGoal.moveDown();
 		intake.runIntake();
 		gear.flapGearIntakePosition();
@@ -159,7 +175,7 @@ public class Robot extends IterativeRobot {
     }
     
     public void ballIntakeState() {
-    	drive.driveTank(leftDriveJoystick.getRawAxis(1), rightDriveJoystick.getRawAxis(1));
+    	drive.driveTankTuned(leftDriveJoystick.getRawAxis(1), rightDriveJoystick.getRawAxis(1));
 		lowGoal.moveDown();
 		intake.runIntake();
 		gear.flapBallIntakePosition();
@@ -167,7 +183,7 @@ public class Robot extends IterativeRobot {
     }
     
     public void climbState() {
-    	drive.driveTank(leftDriveJoystick.getRawAxis(1), rightDriveJoystick.getRawAxis(1));
+    	drive.driveTankTuned(leftDriveJoystick.getRawAxis(1), rightDriveJoystick.getRawAxis(1));
     	drive.shiftDriveHigh(false);
 		intake.climbIntake();
 		lowGoal.moveDown();
@@ -176,12 +192,16 @@ public class Robot extends IterativeRobot {
     }
     
     public void lowGoalState() {
-    	drive.driveTank(leftDriveJoystick.getRawAxis(1), rightDriveJoystick.getRawAxis(1));
+    	drive.driveTankTuned(leftDriveJoystick.getRawAxis(1), rightDriveJoystick.getRawAxis(1));
 		intake.lowGoalIntake();
 		lowGoal.moveUp();
 		gear.flapLowGoalPosition();
 		gear.retractSlot();
     }
+    
+    public void stopIntakeState() {
+    	intake.stopIntake();
+	}
     
     public void driveToAngle() {
     	if (updateCameraData()) {
@@ -191,9 +211,10 @@ public class Robot extends IterativeRobot {
     }
     
     public void driveState() {
-    	drive.driveTank(leftDriveJoystick.getRawAxis(1), rightDriveJoystick.getRawAxis(1));
+    	drive.driveTankTuned(leftDriveJoystick.getRawAxis(1), rightDriveJoystick.getRawAxis(1));
 		intake.runIntake();
-		lowGoal.moveDown();
+//		lowGoal.moveDown();
+		lowGoal.stopLowGoal(); //for driver practice
 //		gear.flapGearIntakePosition();
 		gear.retractSlot();
     }

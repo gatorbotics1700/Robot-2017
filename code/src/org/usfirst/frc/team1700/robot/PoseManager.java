@@ -44,6 +44,10 @@ public class PoseManager {
 		return Constants.ticksToInches((leftDriveEncoder.get() + 
 				rightDriveEncoder.get())/2);
 	}
+	
+	public void printDistance() {
+		System.out.println("Left Encoder: " + leftDriveEncoder.get() + " Right Encoder: " + rightDriveEncoder.get());
+	}
 
 
 }

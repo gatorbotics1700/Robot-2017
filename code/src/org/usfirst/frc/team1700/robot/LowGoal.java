@@ -23,9 +23,15 @@ public class LowGoal {
 		
 	}
 	
+	public void stopLowGoal() {
+		highRampMotor.set(0);
+		lowRampMotor.set(0);
+	}
+	
 	
 	public void moveUp() {
-		if(!highTopSensor.get()) {
+		// driver practice
+		/*if(!highTopSensor.get()) {
 			highRampMotor.set(-Constants.Values.LowGoal.MOVE_UP_SPEED);
 		} else {
 			highRampMotor.set(0);
@@ -36,12 +42,14 @@ public class LowGoal {
 			lowRampMotor.set(0);
 		}
 		System.out.println("limit switch high: " + highTopSensor.get());
-		System.out.println("limit switch low: " + lowTopSensor.get());
+		System.out.println("limit switch low: " + lowTopSensor.get());*/
+		highRampMotor.set(-0.6);
+		lowRampMotor.set(0.6);
 	}
 	
 		
 	public void moveDown() {
-		if (highBottomSensor.get()) {
+		/*if (highBottomSensor.get()) {
 			highRampMotor.set(0);
 		} else {
 			highRampMotor.set(0.3);
@@ -54,5 +62,8 @@ public class LowGoal {
 		}
 		System.out.println("limit switch high: " + highTopSensor.get());
 		System.out.println("limit switch low: " + lowTopSensor.get());
+		*/
+		highRampMotor.set(0.3);
+		lowRampMotor.set(-0.3);
 	}
 }

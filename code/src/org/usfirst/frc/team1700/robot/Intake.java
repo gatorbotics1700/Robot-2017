@@ -23,13 +23,13 @@ public class Intake {
 	}
 	
 	public void lowGoalIntake() {
-		frontRoller.set(0);
-		backRoller.set(-1);
+		frontRoller.set(-0.4);
+		backRoller.set(0);
 	}
 	
 	public void climbIntake() {
-		frontRoller.set(Constants.Values.Drive.INTAKE_CLIMBING_SPEED);
-		backRoller.set(0);
+		frontRoller.set(0);
+		backRoller.set(Constants.Values.Drive.INTAKE_CLIMBING_SPEED);
 	}
 }
 

@@ -23,19 +23,21 @@ public class Constants {
 									   ENCODER_TICKS_PER_REV = 250.0,
 									   MIN_DRIVE_POWER = 0.35,
 									   MIN_DRIVE_POWER_LOW_GEAR = 0.3,
-									   INTAKE_CLIMBING_SPEED = 0.6,
+									   INTAKE_CLIMBING_SPEED = 0.2,
 									   TICKS_PER_INCH = ENCODER_TICKS_PER_REV * DRIVE_GEAR_REDUCTION / (WHEEL_DIAMETER_INCHES*Math.PI), 
 									   VOLTAGE_RAMP_RATE = 12,
+									   JOYSTICK_TUNING_CONSTANT = 0.4,
 									   MID_RAMP_SPEED = 0.6;
 			public static final int MILLISECOND_HISTORY_LENGTH = 2000;
 		}
 		
 		public static class Servos {
 			public static final double GEAR_INTAKE_POSITION = 0.03,
-					BALL_DUMPING_POSITION = 0.3,
-					BALL_INTAKE_POSITION = 0.48,
+					BALL_INTAKE_POSITION = 0.3,
+					BALL_DUMPING_POSITION = 0.48,
 					DRIVE_SERVO_SHIFT_HIGH_POSITION = 0.3,
-					DRIVE_SERVO_SHIFT_LOW_POSITION = 0.7;
+					DRIVE_SERVO_SHIFT_LOW_POSITION = 0.7,
+					FLAP_SERVO_OFFSET = 0.92;
 		}
 		public static class Auto {
 			public static final double FIRST_DISTANCE = 50, 
@@ -67,6 +69,7 @@ public class Constants {
 		public static class Field {
 			public static final double PEG_VISION_SEPARATION = 8.25; 
 		}
+		
 	}
 	// CANTalon IDs
 	public enum CanBus {
@@ -124,7 +127,8 @@ public class Constants {
 	// Buttons
 	public static class JoystickButtons{
 		public enum Left {
-			VISION(1);
+			VISION(1),
+			CLIMB(5);
 			private int id;
 			
 			private Left(int id) {
@@ -136,9 +140,8 @@ public class Constants {
 		} 
 		
 		public enum Right {
-			CLIMB(1),
-			SHIFT_LOW(2),
-			SHIFT_HIGH(3);
+			SHIFT_LOW(3),
+			SHIFT_HIGH(2);
 			private int id;
 			
 			private Right(int id) {
@@ -153,8 +156,11 @@ public class Constants {
 			LOW_GOAL_SCORE(1),
 			GEAR_INTAKE(2),
 			BALL_INTAKE(3),
+			LOW_GOAL_UP(4),
+			LOW_GOAL_DOWN(5),
 			ANGLE(6),
 			RESET(7),
+			STOP_INTAKE(8),
 			VISION(10),
 			ALIGN_TO_PEG(11);
 			private int id;
@@ -170,16 +176,16 @@ public class Constants {
 	} 
 	
 	public enum DigitalIO {
-		QUAD_ENCODER_RIGHT_1(0),
-		QUAD_ENCODER_RIGHT_2(8),
-		QUAD_ENCODER_LEFT_1(9),
-		QUAD_ENCODER_LEFT_2(3),
+		QUAD_ENCODER_RIGHT_1(6),
+		QUAD_ENCODER_RIGHT_2(7),
+		QUAD_ENCODER_LEFT_1(8),
+		QUAD_ENCODER_LEFT_2(9),
 		HIGH_TOP_RAMP_ID(4),
 		LOW_TOP_RAMP_ID(5),
-		GEAR_RECEIVER_SENSOR_ID(7),
+		GEAR_RECEIVER_SENSOR_ID(11),
 		HIGH_BOTTOM_RAMP_ID(1),
 		LOW_BOTTOM_RAMP_ID(2),
-		FIRST_AUTO_SWITCH(6),
+		FIRST_AUTO_SWITCH(3),
 		SECOND_AUTO_SWITCH(10);
 		private int port;
 		

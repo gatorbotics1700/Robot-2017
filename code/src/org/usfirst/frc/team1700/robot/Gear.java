@@ -36,7 +36,7 @@ public class Gear {
 	
 	private void setServos(double value) {
 		leftFlapServo.set(value);
-		rightFlapServo.set(1-value);
+		rightFlapServo.set(Constants.Values.Servos.FLAP_SERVO_OFFSET-value);
 	}
 	
 	public void retractSlot(){

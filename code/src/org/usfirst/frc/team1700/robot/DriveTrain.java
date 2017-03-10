@@ -87,6 +87,15 @@ public class DriveTrain {
 		rightBack.set(-rightSpeed);
 	}
 	
+	public void driveTankTuned(double leftSpeed, double rightSpeed) {
+		double tunedLeftSpeed = Constants.Values.Drive.JOYSTICK_TUNING_CONSTANT*Math.pow(leftSpeed, 3) + (1-Constants.Values.Drive.JOYSTICK_TUNING_CONSTANT)*leftSpeed;
+		double tunedRightSpeed = Constants.Values.Drive.JOYSTICK_TUNING_CONSTANT*Math.pow(rightSpeed, 3) + (1-Constants.Values.Drive.JOYSTICK_TUNING_CONSTANT)*rightSpeed;
+		leftFront.set(tunedLeftSpeed);
+		leftBack.set(tunedLeftSpeed);
+		rightFront.set(-tunedRightSpeed);
+		rightBack.set(-tunedRightSpeed);
+	}
+	
 	public boolean driveTankByAngle(double speed, double angle) {
 		PoseDelta delta = new PoseDelta(angle, 0);
 		double angleSpeed = angle*Constants.Values.Drive.TURNING_ANGLE_PROPORTION;
