@@ -125,7 +125,10 @@ public class DriveTrain {
 		}
 	}
 	
-	
+	public void printClimbCurrent() {
+		System.out.println("Left Current 1: " + leftBack.getOutputCurrent());
+		System.out.println("Left Current 2: " + leftFront.getOutputCurrent());
+	}
 	
 	public void shiftDrive() {
 		if (shifter.get() == DoubleSolenoid.Value.kReverse) {

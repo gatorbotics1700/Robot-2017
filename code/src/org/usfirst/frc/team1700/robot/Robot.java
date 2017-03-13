@@ -20,7 +20,7 @@ public class Robot extends IterativeRobot {
     DriveTrain drive;
     Gear gear;
     LowGoal lowGoal;
-    List<Vision> vision;
+//    List<Vision> vision;
     Intake intake;
     PoseManager poseManager;
     Autonomous auto;
@@ -43,20 +43,28 @@ public class Robot extends IterativeRobot {
         firstAutoSwitch = new DigitalInput(Constants.DigitalIO.FIRST_AUTO_SWITCH.getPort());
         secondAutoSwitch = new DigitalInput(Constants.DigitalIO.SECOND_AUTO_SWITCH.getPort());
         cameraData = new CameraData();
-        vision = Arrays.asList(new Vision(0), new Vision(1));
+//        try {
+//        	vision = Arrays.asList(new Vision(0), new Vision(1));
+//        } catch (Exception exception) {
+//        	System.out.println("Cameras not connected");
+//        }
         table = NetworkTable.getTable("GRIP/myContoursReport");
         targetPose = new Pose(0,0);
     }
 	
     public void robotInit() {
 //    	drive.setDriveVoltageRampRates();
-    	vision.get(0).turnOnVision();
-    	vision.get(1).turnOnVision();
+//    	try {
+//        	vision.get(0).turnOnVision();
+//        	vision.get(1).turnOnVision();
+//        } catch (Exception exception) {
+//        	System.out.println("Cameras not connected");
+//        }
     }
     
 
     public void autonomousInit() {
-    	auto = new MiddlePegAutonomous(drive, poseManager);
+    	auto = new RightPegAutonomousWithoutVision(drive, poseManager);
 //    	if(firstAutoSwitch.get() && secondAutoSwitch.get()) {
 //    		auto = new RightPegAutonomous(drive, poseManager);
 //    	} else if(firstAutoSwitch.get() && !secondAutoSwitch.get()) {
@@ -70,8 +78,6 @@ public class Robot extends IterativeRobot {
    
     public void autonomousPeriodic() {
     	auto.update(gear.gearInSlot());
-    	driveState();
-    	
     }
 
 
@@ -112,7 +118,6 @@ public class Robot extends IterativeRobot {
     		lowGoal.moveUp();
         	drive.driveTankTuned(leftDriveJoystick.getRawAxis(1), rightDriveJoystick.getRawAxis(1));
     	}
-    	
     	else {
     		driveState();
     	}
@@ -125,29 +130,30 @@ public class Robot extends IterativeRobot {
     	}
     	
     	poseManager.printDistance();
+    	drive.printClimbCurrent();
     }
     
-    protected boolean updateCameraData() {
-    	//check if there's two. If two call stereoimaging if one call account for camera offset
-		List<CameraData> newCameraData = getCameraDataValues();
-			if(newCameraData.get(0).timestamp > cameraData.timestamp || newCameraData.get(1).timestamp > cameraData.timestamp) {
-				cameraData = Vision.stereoImaging(newCameraData.get(0), newCameraData.get(1), Constants.Values.Vision.CAMERA_LEFT_OFFSET, Constants.Values.Vision.CAMERA_RIGHT_OFFSET);;
-				System.out.println("Camera Data! " + cameraData);
-				return true;
-			}
-		return false;
-    }
+//    protected boolean updateCameraData() {
+//    	//check if there's two. If two call stereoimaging if one call account for camera offset
+//		List<CameraData> newCameraData = getCameraDataValues();
+//			if(newCameraData.get(0).timestamp > cameraData.timestamp || newCameraData.get(1).timestamp > cameraData.timestamp) {
+//				cameraData = Vision.stereoImaging(newCameraData.get(0), newCameraData.get(1), Constants.Values.Vision.CAMERA_LEFT_OFFSET, Constants.Values.Vision.CAMERA_RIGHT_OFFSET);;
+//				System.out.println("Camera Data! " + cameraData);
+//				return true;
+//			}
+//		return false;
+//    }
     
-	protected List<CameraData> getCameraDataValues() {
-		List<CameraData> newCameraData = new ArrayList<CameraData>();
-		for(int i=0; i<vision.size(); i++) {
-			double angle = table.getNumber(i+":Angle", 0);
-			long timestamp = (long) table.getNumber(i+":Time", 0);
-			double distance = table.getNumber(i+":Distance", 0);
-			newCameraData.add(new CameraData(timestamp, angle, distance));
-		}
-		return newCameraData;
-	}
+//	protected List<CameraData> getCameraDataValues() {
+//		List<CameraData> newCameraData = new ArrayList<CameraData>();
+//		for(int i=0; i<vision.size(); i++) {
+//			double angle = table.getNumber(i+":Angle", 0);
+//			long timestamp = (long) table.getNumber(i+":Time", 0);
+//			double distance = table.getNumber(i+":Distance", 0);
+//			newCameraData.add(new CameraData(timestamp, angle, distance));
+//		}
+//		return newCameraData;
+//	}
     
     public void gearState() {
     	drive.driveTankTuned(leftDriveJoystick.getRawAxis(1), rightDriveJoystick.getRawAxis(1));
@@ -163,10 +169,10 @@ public class Robot extends IterativeRobot {
 		intake.runIntake();
 		gear.flapGearIntakePosition();
 		gear.extendSlot();
-		if (updateCameraData()) {
-			targetPose = poseManager.getCurrentPose().add(new PoseDelta(Constants.radiansToDegrees(cameraData.angle), cameraData.distance)) ;
-			
-		}
+//		if (updateCameraData()) {
+//			targetPose = poseManager.getCurrentPose().add(new PoseDelta(Constants.radiansToDegrees(cameraData.angle), cameraData.distance)) ;
+//			
+//		}
 		//drive.driveByPoseDelta(targetPose.subtract(poseManager.getCurrentPose()));
     }
     
@@ -204,10 +210,10 @@ public class Robot extends IterativeRobot {
 	}
     
     public void driveToAngle() {
-    	if (updateCameraData()) {
-			targetPose = poseManager.getCurrentPose().add(new PoseDelta(Constants.radiansToDegrees(cameraData.angle), 0));
-		}
-		drive.driveByPoseDeltaLowGear(targetPose.subtract(poseManager.getCurrentPose()));
+//    	if (updateCameraData()) {
+//			targetPose = poseManager.getCurrentPose().add(new PoseDelta(Constants.radiansToDegrees(cameraData.angle), 0));
+//		}
+//		drive.driveByPoseDeltaLowGear(targetPose.subtract(poseManager.getCurrentPose()));
     }
     
     public void driveState() {

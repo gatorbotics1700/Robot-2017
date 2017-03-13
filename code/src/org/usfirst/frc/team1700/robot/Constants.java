@@ -1,6 +1,5 @@
 package org.usfirst.frc.team1700.robot;
 /**
-	@author christine
 	The RobotMap should be used for naming all ports, ids, etc. 
 	so we can change them more easily and ensure that we are not reusing them.
 	*/
@@ -42,9 +41,9 @@ public class Constants {
 		public static class Auto {
 			public static final double FIRST_DISTANCE = 50, 
 									   TURN_ANGLE = 60,
-									   SECOND_DISTANCE = 60,
+									   SECOND_DISTANCE = 30,
 									   BACK_UP_DISTANCE = 25,
-									   MIDDLE_PEG_DISTANCE = 75, //TODO: Test
+									   MIDDLE_PEG_DISTANCE = 80, //TODO: Test
 									   WAIT_TIME = 2;
 		}
 
@@ -176,16 +175,16 @@ public class Constants {
 	} 
 	
 	public enum DigitalIO {
-		QUAD_ENCODER_RIGHT_1(6),
-		QUAD_ENCODER_RIGHT_2(7),
-		QUAD_ENCODER_LEFT_1(8),
-		QUAD_ENCODER_LEFT_2(9),
+		QUAD_ENCODER_RIGHT_1(2),
+		QUAD_ENCODER_RIGHT_2(3),
+		QUAD_ENCODER_LEFT_1(0),
+		QUAD_ENCODER_LEFT_2(1),
 		HIGH_TOP_RAMP_ID(4),
 		LOW_TOP_RAMP_ID(5),
 		GEAR_RECEIVER_SENSOR_ID(11),
-		HIGH_BOTTOM_RAMP_ID(1),
-		LOW_BOTTOM_RAMP_ID(2),
-		FIRST_AUTO_SWITCH(3),
+		HIGH_BOTTOM_RAMP_ID(6),  //previous 1
+		LOW_BOTTOM_RAMP_ID(7),  //previous 2
+		FIRST_AUTO_SWITCH(8),  //previous 3
 		SECOND_AUTO_SWITCH(10);
 		private int port;
 		
