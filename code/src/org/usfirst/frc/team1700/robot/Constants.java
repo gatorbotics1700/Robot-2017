@@ -215,8 +215,10 @@ public class Constants {
 	public enum Solenoids {
 		SHIFTER_1(6),
         SHIFTER_2(7),
-        RETRACTOR_1(4),
-        RETRACTOR_2(5);
+        POPPER_1(4),
+        POPPER_2(5),
+        DROPPER_1(1),
+        DROPPER_2(2);
 
 		private int port;
 		

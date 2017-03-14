@@ -16,16 +16,20 @@ import edu.wpi.first.wpilibj.Servo;
 public class Gear {
 	Servo leftFlapServo;
 	Servo rightFlapServo;
-	DoubleSolenoid retractor;
+	DoubleSolenoid popper;
+	DoubleSolenoid dropper;
 	DigitalInput beamBreakReceiver;
 	DigitalInput beamBreakEmitter;
 	
 	public Gear() {
 		leftFlapServo = new Servo(Constants.PWM.FLAP_LEFT.getPort());
 		rightFlapServo = new Servo(Constants.PWM.FLAP_RIGHT.getPort());
-		retractor = new DoubleSolenoid(
-				Constants.Solenoids.RETRACTOR_1.getPort(), 
-				Constants.Solenoids.RETRACTOR_2.getPort());
+		popper = new DoubleSolenoid(
+				Constants.Solenoids.POPPER_1.getPort(), 
+				Constants.Solenoids.POPPER_2.getPort());
+		dropper = new DoubleSolenoid(
+				Constants.Solenoids.DROPPER_1.getPort(),
+				Constants.Solenoids.DROPPER_2.getPort());
 		beamBreakReceiver = new DigitalInput(Constants.DigitalIO.GEAR_RECEIVER_SENSOR_ID.getPort());
 	}
 	
@@ -54,14 +58,14 @@ public class Gear {
 	
 	// Methods to handle gear slot "popping"
 	public void retractSlot(){
-		retractor.set(DoubleSolenoid.Value.kReverse);
+		popper.set(DoubleSolenoid.Value.kReverse);
 	}
 	
 	public void extendSlot(){
-		retractor.set(DoubleSolenoid.Value.kForward);
+		popper.set(DoubleSolenoid.Value.kForward);
 	}
 	
-	// Methods to handle gear slt "dropping"
+	// Methods to handle gear slot "dropping"
 	public void retractDropper(){
 		dropper.set(DoubleSolenoid.Value.kReverse);
 	}
@@ -70,9 +74,9 @@ public class Gear {
 		dropper.set(DoubleSolenoid.Value.kForward);
 	}
 	
-	public boolean gearInSlot() {
-		return (!beamBreakReceiver.get());
-	}
+//	public boolean gearInSlot() {
+//		return (!beamBreakReceiver.get());
+//	}
 	
 	// TODO: Add methods to handle gear slot "dropping"
 }

@@ -26,7 +26,6 @@ public class SidePegAutonomousWithoutVision extends Autonomous {
 	
 	@Override
 	protected void init() {
-		super.updateCameraData();
 		currentAutoStage = AutoStage.DRIVE_FORWARD;
 		updateDestination(new PoseDelta(0,Constants.Values.Auto.FIRST_DISTANCE));
 	}

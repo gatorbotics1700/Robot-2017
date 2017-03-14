@@ -1,26 +1,26 @@
 package org.usfirst.frc.team1700.robot;
 
-import java.util.Collections;
-import java.util.Vector;
-
-import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
+import org.opencv.core.Rect;
+import org.opencv.imgproc.Imgproc;
+import edu.wpi.cscore.UsbCamera;
+import edu.wpi.first.wpilibj.CameraServer;
+import edu.wpi.first.wpilibj.networktables.NetworkTable;
+import edu.wpi.first.wpilibj.vision.VisionThread;
+
+/* 
+import java.util.Collections;
+import java.util.Vector;
+import org.opencv.core.CvType;
 import org.opencv.core.MatOfPoint2f;
 import org.opencv.core.Point;
-import org.opencv.core.Rect;
 import org.opencv.core.RotatedRect;
-import org.opencv.imgproc.Imgproc;
-
 import edu.wpi.cscore.AxisCamera;
-import edu.wpi.cscore.UsbCamera;
 import edu.wpi.cscore.VideoMode;
-import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.networktables.NetworkTable;
-import edu.wpi.first.wpilibj.vision.VisionRunner;
-import edu.wpi.first.wpilibj.vision.VisionThread;
+import edu.wpi.first.wpilibj.vision.VisionRunner; */
 
 public class Vision {
 	private static final double HORIZONTAL_FOV = Constants.degreesToRadians(70.42);

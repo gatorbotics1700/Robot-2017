@@ -3,9 +3,9 @@ package org.usfirst.frc.team1700.robot;
 
 
 
-import java.util.ArrayList;
+/* import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
+import java.util.List; */
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.IterativeRobot;
@@ -77,7 +77,7 @@ public class Robot extends IterativeRobot {
  
    
     public void autonomousPeriodic() {
-    	auto.update(gear.gearInSlot());
+    	//auto.update(gear.gearInSlot());
     }
 
 
@@ -130,7 +130,7 @@ public class Robot extends IterativeRobot {
     	}
     	
     	poseManager.printDistance();
-    	drive.printClimbCurrent();
+    	//drive.printClimbCurrent();
     }
     
 //    protected boolean updateCameraData() {
