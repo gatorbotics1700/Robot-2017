@@ -12,7 +12,9 @@ public class SidePegAutonomousWithoutVision extends Autonomous {
     	HOLD_TURN,
     	SCORE,
     	HOLD_SCORE,
-    	RETRY,
+    	BACK_UP,
+    	TURN_BACK,
+    	CROSS_FIELD,
     	DONE;
     }
     
@@ -31,7 +33,7 @@ public class SidePegAutonomousWithoutVision extends Autonomous {
 	}
 
 	@Override
-	protected void periodic(boolean atDestination, boolean newCameraData, boolean hasGear) {
+	protected void periodic(boolean atDestination, boolean newCameraData) {
     		switch (currentAutoStage) {
         	case DRIVE_FORWARD:
         		System.out.println("In drive forward.");
@@ -74,9 +76,35 @@ public class SidePegAutonomousWithoutVision extends Autonomous {
         	case HOLD_SCORE:
         		System.out.println("Holding score");
 				if(System.currentTimeMillis() > deadline) {
-					currentAutoStage = AutoStage.DONE;
+					updateDestination(new PoseDelta(0, -Constants.Values.Auto.SECOND_DISTANCE));
+					currentAutoStage = AutoStage.BACK_UP;
 				}
-    			break;        	
+    			break; 
+        	case BACK_UP:
+        		System.out.println("Driving back");
+        		if (atDestination) {
+        			System.out.println("Stop back");
+        			deadline = Constants.Values.Auto.WAIT_TIME + System.currentTimeMillis();
+					updateDestination(new PoseDelta(-turnAngle, 0));
+                	currentAutoStage = AutoStage.TURN_BACK;
+        		}
+        		break;
+        	case TURN_BACK:
+        		System.out.println("Turning back");
+        		if (atDestination) {
+        			System.out.println("stopped turning");
+        			deadline = Constants.Values.Auto.WAIT_TIME + System.currentTimeMillis();
+					updateDestination(new PoseDelta(0, Constants.Values.Auto.CROSS_DISTANCE));
+                	currentAutoStage = AutoStage.CROSS_FIELD;
+        		}
+        		break;
+        	case CROSS_FIELD:
+        		if (atDestination) {
+        			System.out.println("stopped turning");
+        			deadline = Constants.Values.Auto.WAIT_TIME + System.currentTimeMillis();
+					currentAutoStage = AutoStage.DONE;
+        		}
+        		break;
         	case DONE:
         		System.out.println("Done");
         		stopRobot();

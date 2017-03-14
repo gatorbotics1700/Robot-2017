@@ -21,10 +21,10 @@ public abstract class Autonomous {
 		init();
 	}
 	
-	public void update(boolean hasGear) {
+	public void update() {
 		delta = destinationPose.subtract(poseManager.getCurrentPose());
 		boolean updated = updateCameraData();
-		periodic(drive.driveByPoseDelta(delta), updated, hasGear);
+		periodic(drive.driveByPoseDelta(delta), updated);
 		drive.shiftDriveHigh(true);
 				
 		if(updated) {
@@ -62,11 +62,12 @@ public abstract class Autonomous {
 	}
 	
 	protected void stopRobot() {
+		System.out.println("stopRobot method called");
 		drive.driveTank(0, 0);
 	}
 	
 	protected abstract void init();
-	protected abstract void periodic(boolean atDestination, boolean newCameraData, boolean hasGear);
+	protected abstract void periodic(boolean atDestination, boolean newCameraData);
 	
 	
 }

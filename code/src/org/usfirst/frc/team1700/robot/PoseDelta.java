@@ -17,6 +17,16 @@ public class PoseDelta {
 	
 	//This method returns whether or not the poseDelta is near zero.
 	public boolean nearZero() {
+		return (Math.abs(this.angleDelta) < Constants.Values.Drive.ANGLE_TOLERANCE_STOP && 
+				Math.abs(this.distanceDelta) < Constants.Values.Drive.DISTANCE_TOLERANCE_STOP);
+	}
+	
+	public boolean withinTol() {
+		return (Math.abs(this.angleDelta) < Constants.Values.Drive.ANGLE_TOLERANCE && 
+				Math.abs(this.distanceDelta) < Constants.Values.Drive.DISTANCE_TOLERANCE);
+	}
+	
+	public boolean speedTol() {
 		return (Math.abs(this.angleDelta) < Constants.Values.Drive.ANGLE_TOLERANCE && 
 				Math.abs(this.distanceDelta) < Constants.Values.Drive.DISTANCE_TOLERANCE);
 	}

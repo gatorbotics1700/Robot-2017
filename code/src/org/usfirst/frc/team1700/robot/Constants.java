@@ -11,16 +11,18 @@ public class Constants {
 	} 
 	public static class Values {
 		public static class Drive {
-			public static final double TURNING_ANGLE_PROPORTION = 0.04,
+			public static final double TURNING_ANGLE_PROPORTION = 0.05,
 									   TURNING_ANGLE_PROPORTION_LOW_GEAR = 0.02,
-									   DRIVING_DISTANCE_PROPORTION_LOW_GEAR = 1.0/300.0,
-									   DRIVING_DISTANCE_PROPORTION = (1.0/252.0),
+									   DRIVING_DISTANCE_PROPORTION_LOW_GEAR = 1.0/100.0,
+									   DRIVING_DISTANCE_PROPORTION = (1.0/70.0),
 									   ANGLE_TOLERANCE = 5.0,
+									   ANGLE_TOLERANCE_STOP = 1.0,
 									   DISTANCE_TOLERANCE = 4.0,
+									   DISTANCE_TOLERANCE_STOP = 0.5,
 									   WHEEL_DIAMETER_INCHES = 4.0,
 									   DRIVE_GEAR_REDUCTION = 1.0,
 									   ENCODER_TICKS_PER_REV = 250.0,
-									   MIN_DRIVE_POWER = 0.35,
+									   MIN_DRIVE_POWER = 0.15,
 									   MIN_DRIVE_POWER_LOW_GEAR = 0.3,
 									   INTAKE_CLIMBING_SPEED = 0.2,
 									   TICKS_PER_INCH = ENCODER_TICKS_PER_REV * DRIVE_GEAR_REDUCTION / (WHEEL_DIAMETER_INCHES*Math.PI), 
@@ -43,6 +45,7 @@ public class Constants {
 									   TURN_ANGLE = 60,
 									   SECOND_DISTANCE = 30,
 									   BACK_UP_DISTANCE = 25,
+									   CROSS_DISTANCE = 240,
 									   MIDDLE_PEG_DISTANCE = 80, //TODO: Test
 									   WAIT_TIME = 2;
 		}

@@ -64,7 +64,7 @@ public class Robot extends IterativeRobot {
     
 
     public void autonomousInit() {
-    	auto = new RightPegAutonomousWithoutVision(drive, poseManager);
+    	auto = new LeftPegAutonomousWithoutVision(drive, poseManager);
 //    	if(firstAutoSwitch.get() && secondAutoSwitch.get()) {
 //    		auto = new RightPegAutonomous(drive, poseManager);
 //    	} else if(firstAutoSwitch.get() && !secondAutoSwitch.get()) {
@@ -77,7 +77,7 @@ public class Robot extends IterativeRobot {
  
    
     public void autonomousPeriodic() {
-    	//auto.update(gear.gearInSlot());
+    	auto.update();
     }
 
 

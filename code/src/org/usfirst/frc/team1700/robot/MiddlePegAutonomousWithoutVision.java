@@ -29,7 +29,7 @@ double deadline;
 	}
 
 	@Override
-	protected void periodic(boolean atDestination, boolean newCameraData, boolean hasGear) {
+	protected void periodic(boolean atDestination, boolean newCameraData) {
 		switch(currentAutoStage) {
 		case SCORE:
 			if(atDestination) {
@@ -40,12 +40,7 @@ double deadline;
 		case WAIT:
 			stopRobot();
 			if(System.currentTimeMillis() > deadline) {
-				if(hasGear) {
-	        		updateDestination(new PoseDelta(0, -Constants.Values.Auto.BACK_UP_DISTANCE));
-					currentAutoStage = AutoStage.RETRY;
-				} else {
-					currentAutoStage = AutoStage.DONE;
-				}
+				currentAutoStage = AutoStage.DONE;
 			}
 			break;
 		case RETRY:

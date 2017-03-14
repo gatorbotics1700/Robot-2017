@@ -18,6 +18,8 @@ public class DriveTrain {
     CANTalon leftFront;
     CANTalon leftBack;
     DoubleSolenoid shifter;
+    int goalCounter;
+    boolean nearZero;
     
 	public DriveTrain() {
 		// Two motors/controllers per side of the robot
@@ -28,6 +30,8 @@ public class DriveTrain {
 		shifter = new DoubleSolenoid(
 				Constants.Solenoids.SHIFTER_1.getPort(),
 				Constants.Solenoids.SHIFTER_2.getPort());
+		goalCounter = 0;
+		boolean nearZero = false;
 	}
 	
 	// Voltage ramp rate used to prevent brownouts
@@ -41,22 +45,32 @@ public class DriveTrain {
 	
 	// Relative pose based driving. Use to go to set points in autonomous
 	public boolean driveByPoseDelta(PoseDelta poseDelta) {
-		if(poseDelta.nearZero()) {
+		if(poseDelta.nearZero()){
+			System.out.println("Stop robot");
 			driveTank(0,0);
-			return true; 
+			goalCounter = 25;
+			return true;
+		}else{
+			double angleSpeed = poseDelta.angleDelta*Constants.Values.Drive.TURNING_ANGLE_PROPORTION;
+			double distanceSpeed = -poseDelta.distanceDelta*Constants.Values.Drive.DRIVING_DISTANCE_PROPORTION;
+			double rightSpeed = distanceSpeed + angleSpeed;
+			// Min drive power used to overcome static frictions
+			rightSpeed = Math.copySign(Math.max(Constants.Values.Drive.MIN_DRIVE_POWER, Math.abs(rightSpeed)), rightSpeed);
+			double leftSpeed = distanceSpeed - angleSpeed;
+			leftSpeed = Math.copySign(Math.max(Constants.Values.Drive.MIN_DRIVE_POWER, Math.abs(leftSpeed)), leftSpeed);
+			leftSpeed *= 0.97; // Compensating multiplier for differences in friction. This is largely due to PTO  
+			System.out.println("Delta: " + poseDelta);
+			System.out.println("Portions: " + angleSpeed + ", " + distanceSpeed);
+			System.out.println("Speeds:" + leftSpeed + ", " + rightSpeed);
+			driveTank(leftSpeed, rightSpeed);
+			if(poseDelta.withinTol()) {
+				 goalCounter++;
+				 if(goalCounter>25)
+					 return true;
+			}else{
+				goalCounter = 0;
+			}	
 		}
-		double angleSpeed = poseDelta.angleDelta*Constants.Values.Drive.TURNING_ANGLE_PROPORTION;
-		double distanceSpeed = -poseDelta.distanceDelta*Constants.Values.Drive.DRIVING_DISTANCE_PROPORTION;
-		double rightSpeed = distanceSpeed + angleSpeed;
-		// Min drive power used to overcome static frictions
-		rightSpeed = Math.copySign(Math.max(Constants.Values.Drive.MIN_DRIVE_POWER, Math.abs(rightSpeed)), rightSpeed);
-		double leftSpeed = distanceSpeed - angleSpeed;
-		leftSpeed = Math.copySign(Math.max(Constants.Values.Drive.MIN_DRIVE_POWER, Math.abs(leftSpeed)), leftSpeed);
-		leftSpeed *= 1.2; // Compensating multiplier for differences in friction. This is largely due to PTO  
-		System.out.println("Delta: " + poseDelta);
-		System.out.println("Portions: " + angleSpeed + ", " + distanceSpeed);
-		System.out.println("Speeds:" + leftSpeed + ", " + rightSpeed);
-		driveTank(leftSpeed, rightSpeed);	
 		return false;
 	}
 	// Relative pose based driving. Use to go to set points in autonomous
