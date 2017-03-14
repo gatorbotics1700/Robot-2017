@@ -73,6 +73,7 @@ public class DriveTrain {
 			driveTank(0,0);
 			return true; 
 		}
+		
 		double angleSpeed = poseDelta.angleDelta*Constants.Values.Drive.TURNING_ANGLE_PROPORTION_LOW_GEAR;
 		double distanceSpeed = -poseDelta.distanceDelta*Constants.Values.Drive.DRIVING_DISTANCE_PROPORTION_LOW_GEAR;
 		double rightSpeed = distanceSpeed + angleSpeed;

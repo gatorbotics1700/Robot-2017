@@ -1,5 +1,6 @@
+/* This class implements the camera to be used in autonomous via the IP Camera. 
+ */
 package org.usfirst.frc.team1700.robot;
-
 
 import edu.wpi.first.wpilibj.networktables.NetworkTable;
 
@@ -37,6 +38,7 @@ public abstract class Autonomous {
 		destinationPose = poseManager.getCurrentPose().add(delta);
 	}
 	
+	//returns new camera data values including angle and distance
 	protected CameraData getCameraDataValues() {
 		double angle = table.getNumber("Angle", 0);
 		long timestamp = (long) table.getNumber("Time", 0);
@@ -45,7 +47,6 @@ public abstract class Autonomous {
 }
 	
 	 //Updates values if the values are new
-
 	protected boolean updateCameraData() {
 			CameraData newCameraData = getCameraDataValues();
 			if(newCameraData.timestamp > cameraData.timestamp) {
@@ -63,7 +64,6 @@ public abstract class Autonomous {
 	protected void stopRobot() {
 		drive.driveTank(0, 0);
 	}
-	
 	
 	protected abstract void init();
 	protected abstract void periodic(boolean atDestination, boolean newCameraData, boolean hasGear);
