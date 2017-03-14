@@ -61,6 +61,15 @@ public class Gear {
 		retractor.set(DoubleSolenoid.Value.kForward);
 	}
 	
+	// Methods to handle gear slt "dropping"
+	public void retractDropper(){
+		dropper.set(DoubleSolenoid.Value.kReverse);
+	}
+	
+	public void extendDropper(){
+		dropper.set(DoubleSolenoid.Value.kForward);
+	}
+	
 	public boolean gearInSlot() {
 		return (!beamBreakReceiver.get());
 	}
