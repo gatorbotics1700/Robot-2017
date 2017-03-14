@@ -1,3 +1,6 @@
+/* This class stores all the camera data for the autonomous modes
+ * including angle and distance.
+ */
 package org.usfirst.frc.team1700.robot;
 
 import edu.wpi.first.wpilibj.networktables.NetworkTable;

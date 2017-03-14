@@ -1,3 +1,6 @@
+/* This class implements a circular buffer to be used for 
+ * storing robot poses. 
+ */
 package org.usfirst.frc.team1700.robot;
 
 import java.util.ArrayList;
@@ -23,6 +26,7 @@ public class CircularBuffer {
 		circularBuffer.add(currentPos, pose);
 	}
 	
+	//returns history of robot poses
 	public Pose getHistory(double millisecondOffset) {
 		int firstOffset = (int)(millisecondOffset/50);
 		int secondOffset = firstOffset + 1; 
