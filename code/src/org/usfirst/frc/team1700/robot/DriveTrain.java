@@ -45,20 +45,41 @@ public class DriveTrain {
 	
 	// Relative pose based driving. Use to go to set points in autonomous
 	public boolean driveByPoseDelta(PoseDelta poseDelta) {
+		double angleSpeed, distanceSpeed;
 		if(poseDelta.nearZero()){
 			System.out.println("Stop robot");
 			driveTank(0,0);
 			goalCounter = 25;
 			return true;
 		}else{
-			double angleSpeed = poseDelta.angleDelta*Constants.Values.Drive.TURNING_ANGLE_PROPORTION;
-			double distanceSpeed = -poseDelta.distanceDelta*Constants.Values.Drive.DRIVING_DISTANCE_PROPORTION;
+			// caps angle speed at max angle speed value
+			if(poseDelta.angleDelta*Constants.Values.Drive.TURNING_ANGLE_PROPORTION > 
+			Constants.Values.Drive.MAX_ANGLE_SPEED) {
+				angleSpeed = Constants.Values.Drive.MAX_ANGLE_SPEED;
+			} else if(poseDelta.angleDelta*Constants.Values.Drive.TURNING_ANGLE_PROPORTION < 
+			-Constants.Values.Drive.MAX_ANGLE_SPEED){
+				angleSpeed = -Constants.Values.Drive.MAX_ANGLE_SPEED;				
+			} else {
+				angleSpeed = poseDelta.angleDelta*Constants.Values.Drive.TURNING_ANGLE_PROPORTION;
+			}
+			
+			// caps distance speed at max distance speed value
+			if(poseDelta.distanceDelta*Constants.Values.Drive.DRIVING_DISTANCE_PROPORTION > 
+			Constants.Values.Drive.MAX_DISTANCE_SPEED) {
+				distanceSpeed = -Constants.Values.Drive.MAX_DISTANCE_SPEED;
+			} else if(poseDelta.distanceDelta*Constants.Values.Drive.DRIVING_DISTANCE_PROPORTION < 
+			-Constants.Values.Drive.MAX_DISTANCE_SPEED) {
+				distanceSpeed = Constants.Values.Drive.MAX_DISTANCE_SPEED;
+			} else {
+				distanceSpeed = -poseDelta.distanceDelta*Constants.Values.Drive.DRIVING_DISTANCE_PROPORTION;
+			}
+			
 			double rightSpeed = distanceSpeed + angleSpeed;
 			// Min drive power used to overcome static frictions
 			rightSpeed = Math.copySign(Math.max(Constants.Values.Drive.MIN_DRIVE_POWER, Math.abs(rightSpeed)), rightSpeed);
 			double leftSpeed = distanceSpeed - angleSpeed;
 			leftSpeed = Math.copySign(Math.max(Constants.Values.Drive.MIN_DRIVE_POWER, Math.abs(leftSpeed)), leftSpeed);
-			leftSpeed *= 0.97; // Compensating multiplier for differences in friction. This is largely due to PTO  
+			leftSpeed *= 1; // Compensating multiplier for differences in friction. This is largely due to PTO  
 			System.out.println("Delta: " + poseDelta);
 			System.out.println("Portions: " + angleSpeed + ", " + distanceSpeed);
 			System.out.println("Speeds:" + leftSpeed + ", " + rightSpeed);
@@ -151,6 +172,11 @@ public class DriveTrain {
 		} else {
 			shifter.set(DoubleSolenoid.Value.kReverse);
 		}
+	}
+	
+	public void setMaxCurrent() {
+		leftBack.setCurrentLimit(Constants.Values.Climb.MAX_CURRENT);
+		leftFront.setCurrentLimit(Constants.Values.Climb.MAX_CURRENT);
 	}
 	
 }

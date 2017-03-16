@@ -4,22 +4,24 @@
  */
 package org.usfirst.frc.team1700.robot;
 
+import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.Victor;
 
 public class Intake {
 	Victor frontRoller;
 	Victor backRoller;
+	PowerDistributionPanel pdp;
 	
-	//initializer
 	public Intake(){
 		frontRoller = new Victor(Constants.PWM.FRONT_ROLLER.getPort());
 		backRoller = new Victor(Constants.PWM.BACK_ROLLER.getPort());
+		pdp = new PowerDistributionPanel();
 	}
 	
-	//This method runs the intake mechanism.
+	//This method runs the intake mechanism used during most of the match
 	public void runIntake(){
-		frontRoller.set(1);
-		backRoller.set(1);
+		frontRoller.set(Constants.Values.Intake.CURRENT_LIMIT / pdp.getCurrent(0)); //TODO: Change port ids
+		backRoller.set(Constants.Values.Intake.CURRENT_LIMIT / pdp.getCurrent(1)); //TODO: Change port ids
 	}
 	
 	//This method stops the intake rollers.

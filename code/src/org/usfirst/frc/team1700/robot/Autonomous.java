@@ -10,10 +10,12 @@ public abstract class Autonomous {
 	private Pose destinationPose;	
     protected PoseDelta delta;
     private NetworkTable table;
+    private Gear gear;
 	
     protected CameraData cameraData;
 	
-	public Autonomous(DriveTrain drive, PoseManager poseManager) {
+	public Autonomous(DriveTrain drive, PoseManager poseManager, Gear gear) {
+		this.gear = gear;
 		this.drive = drive;
 		this.poseManager = poseManager;
 		this.cameraData = new CameraData();
@@ -64,6 +66,10 @@ public abstract class Autonomous {
 	protected void stopRobot() {
 		System.out.println("stopRobot method called");
 		drive.driveTank(0, 0);
+	}
+	
+	protected void dropGear() {
+		gear.extendDropper();
 	}
 	
 	protected abstract void init();

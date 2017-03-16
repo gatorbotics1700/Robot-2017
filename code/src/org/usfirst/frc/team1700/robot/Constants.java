@@ -11,10 +11,10 @@ public class Constants {
 	} 
 	public static class Values {
 		public static class Drive {
-			public static final double TURNING_ANGLE_PROPORTION = 0.05,
+			public static final double TURNING_ANGLE_PROPORTION = 0.07,
 									   TURNING_ANGLE_PROPORTION_LOW_GEAR = 0.02,
-									   DRIVING_DISTANCE_PROPORTION_LOW_GEAR = 1.0/100.0,
-									   DRIVING_DISTANCE_PROPORTION = (1.0/70.0),
+									   DRIVING_DISTANCE_PROPORTION_LOW_GEAR = 1.0/200.0,
+									   DRIVING_DISTANCE_PROPORTION = (1.0/30.0),
 									   ANGLE_TOLERANCE = 5.0,
 									   ANGLE_TOLERANCE_STOP = 1.0,
 									   DISTANCE_TOLERANCE = 4.0,
@@ -22,13 +22,15 @@ public class Constants {
 									   WHEEL_DIAMETER_INCHES = 4.0,
 									   DRIVE_GEAR_REDUCTION = 1.0,
 									   ENCODER_TICKS_PER_REV = 250.0,
-									   MIN_DRIVE_POWER = 0.15,
+									   MIN_DRIVE_POWER = 0.13,
 									   MIN_DRIVE_POWER_LOW_GEAR = 0.3,
 									   INTAKE_CLIMBING_SPEED = 0.2,
 									   TICKS_PER_INCH = ENCODER_TICKS_PER_REV * DRIVE_GEAR_REDUCTION / (WHEEL_DIAMETER_INCHES*Math.PI), 
 									   VOLTAGE_RAMP_RATE = 12,
 									   JOYSTICK_TUNING_CONSTANT = 0.4,
-									   MID_RAMP_SPEED = 0.6;
+									   MID_RAMP_SPEED = 0.6,
+									   MAX_ANGLE_SPEED = 0.5,
+									   MAX_DISTANCE_SPEED = 0.35;
 			public static final int MILLISECOND_HISTORY_LENGTH = 2000;
 		}
 		
@@ -45,9 +47,12 @@ public class Constants {
 									   TURN_ANGLE = 60,
 									   SECOND_DISTANCE = 30,
 									   BACK_UP_DISTANCE = 25,
+									   TURN_MIDDLE_ANGLE = 90,
+									   TO_SIDE_DISTANCE = 50,
 									   CROSS_DISTANCE = 240,
 									   MIDDLE_PEG_DISTANCE = 80, //TODO: Test
-									   WAIT_TIME = 2;
+									   DEPLOY_TIME = 2000,
+									   WAIT_TIME = 500;
 		}
 
 		public static class Vision {
@@ -66,6 +71,19 @@ public class Constants {
 									   HIGH_MOTOR_VALUE = 150,
 									   MOVE_UP_SPEED = 0.3,
 									   MOVE_DOWN_SPEED = 0.4;
+		}
+		
+		public static class Intake {
+			public static final int CURRENT_LIMIT = 23;
+		}
+		
+		public static class Climb {
+			public static final int MAX_CURRENT = 50;
+		}
+		
+		public static class Gear {
+			public static final int POPPER_TIME = 500,
+									DROPPER_TIME = 500;
 		}
 		
 		public static class Field {
@@ -130,6 +148,7 @@ public class Constants {
 	public static class JoystickButtons{
 		public enum Left {
 			VISION(1),
+			DEPLOY_GEAR(3),
 			CLIMB(5);
 			private int id;
 			
@@ -155,16 +174,15 @@ public class Constants {
 		}
 		
 		public enum Co {
-			LOW_GOAL_SCORE(1),
+//			LOW_GOAL_SCORE(1),
+			DROPPER_RETRACT(1),
 			GEAR_INTAKE(2),
 			BALL_INTAKE(3),
 			LOW_GOAL_UP(4),
 			LOW_GOAL_DOWN(5),
 			ANGLE(6),
 			RESET(7),
-			STOP_INTAKE(8),
-			VISION(10),
-			ALIGN_TO_PEG(11);
+			STOP_INTAKE(8);
 			private int id;
 			
 			private Co(int id) {
@@ -220,8 +238,8 @@ public class Constants {
         SHIFTER_2(7),
         POPPER_1(4),
         POPPER_2(5),
-        DROPPER_1(1),
-        DROPPER_2(2);
+        DROPPER_1(0),
+        DROPPER_2(1);
 
 		private int port;
 		

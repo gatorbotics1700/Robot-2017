@@ -15,8 +15,8 @@ double deadline;
     AutoStage currentAutoStage;
 	double turnAngle;
 
-	public MiddlePegAutonomous(DriveTrain drive, PoseManager poseManager) {
-		super(drive, poseManager);
+	public MiddlePegAutonomous(DriveTrain drive, PoseManager poseManager, Gear gear) {
+		super(drive, poseManager, gear);
 		// TODO Auto-generated constructor stub
 	}
 

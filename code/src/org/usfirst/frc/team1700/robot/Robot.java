@@ -29,6 +29,7 @@ public class Robot extends IterativeRobot {
     CameraData cameraData;
     NetworkTable table;
     Pose targetPose;
+    boolean climbing;
     
     
     public Robot() {
@@ -64,7 +65,7 @@ public class Robot extends IterativeRobot {
     
 
     public void autonomousInit() {
-    	auto = new LeftPegAutonomousWithoutVision(drive, poseManager);
+    	auto = new MiddlePegAutonomousWithoutVision(drive, poseManager, gear);
 //    	if(firstAutoSwitch.get() && secondAutoSwitch.get()) {
 //    		auto = new RightPegAutonomous(drive, poseManager);
 //    	} else if(firstAutoSwitch.get() && !secondAutoSwitch.get()) {
@@ -85,6 +86,7 @@ public class Robot extends IterativeRobot {
     public void teleopInit() {
         targetPose = poseManager.getCurrentPose();
     	drive.shiftDriveHigh(true);
+    	climbing = false;
     }
     
     
@@ -93,16 +95,16 @@ public class Robot extends IterativeRobot {
      */
     
     public void teleopPeriodic() {
-    	if (leftDriveJoystick.getRawButton(Constants.JoystickButtons.Left.CLIMB.getId())) {
+    	if (climbing) {
     		climbState();
     	} else if(coDriveJoystick.getRawButton(Constants.JoystickButtons.Co.GEAR_INTAKE.getId())) {
     		gearState();
     	} else if (coDriveJoystick.getRawButton(Constants.JoystickButtons.Co.BALL_INTAKE.getId())) {
     		ballIntakeState();
-    	} else if (leftDriveJoystick.getRawButton(Constants.JoystickButtons.Co.VISION.getId())) {
-    		visionState();
-    	} else if (coDriveJoystick.getRawButton(Constants.JoystickButtons.Co.LOW_GOAL_SCORE.getId())) {
-    		lowGoalState();
+//    	} else if (leftDriveJoystick.getRawButton(Constants.JoystickButtons.Co.VISION.getId())) {
+//    		visionState();
+//    	} else if (coDriveJoystick.getRawButton(Constants.JoystickButtons.Co.LOW_GOAL_SCORE.getId())) {
+//    		lowGoalState();
     	} else if (coDriveJoystick.getRawButton(Constants.JoystickButtons.Co.STOP_INTAKE.getId())) {
     		stopIntakeState();
     	} else if (coDriveJoystick.getRawButton(Constants.JoystickButtons.Co.RESET.getId())) {
@@ -123,12 +125,24 @@ public class Robot extends IterativeRobot {
     	}
     	
     	if(rightDriveJoystick.getRawButton(Constants.JoystickButtons.Right.SHIFT_HIGH.getId())) {
+    		climbing = false;
     		drive.shiftDriveHigh(true);
     		System.out.println("Shifting High");
     	} else if (rightDriveJoystick.getRawButton(Constants.JoystickButtons.Right.SHIFT_LOW.getId())) {
     		drive.shiftDriveHigh(false);
     	}
     	
+    	if(leftDriveJoystick.getRawButton(Constants.JoystickButtons.Left.DEPLOY_GEAR.getId())) {
+    		gear.extendDropper();
+    	} else if (coDriveJoystick.getRawButton(Constants.JoystickButtons.Co.DROPPER_RETRACT.getId())) {
+    		gear.retractDropper();
+    	}
+    	
+    	if (leftDriveJoystick.getRawButton(Constants.JoystickButtons.Left.CLIMB.getId())) {
+    		climbing = true;
+    	}
+    	
+
     	poseManager.printDistance();
     	//drive.printClimbCurrent();
     }
@@ -159,8 +173,10 @@ public class Robot extends IterativeRobot {
     	drive.driveTankTuned(leftDriveJoystick.getRawAxis(1), rightDriveJoystick.getRawAxis(1));
 		lowGoal.moveDown();
 		intake.runIntake();
+		gear.retractDropper();
 		gear.flapGearIntakePosition();
 		gear.extendSlot();
+		System.out.println("Gear state");
 		
     }
     
@@ -191,10 +207,12 @@ public class Robot extends IterativeRobot {
     public void climbState() {
     	drive.driveTankTuned(leftDriveJoystick.getRawAxis(1), rightDriveJoystick.getRawAxis(1));
     	drive.shiftDriveHigh(false);
+    	drive.setMaxCurrent();
 		intake.climbIntake();
 		lowGoal.moveDown();
 		gear.flapGearIntakePosition();
 		gear.retractSlot();
+		gear.retractDropper();
     }
     
     public void lowGoalState() {
