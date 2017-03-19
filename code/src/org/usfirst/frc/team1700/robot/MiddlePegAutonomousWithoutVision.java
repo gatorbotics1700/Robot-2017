@@ -55,7 +55,7 @@ double deadline;
     		if (atDestination) {
     			System.out.println("Stop back");
 				updateDestination(new PoseDelta(Constants.Values.Auto.TURN_MIDDLE_ANGLE, 0));
-            	currentAutoStage = AutoStage.TURN;
+            	currentAutoStage = AutoStage.DONE;
     		}
     		break;
 		case TURN:

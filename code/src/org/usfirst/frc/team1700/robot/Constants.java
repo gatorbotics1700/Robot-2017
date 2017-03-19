@@ -11,31 +11,34 @@ public class Constants {
 	} 
 	public static class Values {
 		public static class Drive {
-			public static final double TURNING_ANGLE_PROPORTION = 0.07,
+			public static final double TURNING_ANGLE_PROPORTION = 0.085,
+									   TURNING_ANGLE_D = -0.001,
 									   TURNING_ANGLE_PROPORTION_LOW_GEAR = 0.02,
-									   DRIVING_DISTANCE_PROPORTION_LOW_GEAR = 1.0/200.0,
-									   DRIVING_DISTANCE_PROPORTION = (1.0/30.0),
 									   ANGLE_TOLERANCE = 5.0,
 									   ANGLE_TOLERANCE_STOP = 1.0,
+									   MAX_ANGLE_SPEED = 0.5,
+									   DRIVING_DISTANCE_PROPORTION = (1.0/30.0),
+									   DRIVING_DISTANCE_PROPORTION_LOW_GEAR = 1.0/200.0,
+									   DRIVING_DISTANCE_D = -0.001,
 									   DISTANCE_TOLERANCE = 4.0,
 									   DISTANCE_TOLERANCE_STOP = 0.5,
-									   WHEEL_DIAMETER_INCHES = 4.0,
-									   DRIVE_GEAR_REDUCTION = 1.0,
-									   ENCODER_TICKS_PER_REV = 250.0,
+									   MAX_DISTANCE_SPEED = 0.35,
 									   MIN_DRIVE_POWER = 0.13,
 									   MIN_DRIVE_POWER_LOW_GEAR = 0.3,
+									   WHEEL_DIAMETER_INCHES = 4.0,
+									   DRIVE_GEAR_REDUCTION = 1.0,
+									   ENCODER_TICKS_PER_REV = 212.0,
 									   INTAKE_CLIMBING_SPEED = 0.2,
 									   TICKS_PER_INCH = ENCODER_TICKS_PER_REV * DRIVE_GEAR_REDUCTION / (WHEEL_DIAMETER_INCHES*Math.PI), 
-									   VOLTAGE_RAMP_RATE = 12,
+									   VOLTAGE_RAMP_RATE = 100,
 									   JOYSTICK_TUNING_CONSTANT = 0.4,
-									   MID_RAMP_SPEED = 0.6,
-									   MAX_ANGLE_SPEED = 0.5,
-									   MAX_DISTANCE_SPEED = 0.35;
+									   MID_RAMP_SPEED = 0.6;
+									   
 			public static final int MILLISECOND_HISTORY_LENGTH = 2000;
 		}
 		
 		public static class Servos {
-			public static final double GEAR_INTAKE_POSITION = 0.03,
+			public static final double GEAR_INTAKE_POSITION = 0.015,
 					BALL_INTAKE_POSITION = 0.3,
 					BALL_DUMPING_POSITION = 0.48,
 					DRIVE_SERVO_SHIFT_HIGH_POSITION = 0.3,
@@ -43,15 +46,15 @@ public class Constants {
 					FLAP_SERVO_OFFSET = 0.92;
 		}
 		public static class Auto {
-			public static final double FIRST_DISTANCE = 50, 
+			public static final double FIRST_DISTANCE = 104-18, 
 									   TURN_ANGLE = 60,
-									   SECOND_DISTANCE = 30,
+									   SECOND_DISTANCE = 29,
 									   BACK_UP_DISTANCE = 25,
 									   TURN_MIDDLE_ANGLE = 90,
-									   TO_SIDE_DISTANCE = 50,
+									   TO_SIDE_DISTANCE = 100,
 									   CROSS_DISTANCE = 240,
-									   MIDDLE_PEG_DISTANCE = 80, //TODO: Test
-									   DEPLOY_TIME = 2000,
+									   MIDDLE_PEG_DISTANCE = 102-18, //TODO: Test
+									   DEPLOY_TIME = 750, //in milliseconds
 									   WAIT_TIME = 500;
 		}
 
@@ -196,17 +199,17 @@ public class Constants {
 	} 
 	
 	public enum DigitalIO {
-		QUAD_ENCODER_RIGHT_1(2),
-		QUAD_ENCODER_RIGHT_2(3),
-		QUAD_ENCODER_LEFT_1(0),
-		QUAD_ENCODER_LEFT_2(1),
-		HIGH_TOP_RAMP_ID(4),
+		QUAD_ENCODER_RIGHT_1(6),
+		QUAD_ENCODER_RIGHT_2(7),
+		QUAD_ENCODER_LEFT_1(8),
+		QUAD_ENCODER_LEFT_2(9),
+		HIGH_TOP_RAMP_ID(11),
 		LOW_TOP_RAMP_ID(5),
-		GEAR_RECEIVER_SENSOR_ID(11),
-		HIGH_BOTTOM_RAMP_ID(6),  //previous 1
-		LOW_BOTTOM_RAMP_ID(7),  //previous 2
-		FIRST_AUTO_SWITCH(8),  //previous 3
-		SECOND_AUTO_SWITCH(10);
+//		GEAR_RECEIVER_SENSOR_ID(11),
+		HIGH_BOTTOM_RAMP_ID(1),
+		LOW_BOTTOM_RAMP_ID(2),
+		FIRST_AUTO_SWITCH(3),
+		SECOND_AUTO_SWITCH(4);
 		private int port;
 		
 		private DigitalIO(int port) {
@@ -238,8 +241,8 @@ public class Constants {
         SHIFTER_2(7),
         POPPER_1(4),
         POPPER_2(5),
-        DROPPER_1(0),
-        DROPPER_2(1);
+        DROPPER_1(3),
+        DROPPER_2(2);
 
 		private int port;
 		
@@ -251,8 +254,12 @@ public class Constants {
 		}
 	}
 			                	
-	public static double ticksToInches(double ticks) {
+	public static double ticksToInchesRight(double ticks) {
 		//System.out.println("Tick per inch: " + TICKS_PER_INCH);
+		return ticks / Values.Drive.TICKS_PER_INCH  * 212/360;
+	}
+	
+	public static double ticksToInchesLeft(double ticks) {
 		return ticks / Values.Drive.TICKS_PER_INCH;
 	}
 	

@@ -2,7 +2,6 @@
 package org.usfirst.frc.team1700.robot;
 
 
-
 /* import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List; */
@@ -33,11 +32,11 @@ public class Robot extends IterativeRobot {
     
     
     public Robot() {
+        poseManager = new PoseManager();
     	drive = new DriveTrain();
         gear = new Gear();
         lowGoal = new LowGoal();
         intake = new Intake();
-        poseManager = new PoseManager();
         leftDriveJoystick = new Joystick(Constants.DriverStation.LEFT_JOYSTICK.getPort());
         rightDriveJoystick = new Joystick(Constants.DriverStation.RIGHT_JOYSTICK.getPort());
         coDriveJoystick = new Joystick(Constants.DriverStation.CO_JOYSTICK.getPort());
@@ -65,20 +64,24 @@ public class Robot extends IterativeRobot {
     
 
     public void autonomousInit() {
-    	auto = new MiddlePegAutonomousWithoutVision(drive, poseManager, gear);
-//    	if(firstAutoSwitch.get() && secondAutoSwitch.get()) {
-//    		auto = new RightPegAutonomous(drive, poseManager);
-//    	} else if(firstAutoSwitch.get() && !secondAutoSwitch.get()) {
-//    		auto = new LeftPegAutonomous(drive, poseManager);
-//    	} else {
-//    		auto = new MiddlePegAutonomous(drive, poseManager);
-//    	}
+    	gear.retractDropper();
+
+    	if(firstAutoSwitch.get() && secondAutoSwitch.get()) {
+    		auto = new MiddlePegAutonomousWithoutVision(drive, poseManager, gear);
+    	} else if(firstAutoSwitch.get() && !secondAutoSwitch.get()) {
+    		auto = new LeftPegAutonomousWithoutVision(drive, poseManager, gear);
+    	} else if(!firstAutoSwitch.get() && secondAutoSwitch.get()) {
+    		auto = new RightPegAutonomousWithoutVision(drive, poseManager, gear);
+    	} else {
+    		auto = new BaselineAutonomous(drive, poseManager, gear);
+    	}
     	auto.init();
     }
  
    
     public void autonomousPeriodic() {
     	auto.update();
+
     }
 
 
@@ -142,6 +145,8 @@ public class Robot extends IterativeRobot {
     		climbing = true;
     	}
     	
+    	gear.flapGearIntakePosition();
+    	
 
     	poseManager.printDistance();
     	//drive.printClimbCurrent();
@@ -174,7 +179,7 @@ public class Robot extends IterativeRobot {
 		lowGoal.moveDown();
 		intake.runIntake();
 		gear.retractDropper();
-		gear.flapGearIntakePosition();
+//		gear.flapGearIntakePosition();
 		gear.extendSlot();
 		System.out.println("Gear state");
 		
@@ -183,7 +188,7 @@ public class Robot extends IterativeRobot {
     public void visionState() {
 		lowGoal.moveDown();
 		intake.runIntake();
-		gear.flapGearIntakePosition();
+//		gear.flapGearIntakePosition();
 		gear.extendSlot();
 //		if (updateCameraData()) {
 //			targetPose = poseManager.getCurrentPose().add(new PoseDelta(Constants.radiansToDegrees(cameraData.angle), cameraData.distance)) ;
@@ -200,7 +205,7 @@ public class Robot extends IterativeRobot {
     	drive.driveTankTuned(leftDriveJoystick.getRawAxis(1), rightDriveJoystick.getRawAxis(1));
 		lowGoal.moveDown();
 		intake.runIntake();
-		gear.flapBallIntakePosition();
+//		gear.flapBallIntakePosition();
 		gear.retractSlot();
     }
     
@@ -210,7 +215,7 @@ public class Robot extends IterativeRobot {
     	drive.setMaxCurrent();
 		intake.climbIntake();
 		lowGoal.moveDown();
-		gear.flapGearIntakePosition();
+//		gear.flapGearIntakePosition();
 		gear.retractSlot();
 		gear.retractDropper();
     }
@@ -219,7 +224,7 @@ public class Robot extends IterativeRobot {
     	drive.driveTankTuned(leftDriveJoystick.getRawAxis(1), rightDriveJoystick.getRawAxis(1));
 		intake.lowGoalIntake();
 		lowGoal.moveUp();
-		gear.flapLowGoalPosition();
+//		gear.flapLowGoalPosition();
 		gear.retractSlot();
     }
     

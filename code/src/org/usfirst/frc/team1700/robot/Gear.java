@@ -18,8 +18,8 @@ public class Gear {
 	Servo rightFlapServo;
 	DoubleSolenoid popper;
 	DoubleSolenoid dropper;
-	DigitalInput beamBreakReceiver;
-	DigitalInput beamBreakEmitter;
+	//DigitalInput beamBreakReceiver;
+	//DigitalInput beamBreakEmitter;
 	long popperTimer;
 	long dropperTimer;
 	
@@ -32,7 +32,7 @@ public class Gear {
 		dropper = new DoubleSolenoid(
 				Constants.Solenoids.DROPPER_1.getPort(),
 				Constants.Solenoids.DROPPER_2.getPort());
-		beamBreakReceiver = new DigitalInput(Constants.DigitalIO.GEAR_RECEIVER_SENSOR_ID.getPort());
+		//beamBreakReceiver = new DigitalInput(Constants.DigitalIO.GEAR_RECEIVER_SENSOR_ID.getPort());
 		popperTimer = 0;
 		dropperTimer = 0;
 	}

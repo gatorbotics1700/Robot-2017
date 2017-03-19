@@ -28,10 +28,11 @@ public abstract class Autonomous {
 		boolean updated = updateCameraData();
 		periodic(drive.driveByPoseDelta(delta), updated);
 		drive.shiftDriveHigh(true);
-				
+		poseManager.printDistance();		
 		if(updated) {
 			cameraData = getCameraDataValues();
 		}
+		
 		// TODO: Store robot pose history here
 		// TODO: Store camera data in this class, update here.
 	}
@@ -71,6 +72,7 @@ public abstract class Autonomous {
 	protected void dropGear() {
 		gear.extendDropper();
 	}
+	
 	
 	protected abstract void init();
 	protected abstract void periodic(boolean atDestination, boolean newCameraData);

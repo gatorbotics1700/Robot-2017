@@ -20,8 +20,9 @@ public class Intake {
 	
 	//This method runs the intake mechanism used during most of the match
 	public void runIntake(){
-		frontRoller.set(Constants.Values.Intake.CURRENT_LIMIT / pdp.getCurrent(0)); //TODO: Change port ids
-		backRoller.set(Constants.Values.Intake.CURRENT_LIMIT / pdp.getCurrent(1)); //TODO: Change port ids
+		frontRoller.set(Constants.Values.Intake.CURRENT_LIMIT / Math.abs(pdp.getCurrent(4)));
+		//backRoller.set(-Constants.Values.Intake.CURRENT_LIMIT / Math.abs(pdp.getCurrent(6)));
+		backRoller.set(-1);
 	}
 	
 	//This method stops the intake rollers.
@@ -39,7 +40,7 @@ public class Intake {
 	//This method is used for climbing, when only the back roller is running for the purposes of gripping and scaling the Velcro rope.
 	public void climbIntake() {
 		frontRoller.set(0);
-		backRoller.set(Constants.Values.Drive.INTAKE_CLIMBING_SPEED);
+		backRoller.set(-Constants.Values.Drive.INTAKE_CLIMBING_SPEED);
 	}
 }
 
