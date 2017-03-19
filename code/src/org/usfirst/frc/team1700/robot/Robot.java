@@ -65,6 +65,8 @@ public class Robot extends IterativeRobot {
 
     public void autonomousInit() {
     	gear.retractDropper();
+    	poseManager.resetAngle();
+    	poseManager.resetEncoders();
 
     	if(firstAutoSwitch.get() && secondAutoSwitch.get()) {
     		auto = new MiddlePegAutonomousWithoutVision(drive, poseManager, gear);
@@ -87,6 +89,8 @@ public class Robot extends IterativeRobot {
 
     @Override
     public void teleopInit() {
+    	poseManager.resetAngle();
+    	poseManager.resetEncoders();
         targetPose = poseManager.getCurrentPose();
     	drive.shiftDriveHigh(true);
     	climbing = false;

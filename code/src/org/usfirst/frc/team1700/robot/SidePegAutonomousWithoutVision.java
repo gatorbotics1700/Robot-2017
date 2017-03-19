@@ -55,7 +55,8 @@ public class SidePegAutonomousWithoutVision extends Autonomous {
         		if (atDestination) {
         			System.out.println("stopped turning");
         			deadline = Constants.Values.Auto.WAIT_TIME + System.currentTimeMillis();
-                	currentAutoStage = AutoStage.HOLD_TURN;
+                	//currentAutoStage = AutoStage.HOLD_TURN;
+        			currentAutoStage = AutoStage.DONE;
         		}
         		//drive.driveByPoseDelta(delta);
         		break;
@@ -71,6 +72,7 @@ public class SidePegAutonomousWithoutVision extends Autonomous {
         		if(atDestination) {
         			System.out.println("Stopped driving straight");
         			currentAutoStage = AutoStage.HOLD_SCORE;
+        			//currentAutoStage = AutoStage.DONE;
         			deadline = Constants.Values.Auto.DEPLOY_TIME + System.currentTimeMillis();
         			updateDestination(new PoseDelta(0, 0));
         		}

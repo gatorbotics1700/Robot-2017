@@ -54,6 +54,14 @@ public class PoseManager {
 	public void printAngle() {
 		System.out.println("Angle" + NavX.getAngle());
 	}
-
+	
+	public void resetEncoders() {
+		leftDriveEncoder.reset();
+		rightDriveEncoder.reset();
+	}
+	
+	public void resetAngle() {
+		NavX.reset();
+	}
 
 }

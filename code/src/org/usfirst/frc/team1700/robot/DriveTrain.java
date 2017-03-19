@@ -182,7 +182,7 @@ public class DriveTrain {
 	
 	public void driveTank(double leftSpeed, double rightSpeed) {
 		if(leftSpeed < 0)
-			leftSpeed = leftSpeed - 0.2;
+			leftSpeed = leftSpeed - 0.23;
 		leftFront.set(leftSpeed);
 		leftBack.set(leftSpeed);
 		rightFront.set(-rightSpeed);

@@ -27,7 +27,7 @@ public class Constants {
 									   MIN_DRIVE_POWER_LOW_GEAR = 0.3,
 									   WHEEL_DIAMETER_INCHES = 4.0,
 									   DRIVE_GEAR_REDUCTION = 1.0,
-									   ENCODER_TICKS_PER_REV = 212.0,
+									   ENCODER_TICKS_PER_REV = 360.0,
 									   INTAKE_CLIMBING_SPEED = 0.2,
 									   TICKS_PER_INCH = ENCODER_TICKS_PER_REV * DRIVE_GEAR_REDUCTION / (WHEEL_DIAMETER_INCHES*Math.PI), 
 									   VOLTAGE_RAMP_RATE = 100,
@@ -256,7 +256,7 @@ public class Constants {
 			                	
 	public static double ticksToInchesRight(double ticks) {
 		//System.out.println("Tick per inch: " + TICKS_PER_INCH);
-		return ticks / Values.Drive.TICKS_PER_INCH  * 212/360;
+		return ticks / Values.Drive.TICKS_PER_INCH;
 	}
 	
 	public static double ticksToInchesLeft(double ticks) {
