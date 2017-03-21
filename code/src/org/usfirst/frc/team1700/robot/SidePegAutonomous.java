@@ -16,8 +16,8 @@ public class SidePegAutonomous extends Autonomous {
     AutoStage currentAutoStage;
 	double turnAngle;
 	
-	SidePegAutonomous(DriveTrain drive, PoseManager poseManager) {
-		super(drive, poseManager);
+	SidePegAutonomous(DriveTrain drive, PoseManager poseManager, Gear gear) {
+		super(drive, poseManager, gear);
 	}
 	
 	@Override

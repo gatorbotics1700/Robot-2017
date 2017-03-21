@@ -18,8 +18,10 @@ public class Gear {
 	Servo rightFlapServo;
 	DoubleSolenoid popper;
 	DoubleSolenoid dropper;
-	DigitalInput beamBreakReceiver;
-	DigitalInput beamBreakEmitter;
+	//DigitalInput beamBreakReceiver;
+	//DigitalInput beamBreakEmitter;
+	long popperTimer;
+	long dropperTimer;
 	
 	public Gear() {
 		leftFlapServo = new Servo(Constants.PWM.FLAP_LEFT.getPort());
@@ -30,7 +32,9 @@ public class Gear {
 		dropper = new DoubleSolenoid(
 				Constants.Solenoids.DROPPER_1.getPort(),
 				Constants.Solenoids.DROPPER_2.getPort());
-		beamBreakReceiver = new DigitalInput(Constants.DigitalIO.GEAR_RECEIVER_SENSOR_ID.getPort());
+		//beamBreakReceiver = new DigitalInput(Constants.DigitalIO.GEAR_RECEIVER_SENSOR_ID.getPort());
+		popperTimer = 0;
+		dropperTimer = 0;
 	}
 	
 	// Method for each available position of flaps and set to servos
@@ -57,7 +61,7 @@ public class Gear {
 	}
 	
 	// Methods to handle gear slot "popping"
-	public void retractSlot(){
+	public void retractSlot() {
 		popper.set(DoubleSolenoid.Value.kReverse);
 	}
 	
@@ -73,6 +77,7 @@ public class Gear {
 	public void extendDropper(){
 		dropper.set(DoubleSolenoid.Value.kForward);
 	}
+	
 	
 //	public boolean gearInSlot() {
 //		return (!beamBreakReceiver.get());

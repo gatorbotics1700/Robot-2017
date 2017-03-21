@@ -2,12 +2,14 @@ package org.usfirst.frc.team1700.robot;
 
 import com.kauailabs.navx.frc.AHRS;
 
+import edu.wpi.first.wpilibj.AnalogGyro;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.SPI;
 
 public class PoseManager {
 	
 	AHRS NavX;
+	AnalogGyro gyro;
 	Encoder leftDriveEncoder;
 	Encoder rightDriveEncoder;
 	CircularBuffer poseHistory;
@@ -51,16 +53,30 @@ public class PoseManager {
 			// Encoder failure
 			// Currently assume it is left encoder failure
 			// Todo: add logic to detect which side fails
-			return Constants.ticksToInches(rightDriveEncoder.get()) + 16.5*Math.sin(Math.toRadians(getCurrentAngle()));
+			return Constants.ticksToInchesRight(rightDriveEncoder.get()) + 16.5*Math.sin(Math.toRadians(getCurrentAngle()));
 		}else{
-			return Constants.ticksToInches((leftDriveEncoder.get() + 
+			return Constants.ticksToInchesLeft((leftDriveEncoder.get() + 
 				rightDriveEncoder.get())/2);
 		}
 	}
 	
 	public void printDistance() {
 		System.out.println("Left Encoder: " + leftDriveEncoder.get() + " Right Encoder: " + rightDriveEncoder.get());
+		System.out.println("Left encoder dist: " + Constants.ticksToInchesLeft(leftDriveEncoder.get()));
+		System.out.println("Right encoder dist: " + Constants.ticksToInchesRight(rightDriveEncoder.get()));
 	}
-
+	
+	public void printAngle() {
+		System.out.println("Angle" + NavX.getAngle());
+	}
+	
+	public void resetEncoders() {
+		leftDriveEncoder.reset();
+		rightDriveEncoder.reset();
+	}
+	
+	public void resetAngle() {
+		NavX.reset();
+	}
 
 }

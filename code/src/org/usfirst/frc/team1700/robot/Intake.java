@@ -4,22 +4,25 @@
  */
 package org.usfirst.frc.team1700.robot;
 
+import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.Victor;
 
 public class Intake {
 	Victor frontRoller;
 	Victor backRoller;
+	PowerDistributionPanel pdp;
 	
-	//initializer
 	public Intake(){
 		frontRoller = new Victor(Constants.PWM.FRONT_ROLLER.getPort());
 		backRoller = new Victor(Constants.PWM.BACK_ROLLER.getPort());
+		pdp = new PowerDistributionPanel();
 	}
 	
-	//This method runs the intake mechanism.
+	//This method runs the intake mechanism used during most of the match
 	public void runIntake(){
-		frontRoller.set(1);
-		backRoller.set(1);
+		frontRoller.set(Constants.Values.Intake.CURRENT_LIMIT / Math.abs(pdp.getCurrent(4)));
+		//backRoller.set(-Constants.Values.Intake.CURRENT_LIMIT / Math.abs(pdp.getCurrent(6)));
+		backRoller.set(-1);
 	}
 	
 	//This method stops the intake rollers.
@@ -37,7 +40,7 @@ public class Intake {
 	//This method is used for climbing, when only the back roller is running for the purposes of gripping and scaling the Velcro rope.
 	public void climbIntake() {
 		frontRoller.set(0);
-		backRoller.set(Constants.Values.Drive.INTAKE_CLIMBING_SPEED);
+		backRoller.set(-Constants.Values.Drive.INTAKE_CLIMBING_SPEED);
 	}
 }
 

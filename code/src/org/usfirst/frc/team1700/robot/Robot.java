@@ -2,7 +2,6 @@
 package org.usfirst.frc.team1700.robot;
 
 
-
 /* import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List; */
@@ -29,14 +28,15 @@ public class Robot extends IterativeRobot {
     CameraData cameraData;
     NetworkTable table;
     Pose targetPose;
+    boolean climbing;
     
     
     public Robot() {
+        poseManager = new PoseManager();
     	drive = new DriveTrain();
         gear = new Gear();
         lowGoal = new LowGoal();
         intake = new Intake();
-        poseManager = new PoseManager();
         leftDriveJoystick = new Joystick(Constants.DriverStation.LEFT_JOYSTICK.getPort());
         rightDriveJoystick = new Joystick(Constants.DriverStation.RIGHT_JOYSTICK.getPort());
         coDriveJoystick = new Joystick(Constants.DriverStation.CO_JOYSTICK.getPort());
@@ -64,27 +64,36 @@ public class Robot extends IterativeRobot {
     
 
     public void autonomousInit() {
-    	auto = new LeftPegAutonomousWithoutVision(drive, poseManager);
-//    	if(firstAutoSwitch.get() && secondAutoSwitch.get()) {
-//    		auto = new RightPegAutonomous(drive, poseManager);
-//    	} else if(firstAutoSwitch.get() && !secondAutoSwitch.get()) {
-//    		auto = new LeftPegAutonomous(drive, poseManager);
-//    	} else {
-//    		auto = new MiddlePegAutonomous(drive, poseManager);
-//    	}
+    	gear.retractDropper();
+    	poseManager.resetAngle();
+    	poseManager.resetEncoders();
+
+    	if(firstAutoSwitch.get() && secondAutoSwitch.get()) {
+    		auto = new MiddlePegAutonomousWithoutVision(drive, poseManager, gear);
+    	} else if(firstAutoSwitch.get() && !secondAutoSwitch.get()) {
+    		auto = new LeftPegAutonomousWithoutVision(drive, poseManager, gear);
+    	} else if(!firstAutoSwitch.get() && secondAutoSwitch.get()) {
+    		auto = new RightPegAutonomousWithoutVision(drive, poseManager, gear);
+    	} else {
+    		auto = new BaselineAutonomous(drive, poseManager, gear);
+    	}
     	auto.init();
     }
  
    
     public void autonomousPeriodic() {
     	auto.update();
+
     }
 
 
     @Override
     public void teleopInit() {
+    	poseManager.resetAngle();
+    	poseManager.resetEncoders();
         targetPose = poseManager.getCurrentPose();
     	drive.shiftDriveHigh(true);
+    	climbing = false;
     }
     
     
@@ -93,16 +102,16 @@ public class Robot extends IterativeRobot {
      */
     
     public void teleopPeriodic() {
-    	if (leftDriveJoystick.getRawButton(Constants.JoystickButtons.Left.CLIMB.getId())) {
+    	if (climbing) {
     		climbState();
     	} else if(coDriveJoystick.getRawButton(Constants.JoystickButtons.Co.GEAR_INTAKE.getId())) {
     		gearState();
     	} else if (coDriveJoystick.getRawButton(Constants.JoystickButtons.Co.BALL_INTAKE.getId())) {
     		ballIntakeState();
-    	} else if (leftDriveJoystick.getRawButton(Constants.JoystickButtons.Co.VISION.getId())) {
-    		visionState();
-    	} else if (coDriveJoystick.getRawButton(Constants.JoystickButtons.Co.LOW_GOAL_SCORE.getId())) {
-    		lowGoalState();
+//    	} else if (leftDriveJoystick.getRawButton(Constants.JoystickButtons.Co.VISION.getId())) {
+//    		visionState();
+//    	} else if (coDriveJoystick.getRawButton(Constants.JoystickButtons.Co.LOW_GOAL_SCORE.getId())) {
+//    		lowGoalState();
     	} else if (coDriveJoystick.getRawButton(Constants.JoystickButtons.Co.STOP_INTAKE.getId())) {
     		stopIntakeState();
     	} else if (coDriveJoystick.getRawButton(Constants.JoystickButtons.Co.RESET.getId())) {
@@ -123,12 +132,26 @@ public class Robot extends IterativeRobot {
     	}
     	
     	if(rightDriveJoystick.getRawButton(Constants.JoystickButtons.Right.SHIFT_HIGH.getId())) {
+    		climbing = false;
     		drive.shiftDriveHigh(true);
     		System.out.println("Shifting High");
     	} else if (rightDriveJoystick.getRawButton(Constants.JoystickButtons.Right.SHIFT_LOW.getId())) {
     		drive.shiftDriveHigh(false);
     	}
     	
+    	if(leftDriveJoystick.getRawButton(Constants.JoystickButtons.Left.DEPLOY_GEAR.getId())) {
+    		gear.extendDropper();
+    	} else if (coDriveJoystick.getRawButton(Constants.JoystickButtons.Co.DROPPER_RETRACT.getId())) {
+    		gear.retractDropper();
+    	}
+    	
+    	if (leftDriveJoystick.getRawButton(Constants.JoystickButtons.Left.CLIMB.getId())) {
+    		climbing = true;
+    	}
+    	
+    	gear.flapGearIntakePosition();
+    	
+
     	poseManager.printDistance();
     	//drive.printClimbCurrent();
     }
@@ -159,15 +182,17 @@ public class Robot extends IterativeRobot {
     	drive.driveTankTuned(leftDriveJoystick.getRawAxis(1), rightDriveJoystick.getRawAxis(1));
 		lowGoal.moveDown();
 		intake.runIntake();
-		gear.flapGearIntakePosition();
+		gear.retractDropper();
+//		gear.flapGearIntakePosition();
 		gear.extendSlot();
+		System.out.println("Gear state");
 		
     }
     
     public void visionState() {
 		lowGoal.moveDown();
 		intake.runIntake();
-		gear.flapGearIntakePosition();
+//		gear.flapGearIntakePosition();
 		gear.extendSlot();
 //		if (updateCameraData()) {
 //			targetPose = poseManager.getCurrentPose().add(new PoseDelta(Constants.radiansToDegrees(cameraData.angle), cameraData.distance)) ;
@@ -184,24 +209,26 @@ public class Robot extends IterativeRobot {
     	drive.driveTankTuned(leftDriveJoystick.getRawAxis(1), rightDriveJoystick.getRawAxis(1));
 		lowGoal.moveDown();
 		intake.runIntake();
-		gear.flapBallIntakePosition();
+//		gear.flapBallIntakePosition();
 		gear.retractSlot();
     }
     
     public void climbState() {
     	drive.driveTankTuned(leftDriveJoystick.getRawAxis(1), rightDriveJoystick.getRawAxis(1));
     	drive.shiftDriveHigh(false);
+    	drive.setMaxCurrent();
 		intake.climbIntake();
 		lowGoal.moveDown();
-		gear.flapGearIntakePosition();
+//		gear.flapGearIntakePosition();
 		gear.retractSlot();
+		gear.retractDropper();
     }
     
     public void lowGoalState() {
     	drive.driveTankTuned(leftDriveJoystick.getRawAxis(1), rightDriveJoystick.getRawAxis(1));
 		intake.lowGoalIntake();
 		lowGoal.moveUp();
-		gear.flapLowGoalPosition();
+//		gear.flapLowGoalPosition();
 		gear.retractSlot();
     }
     

@@ -22,8 +22,8 @@ public class SidePegAutonomousWithoutVision extends Autonomous {
 	double turnAngle;
 	double targetDistance;
 	
-	SidePegAutonomousWithoutVision(DriveTrain drive, PoseManager poseManager) {
-		super(drive, poseManager);
+	SidePegAutonomousWithoutVision(DriveTrain drive, PoseManager poseManager, Gear gear) {
+		super(drive, poseManager, gear);
 	}
 	
 	@Override
@@ -55,7 +55,8 @@ public class SidePegAutonomousWithoutVision extends Autonomous {
         		if (atDestination) {
         			System.out.println("stopped turning");
         			deadline = Constants.Values.Auto.WAIT_TIME + System.currentTimeMillis();
-                	currentAutoStage = AutoStage.HOLD_TURN;
+                	//currentAutoStage = AutoStage.HOLD_TURN;
+        			currentAutoStage = AutoStage.DONE;
         		}
         		//drive.driveByPoseDelta(delta);
         		break;
@@ -71,10 +72,14 @@ public class SidePegAutonomousWithoutVision extends Autonomous {
         		if(atDestination) {
         			System.out.println("Stopped driving straight");
         			currentAutoStage = AutoStage.HOLD_SCORE;
+        			//currentAutoStage = AutoStage.DONE;
+        			deadline = Constants.Values.Auto.DEPLOY_TIME + System.currentTimeMillis();
+        			updateDestination(new PoseDelta(0, 0));
         		}
         		break;
         	case HOLD_SCORE:
         		System.out.println("Holding score");
+        		dropGear();
 				if(System.currentTimeMillis() > deadline) {
 					updateDestination(new PoseDelta(0, -Constants.Values.Auto.SECOND_DISTANCE));
 					currentAutoStage = AutoStage.BACK_UP;
@@ -102,10 +107,12 @@ public class SidePegAutonomousWithoutVision extends Autonomous {
         		if (atDestination) {
         			System.out.println("stopped turning");
         			deadline = Constants.Values.Auto.WAIT_TIME + System.currentTimeMillis();
+        			updateDestination(new PoseDelta(0, 0));
 					currentAutoStage = AutoStage.DONE;
         		}
         		break;
         	case DONE:
+        		updateDestination(new PoseDelta(0, 0));
         		System.out.println("Done");
         		stopRobot();
         		break;
