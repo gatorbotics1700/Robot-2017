@@ -41,8 +41,21 @@ public class PoseManager {
 	
 	private double getCurrentDistance() {
 		System.out.println("Left Encoder: " + leftDriveEncoder.get() + " Right Encoder: " + rightDriveEncoder.get());
-		return Constants.ticksToInches((leftDriveEncoder.get() + 
+		// 16.5 is half of the wheelbase width of the robot in inches. This works out to be the number of
+		// encoder ticks to rotate the robot 1 degree.
+		double tempEncoderAngle = (leftDriveEncoder.get()-rightDriveEncoder.get())/16.5;
+		// If there an difference of greater than 20 degrees, there is an issue
+		// This is an error of 330 ticks. If an encoder read 212 ticks instead of 360, this
+		// will create the 330 tick error in about 2 revolutions (2 feet)
+		if(Math.abs(tempEncoderAngle-getCurrentAngle())>20){
+			// Encoder failure
+			// Currently assume it is left encoder failure
+			// Todo: add logic to detect which side fails
+			return Constants.ticksToInches(rightDriveEncoder.get()) + 16.5*Math.sin(Math.toRadians(getCurrentAngle()));
+		}else{
+			return Constants.ticksToInches((leftDriveEncoder.get() + 
 				rightDriveEncoder.get())/2);
+		}
 	}
 	
 	public void printDistance() {
